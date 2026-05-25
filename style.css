@@ -1,0 +1,2509 @@
+:root{
+  --appBg:#070d18;
+  --panel:#101827;
+  --panel2:#141e31;
+  --line:rgba(255,255,255,.12);
+  --line2:rgba(255,255,255,.20);
+  --text:#f8fafc;
+  --muted:#a9b6cc;
+  --primary:#6d6cff;
+  --primary2:#38bdf8;
+  --danger:#7f1d1d;
+  --radius:14px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  background:var(--appBg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  font-synthesis:none;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+
+.topbar{
+  min-height:60px;
+  padding:10px 14px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:#080e1a;
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:280px}
+.brand__mark{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:30px;padding:0 12px;border-radius:999px;
+  background:#202348;border:1px solid #454b82;color:#fff;
+  font-size:12px;font-weight:900;letter-spacing:.04em;
+}
+.brand h1{margin:0;font-size:18px;line-height:1.1;font-weight:900}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.topActions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}
+
+.btn{
+  min-height:32px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:6px 11px;
+  color:#fff;
+  background:#162033;
+  font-size:13px;
+  font-weight:800;
+}
+.btn:hover{border-color:var(--line2);background:#1b2942}
+.btn--primary{background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:rgba(255,255,255,.22)}
+.btn--soft{background:#1e293b;border-color:rgba(255,255,255,.16)}
+.btn--ghost{background:#111827}
+.btn--danger{background:#4c1418;border-color:rgba(248,113,113,.35)}
+
+.layout{
+  display:grid;
+  grid-template-columns:320px minmax(0,1fr);
+  gap:12px;
+  padding:12px;
+}
+.editor{display:flex;flex-direction:column;gap:10px;min-width:0}
+.panel{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#0e1626;
+  padding:10px;
+}
+.sectionTitle{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px}
+.sectionTitle>span{
+  flex:0 0 auto;width:28px;height:28px;border-radius:10px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  font-weight:900;font-size:13px;
+}
+.sectionTitle h2{margin:0;font-size:15px;line-height:1.15}
+.sectionTitle p{margin:2px 0 0;color:var(--muted);font-size:11px;line-height:1.25}
+
+.field{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.field span,.choiceGroup>span{font-size:11px;color:#dbeafe;font-weight:900}
+input,select,textarea{
+  width:100%;min-height:34px;border:1px solid var(--line);
+  border-radius:11px;background:#202938;color:#fff;
+  padding:7px 10px;outline:none;font-size:13px;
+}
+textarea{resize:vertical;min-height:56px;line-height:1.25}
+input:focus,select:focus,textarea:focus{border-color:#60a5fa}
+select option{background:#111827;color:#fff}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hiddenFile{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.fileHint{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.25}
+
+.dayTabs{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:5px;
+  margin-bottom:9px;
+}
+.dayTab{
+  min-height:29px;
+  padding:5px 4px;
+  border-radius:9px;
+  border:1px solid rgba(255,255,255,.16);
+  background:#111827;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  text-align:center;
+}
+.dayTab.isActive{background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:rgba(255,255,255,.35)}
+.dayTab.isHidden{opacity:.48}
+.dayEditor{border:1px solid var(--line);border-radius:14px;background:#121c2e;padding:9px}
+.dayEditor__head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.dayEditor__head strong{font-size:14px}
+.switchLine{display:flex;flex-direction:row;align-items:center;gap:7px;margin:0;font-size:12px;font-weight:900}
+.switchLine input,.switchBox input{appearance:none;width:34px;height:19px;border-radius:999px;background:#2a3448;position:relative;padding:0;min-height:auto;flex:0 0 auto}
+.switchLine input::after,.switchBox input::after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff}
+.switchLine input:checked,.switchBox input:checked{background:linear-gradient(135deg,var(--primary),var(--primary2))}
+.switchLine input:checked::after,.switchBox input:checked::after{left:17px}
+
+.quickActions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}
+.quickActions--two{grid-template-columns:1fr 1fr}
+.quickActions .btn{min-height:38px;padding:6px 8px;font-size:12px}
+
+.switchBox{
+  display:flex;flex-direction:row;align-items:center;gap:9px;
+  margin-top:9px;padding:8px;border-radius:12px;border:1px solid var(--line);
+  background:#121c2e;
+}
+.switchBox span{display:flex;flex-direction:column;gap:2px}
+.switchBox strong{font-size:12px}
+.switchBox small{color:var(--muted);font-size:10px;line-height:1.2}
+.choiceGroup{margin-top:9px}
+.segmented{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px;padding:4px;border:1px solid var(--line);border-radius:12px;background:#0b1220}
+.segBtn{min-height:28px;border-radius:9px;border:0;background:transparent;color:#cbd5e1;font-weight:900;font-size:12px}
+.segBtn.isActive{background:#27324a;color:#fff}
+
+.preview{min-width:0;border:1px solid var(--line);border-radius:18px;background:#080f1d;overflow:hidden}
+.previewHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line)}
+.previewHeader strong{font-size:15px}
+.previewHeader p{margin:2px 0 0;color:var(--muted);font-size:11px}
+.statusLine{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.statusLine span{display:inline-flex;align-items:center;min-height:26px;padding:0 9px;border-radius:999px;background:#172133;color:#dbeafe;font-size:11px;font-weight:900}
+.statusLine .overflowStatus{background:#3a2508;color:#fed7aa;border:1px solid rgba(251,146,60,.45)}
+.statusLine .overflowStatus[hidden]{display:none}
+.previewFrame{padding:14px;overflow:auto;background:#050b14}
+.previewFrame.isChecker{
+  background-color:#111827;
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,.09) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,.09) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,.09) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,.09) 75%);
+  background-size:24px 24px;
+  background-position:0 0,0 12px,12px -12px,-12px 0;
+}
+
+/* Rendu principal du planning. */
+.planningCanvas{
+  position:relative;
+  container-type:inline-size;
+  width:100%;
+  max-width:1600px;
+  margin:0 auto;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  border-radius:2.2cqw;
+  /* V19 : titre remonté + grille plus large sans changer le vrai format 16:9. */
+  padding:3cqw 2.85cqw 3.25cqw;
+  background:var(--canvasBg);
+  color:var(--canvasText);
+  border:1px solid rgba(255,255,255,.12);
+}
+.planningCanvas.canvasTransparent{background:transparent!important}
+.planningCanvas.format-square{aspect-ratio:1/1;max-width:1000px}
+.canvasHero{margin-bottom:1.75cqw}
+.canvasHero span{display:block;margin-bottom:.65cqw;color:var(--canvasMuted);font-size:1.25cqw;font-weight:900;letter-spacing:.28em;text-transform:uppercase}
+.canvasHero h2{margin:0;font-family:Impact,'Arial Black',system-ui,sans-serif;font-size:5.25cqw;line-height:.94;letter-spacing:.02em;color:var(--canvasText);font-weight:900}
+.canvasHero p{margin:.9cqw 0 0;color:var(--canvasMuted);font-size:1.75cqw;line-height:1.05;font-weight:900}
+.weekGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.82cqw}
+.dayCard{
+  position:relative;
+  min-width:0;
+  height:40.1cqw;
+  border-radius:1.8cqw;
+  border:1px solid var(--dayBorder);
+  background-color:var(--dayBg);
+  background-image:var(--dayImage);
+  background-size:var(--imageFit,cover);
+  background-position:var(--imagePosition,center center);
+  background-repeat:no-repeat;
+  color:var(--dayText);
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:1cqw;
+  padding:1.22cqw;
+  overflow:hidden;
+}
+.dayCard.isTransparent{background-color:transparent}
+.dayCard.hasImage.isTransparent{background-color:transparent}
+.dayHeader{display:flex;flex-direction:column;align-items:flex-start;gap:.7cqw;min-width:0}
+.dayName{font-family:Impact,'Arial Black',system-ui,sans-serif;font-size:2.05cqw;line-height:1;color:var(--dayTitle);letter-spacing:.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dayStatus{display:inline-flex;align-items:center;max-width:100%;min-height:1.65cqw;padding:0 .75cqw;border-radius:999px;background:var(--chipBg);color:var(--chipText);font-size:.78cqw;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dayContent{align-self:var(--verticalAlign,end);text-align:var(--textAlign,left);min-width:0}
+.streamTime{font-family:Impact,'Arial Black',system-ui,sans-serif;font-size:3.35cqw;line-height:.94;font-weight:900;letter-spacing:.01em;color:var(--dayText);overflow-wrap:normal;word-break:normal}
+.streamTitle{margin-top:.75cqw;font-size:1.32cqw;line-height:1.08;font-weight:900;color:var(--dayText);overflow-wrap:break-word;word-break:normal}
+.streamNote{margin:.75cqw 0 0;color:var(--dayMuted);font-size:.9cqw;line-height:1.25;font-weight:800;overflow-wrap:break-word;word-break:normal}
+.dayCard.isOff .streamTime{font-size:4.6cqw;letter-spacing:.05em}
+
+.planningCanvas.view-list{aspect-ratio:auto;min-height:auto;padding:2.45cqw 3.4cqw 3.4cqw}
+.planningCanvas.view-list .canvasHero{margin-bottom:1.55cqw}
+.planningCanvas.view-list .canvasHero h2{font-size:4.4cqw}
+.planningCanvas.view-list .weekGrid{display:flex;flex-direction:column;gap:.85cqw}
+.planningCanvas.view-list .dayCard{height:auto;min-height:7.8cqw;grid-template-columns:14cqw minmax(0,1fr);grid-template-rows:auto;align-items:center;padding:1cqw 1.35cqw;border-radius:1.4cqw}
+.planningCanvas.view-list .dayHeader{gap:.45cqw}
+.planningCanvas.view-list .dayName{font-size:2.2cqw}
+.planningCanvas.view-list .dayStatus{font-size:.75cqw;min-height:1.5cqw}
+.planningCanvas.view-list .dayContent{align-self:center}
+.planningCanvas.view-list .streamTime{font-size:2.5cqw}
+.planningCanvas.view-list .streamTitle{font-size:1.55cqw;margin-top:.35cqw}
+.planningCanvas.view-list .streamNote{font-size:.85cqw;margin-top:.3cqw}
+
+.planningCanvas.format-square .weekGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.1cqw}
+.planningCanvas.format-square .dayCard{height:15.3cqw;grid-template-rows:auto minmax(0,1fr)}
+.planningCanvas.format-square .canvasHero h2{font-size:4.6cqw}
+.planningCanvas.format-square .canvasHero{margin-bottom:2cqw}
+.planningCanvas.format-square .dayName{font-size:1.75cqw}
+.planningCanvas.format-square .streamTime{font-size:2.55cqw}
+.planningCanvas.format-square .streamTitle{font-size:1.15cqw}
+.planningCanvas.format-square .streamNote{font-size:.78cqw}
+
+/* Thèmes */
+.theme-midnight{
+  --canvasBg:linear-gradient(180deg,#121a2b,#081123);
+  --canvasText:#fff;--canvasMuted:#b6c2d6;
+  --dayBg:#1b263e;
+  --dayBorder:rgba(121,156,215,.35);--dayText:#fff;--dayTitle:#fff;--dayMuted:#d6deec;
+  --chipBg:#35415b;--chipText:#f1f5f9;
+}
+.theme-clean{
+  --canvasBg:#f5f7fb;--canvasText:#111827;--canvasMuted:#526070;
+  --dayBg:#ffffff;--dayBorder:#d8dee9;
+  --dayText:#111827;--dayTitle:#111827;--dayMuted:#4b5563;--chipBg:#edf1f7;--chipText:#1f2937;
+}
+.theme-neon{--canvasBg:linear-gradient(135deg,#170026,#2b0b63);--canvasText:#fff;--canvasMuted:#e9d5ff;--dayBg:#24113f;--dayBorder:rgba(217,70,239,.45);--dayText:#fff;--dayTitle:#fff;--dayMuted:#f3e8ff;--chipBg:#4a236b;--chipText:#fff}
+.theme-galaxy{--canvasBg:linear-gradient(135deg,#050316,#1b1744 60%,#0f172a);--canvasText:#fff;--canvasMuted:#c4b5fd;--dayBg:#16142e;--dayBorder:rgba(167,139,250,.45);--dayText:#fff;--dayTitle:#fff;--dayMuted:#ddd6fe;--chipBg:#30275b;--chipText:#fff}
+.theme-ocean{--canvasBg:linear-gradient(180deg,#082f49,#0f172a);--canvasText:#fff;--canvasMuted:#bae6fd;--dayBg:#12324a;--dayBorder:rgba(125,211,252,.38);--dayText:#fff;--dayTitle:#fff;--dayMuted:#dbeafe;--chipBg:#1e4d69;--chipText:#fff}
+.theme-forest{--canvasBg:linear-gradient(180deg,#052e2b,#063b2e);--canvasText:#fff;--canvasMuted:#bbf7d0;--dayBg:#123d33;--dayBorder:rgba(134,239,172,.34);--dayText:#fff;--dayTitle:#fff;--dayMuted:#dcfce7;--chipBg:#22543e;--chipText:#fff}
+.theme-sunset{--canvasBg:linear-gradient(135deg,#3b0764,#ea580c);--canvasText:#fff;--canvasMuted:#fed7aa;--dayBg:#3b1c35;--dayBorder:rgba(253,186,116,.40);--dayText:#fff;--dayTitle:#fff;--dayMuted:#ffedd5;--chipBg:#713f2a;--chipText:#fff}
+.theme-noir{--canvasBg:linear-gradient(180deg,#050505,#17120b);--canvasText:#fff;--canvasMuted:#fbbf24;--dayBg:#151515;--dayBorder:rgba(251,191,36,.42);--dayText:#fff;--dayTitle:#fbbf24;--dayMuted:#fde68a;--chipBg:#332b18;--chipText:#fbbf24}
+.theme-pastel{--canvasBg:linear-gradient(135deg,#ffe4f1,#dbeafe 58%,#dcfce7);--canvasText:#1f2937;--canvasMuted:#64748b;--dayBg:#fff;--dayBorder:rgba(31,41,55,.16);--dayText:#1f2937;--dayTitle:#1f2937;--dayMuted:#64748b;--chipBg:#edf2f7;--chipText:#334155}
+
+.theme-arcade{--canvasBg:linear-gradient(135deg,#050816,#15113a 46%,#061f35);--canvasText:#ffffff;--canvasMuted:#67e8f9;--dayBg:#10142d;--dayBorder:rgba(34,211,238,.44);--dayText:#ffffff;--dayTitle:#f0abfc;--dayMuted:#bae6fd;--chipBg:#1e2a54;--chipText:#67e8f9}
+.theme-horror{--canvasBg:linear-gradient(180deg,#10060a,#26070b 62%,#050505);--canvasText:#fff;--canvasMuted:#fca5a5;--dayBg:#1c0b10;--dayBorder:rgba(239,68,68,.42);--dayText:#fff;--dayTitle:#fecaca;--dayMuted:#fca5a5;--chipBg:#3b1117;--chipText:#fecaca}
+.theme-cozy{--canvasBg:linear-gradient(135deg,#2a160d,#5b341f 55%,#1c0f09);--canvasText:#fff7ed;--canvasMuted:#fed7aa;--dayBg:#3b2416;--dayBorder:rgba(251,191,36,.34);--dayText:#fff7ed;--dayTitle:#fed7aa;--dayMuted:#ffedd5;--chipBg:#5c3823;--chipText:#ffedd5}
+.theme-royal{--canvasBg:linear-gradient(135deg,#061436,#172554 60%,#312e81);--canvasText:#ffffff;--canvasMuted:#bfdbfe;--dayBg:#111d3a;--dayBorder:rgba(250,204,21,.38);--dayText:#ffffff;--dayTitle:#fde68a;--dayMuted:#dbeafe;--chipBg:#1e3a8a;--chipText:#fde68a}
+.theme-manga{--canvasBg:linear-gradient(135deg,#ffffff,#fef3c7 38%,#fecdd3 72%,#bfdbfe);--canvasText:#111827;--canvasMuted:#4b5563;--dayBg:#ffffff;--dayBorder:#111827;--dayText:#111827;--dayTitle:#111827;--dayMuted:#374151;--chipBg:#111827;--chipText:#ffffff}
+.theme-synthwave{--canvasBg:linear-gradient(135deg,#16001f,#4c1d95 46%,#fb7185);--canvasText:#ffffff;--canvasMuted:#fbcfe8;--dayBg:#211033;--dayBorder:rgba(251,113,133,.48);--dayText:#ffffff;--dayTitle:#fef3c7;--dayMuted:#fbcfe8;--chipBg:#4c1d95;--chipText:#fef3c7}
+.theme-emerald{--canvasBg:linear-gradient(135deg,#031712,#064e3b 54%,#0f172a);--canvasText:#ecfdf5;--canvasMuted:#a7f3d0;--dayBg:#102d26;--dayBorder:rgba(52,211,153,.44);--dayText:#ecfdf5;--dayTitle:#bbf7d0;--dayMuted:#d1fae5;--chipBg:#14532d;--chipText:#bbf7d0}
+.theme-velvet{--canvasBg:linear-gradient(135deg,#210516,#7f1d1d 55%,#4a044e);--canvasText:#fff;--canvasMuted:#fecdd3;--dayBg:#321022;--dayBorder:rgba(244,114,182,.42);--dayText:#fff;--dayTitle:#fecdd3;--dayMuted:#ffe4e6;--chipBg:#831843;--chipText:#ffe4e6}
+
+.toastContainer{position:fixed;right:12px;bottom:12px;z-index:20;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{max-width:360px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#0f172a;color:#fff;font-size:12px;font-weight:800}
+
+
+/* Fenêtre moderne de duplication de jour */
+.modalOverlay{
+  position:fixed;
+  inset:0;
+  z-index:18;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(2,6,23,.68);
+  backdrop-filter:blur(10px);
+}
+.modalOverlay.isVisible{display:flex}
+.duplicateDialog{
+  width:min(520px,100%);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:20px;
+  background:linear-gradient(180deg,#111827,#0b1220);
+  box-shadow:0 24px 80px rgba(0,0,0,.45);
+  padding:14px;
+}
+.duplicateDialog__head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.duplicateDialog__head strong{font-size:18px;font-weight:950}
+.duplicateDialog__head p{margin:4px 0 0;color:var(--muted);font-size:12px;font-weight:800}
+.modalClose{
+  flex:0 0 auto;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background:#172133;
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+  font-weight:800;
+}
+.modalClose:hover{background:#22304a;border-color:rgba(255,255,255,.28)}
+.duplicateChoices{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.duplicateChoice{
+  min-height:64px;
+  border-radius:15px;
+  border:1px solid rgba(255,255,255,.14);
+  background:#121c2e;
+  color:#fff;
+  padding:10px 12px;
+  text-align:left;
+}
+.duplicateChoice:hover:not(:disabled),
+.duplicateChoice:focus-visible:not(:disabled){
+  border-color:rgba(96,165,250,.75);
+  background:#1a2840;
+  outline:none;
+}
+.duplicateChoice strong{display:block;font-size:14px;font-weight:950}
+.duplicateChoice small{display:block;margin-top:4px;color:var(--muted);font-size:11px;font-weight:800}
+.duplicateChoice:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  background:#0f172a;
+}
+.duplicateHint{margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.35;font-weight:750}
+
+.resetWarning{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  margin:4px 0 14px;
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid rgba(248,113,113,.28);
+  background:rgba(127,29,29,.18);
+  color:#fee2e2;
+}
+.resetWarning strong{font-size:13px;font-weight:950}
+.resetWarning span{font-size:12px;line-height:1.35;color:#fecaca;font-weight:750}
+.resetActions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.resetActions .btn{min-height:38px}
+
+.exportClone{position:fixed!important;left:-10000px!important;top:0!important;max-width:none!important;margin:0!important}
+
+@media (max-width:1100px){
+  .topbar{align-items:flex-start;flex-direction:column}.topActions{justify-content:flex-start}.layout{grid-template-columns:1fr}.editor{max-width:none}.previewFrame{max-height:none}
+}
+@media (max-width:640px){
+  .layout,.topbar{padding:9px}.grid2,.quickActions,.quickActions--two{grid-template-columns:1fr}.brand{align-items:flex-start;flex-direction:column}.topActions .btn{flex:1 1 auto}.dayTabs{grid-template-columns:repeat(4,1fr)}
+}
+
+
+/* --------------------------------------------------------------------------
+   V20 - Collection de nouveaux thèmes visuels
+   Objectif : ajouter des styles marqués, surtout en mode liste, sans remettre
+   les anciens essais supprimés et leurs options associées.
+-------------------------------------------------------------------------- */
+.theme-twilight{--canvasBg:radial-gradient(900px 520px at 10% 0%, rgba(168,85,247,.18), transparent 60%),linear-gradient(180deg,#14101f,#22163c 52%,#0e0b18);--canvasText:#fff7ff;--canvasMuted:#d8b4fe;--dayBg:#161321;--dayBorder:rgba(216,180,254,.68);--dayText:#fdf4ff;--dayTitle:#f5d0fe;--dayMuted:#e9d5ff;--chipBg:#2d2444;--chipText:#f5d0fe}
+.theme-lavenderline{--canvasBg:linear-gradient(135deg,#100b1f,#312054 58%,#161127);--canvasText:#fff;--canvasMuted:#c4b5fd;--dayBg:#181326;--dayBorder:rgba(196,181,253,.58);--dayText:#fff;--dayTitle:#ddd6fe;--dayMuted:#c4b5fd;--chipBg:#2f2550;--chipText:#ede9fe}
+.theme-moonspell{--canvasBg:radial-gradient(680px 420px at 78% 0%, rgba(147,197,253,.16), transparent 62%),linear-gradient(180deg,#080a13,#161b2e 60%,#080a13);--canvasText:#f8fbff;--canvasMuted:#bfdbfe;--dayBg:#101523;--dayBorder:rgba(147,197,253,.52);--dayText:#f8fbff;--dayTitle:#dbeafe;--dayMuted:#cbd5e1;--chipBg:#1d2940;--chipText:#bfdbfe}
+.theme-roseglass{--canvasBg:linear-gradient(135deg,#20101b,#5b2544 58%,#170b14);--canvasText:#fff1f8;--canvasMuted:#fbcfe8;--dayBg:#211522;--dayBorder:rgba(251,207,232,.48);--dayText:#fff1f8;--dayTitle:#fbcfe8;--dayMuted:#fce7f3;--chipBg:#4a1d37;--chipText:#fce7f3}
+.theme-cybermint{--canvasBg:linear-gradient(135deg,#021615,#073b3a 54%,#071426);--canvasText:#ecfeff;--canvasMuted:#99f6e4;--dayBg:#071f25;--dayBorder:rgba(45,212,191,.52);--dayText:#ecfeff;--dayTitle:#99f6e4;--dayMuted:#ccfbf1;--chipBg:#0f3b42;--chipText:#99f6e4}
+.theme-goldenhour{--canvasBg:linear-gradient(135deg,#1f1306,#78350f 54%,#2b1203);--canvasText:#fff7ed;--canvasMuted:#fed7aa;--dayBg:#2a1b10;--dayBorder:rgba(251,191,36,.52);--dayText:#fff7ed;--dayTitle:#fde68a;--dayMuted:#ffedd5;--chipBg:#5c3a18;--chipText:#fde68a}
+.theme-abyssblue{--canvasBg:radial-gradient(720px 460px at 55% 0%, rgba(56,189,248,.14), transparent 62%),linear-gradient(180deg,#020617,#0b1f3a 56%,#020617);--canvasText:#eff6ff;--canvasMuted:#93c5fd;--dayBg:#071525;--dayBorder:rgba(96,165,250,.54);--dayText:#eff6ff;--dayTitle:#bfdbfe;--dayMuted:#dbeafe;--chipBg:#122c4b;--chipText:#bfdbfe}
+.theme-candypop{--canvasBg:linear-gradient(135deg,#fff1f7,#dbeafe 50%,#f5d0fe);--canvasText:#27132f;--canvasMuted:#7c3aed;--dayBg:#ffffff;--dayBorder:rgba(168,85,247,.36);--dayText:#27132f;--dayTitle:#7c2d12;--dayMuted:#6b21a8;--chipBg:#f3e8ff;--chipText:#6b21a8}
+
+/* Thèmes listés façon lignes premium, inspirés du style violet demandé. */
+.theme-twilight.view-list,
+.theme-lavenderline.view-list,
+.theme-moonspell.view-list,
+.theme-roseglass.view-list,
+.theme-cybermint.view-list,
+.theme-goldenhour.view-list,
+.theme-abyssblue.view-list,
+.theme-candypop.view-list{
+  padding:2.35cqw 3.25cqw 3.25cqw;
+}
+.theme-twilight.view-list .canvasHero,
+.theme-lavenderline.view-list .canvasHero,
+.theme-moonspell.view-list .canvasHero,
+.theme-roseglass.view-list .canvasHero,
+.theme-cybermint.view-list .canvasHero,
+.theme-goldenhour.view-list .canvasHero,
+.theme-abyssblue.view-list .canvasHero,
+.theme-candypop.view-list .canvasHero{margin-bottom:1.35cqw}
+.theme-twilight.view-list .weekGrid,
+.theme-lavenderline.view-list .weekGrid,
+.theme-moonspell.view-list .weekGrid,
+.theme-roseglass.view-list .weekGrid,
+.theme-cybermint.view-list .weekGrid,
+.theme-goldenhour.view-list .weekGrid,
+.theme-abyssblue.view-list .weekGrid,
+.theme-candypop.view-list .weekGrid{gap:.9cqw}
+.theme-twilight.view-list .dayCard,
+.theme-lavenderline.view-list .dayCard,
+.theme-moonspell.view-list .dayCard,
+.theme-roseglass.view-list .dayCard,
+.theme-cybermint.view-list .dayCard,
+.theme-goldenhour.view-list .dayCard,
+.theme-abyssblue.view-list .dayCard,
+.theme-candypop.view-list .dayCard{
+  min-height:5.45cqw;
+  grid-template-columns:13cqw minmax(0,1fr);
+  padding:.7cqw 1.05cqw;
+  border-radius:2.1cqw;
+  background:linear-gradient(90deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+  border-width:1px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);
+}
+.theme-twilight.view-list .dayHeader,
+.theme-lavenderline.view-list .dayHeader,
+.theme-moonspell.view-list .dayHeader,
+.theme-roseglass.view-list .dayHeader,
+.theme-cybermint.view-list .dayHeader,
+.theme-goldenhour.view-list .dayHeader,
+.theme-abyssblue.view-list .dayHeader,
+.theme-candypop.view-list .dayHeader{gap:.25cqw;align-items:flex-start}
+.theme-twilight.view-list .dayName,
+.theme-lavenderline.view-list .dayName,
+.theme-moonspell.view-list .dayName,
+.theme-roseglass.view-list .dayName,
+.theme-cybermint.view-list .dayName,
+.theme-goldenhour.view-list .dayName,
+.theme-abyssblue.view-list .dayName,
+.theme-candypop.view-list .dayName{font-size:1.45cqw;letter-spacing:.08em;text-transform:uppercase}
+.theme-twilight.view-list .dayStatus,
+.theme-lavenderline.view-list .dayStatus,
+.theme-moonspell.view-list .dayStatus,
+.theme-roseglass.view-list .dayStatus,
+.theme-cybermint.view-list .dayStatus,
+.theme-goldenhour.view-list .dayStatus,
+.theme-abyssblue.view-list .dayStatus,
+.theme-candypop.view-list .dayStatus{display:none}
+.theme-twilight.view-list .dayContent,
+.theme-lavenderline.view-list .dayContent,
+.theme-moonspell.view-list .dayContent,
+.theme-roseglass.view-list .dayContent,
+.theme-cybermint.view-list .dayContent,
+.theme-goldenhour.view-list .dayContent,
+.theme-abyssblue.view-list .dayContent,
+.theme-candypop.view-list .dayContent{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:1.2cqw;
+  text-align:left;
+}
+.theme-twilight.view-list .streamTitle,
+.theme-lavenderline.view-list .streamTitle,
+.theme-moonspell.view-list .streamTitle,
+.theme-roseglass.view-list .streamTitle,
+.theme-cybermint.view-list .streamTitle,
+.theme-goldenhour.view-list .streamTitle,
+.theme-abyssblue.view-list .streamTitle,
+.theme-candypop.view-list .streamTitle{grid-column:1;grid-row:1;margin:0;font-size:1.45cqw;letter-spacing:.06em;text-transform:uppercase;text-align:center}
+.theme-twilight.view-list .streamTime,
+.theme-lavenderline.view-list .streamTime,
+.theme-moonspell.view-list .streamTime,
+.theme-roseglass.view-list .streamTime,
+.theme-cybermint.view-list .streamTime,
+.theme-goldenhour.view-list .streamTime,
+.theme-abyssblue.view-list .streamTime,
+.theme-candypop.view-list .streamTime{grid-column:2;grid-row:1;min-width:5.8cqw;padding:.45cqw .95cqw;border-radius:999px;background:var(--chipBg);color:var(--chipText);font-size:1.05cqw;text-align:center}
+.theme-twilight.view-list .streamNote,
+.theme-lavenderline.view-list .streamNote,
+.theme-moonspell.view-list .streamNote,
+.theme-roseglass.view-list .streamNote,
+.theme-cybermint.view-list .streamNote,
+.theme-goldenhour.view-list .streamNote,
+.theme-abyssblue.view-list .streamNote,
+.theme-candypop.view-list .streamNote{display:none}
+.theme-twilight.view-list .dayCard.isOff,
+.theme-lavenderline.view-list .dayCard.isOff,
+.theme-moonspell.view-list .dayCard.isOff,
+.theme-roseglass.view-list .dayCard.isOff,
+.theme-cybermint.view-list .dayCard.isOff,
+.theme-goldenhour.view-list .dayCard.isOff,
+.theme-abyssblue.view-list .dayCard.isOff,
+.theme-candypop.view-list .dayCard.isOff{background:linear-gradient(90deg, rgba(216,180,254,.38), rgba(244,114,182,.28));border-color:rgba(255,255,255,.42)}
+.theme-twilight.view-list .dayCard.isOff .streamTitle,
+.theme-lavenderline.view-list .dayCard.isOff .streamTitle,
+.theme-moonspell.view-list .dayCard.isOff .streamTitle,
+.theme-roseglass.view-list .dayCard.isOff .streamTitle,
+.theme-cybermint.view-list .dayCard.isOff .streamTitle,
+.theme-goldenhour.view-list .dayCard.isOff .streamTitle,
+.theme-abyssblue.view-list .dayCard.isOff .streamTitle,
+.theme-candypop.view-list .dayCard.isOff .streamTitle{font-size:1.6cqw}
+.theme-twilight.view-list .dayCard.isOff .streamTime,
+.theme-lavenderline.view-list .dayCard.isOff .streamTime,
+.theme-moonspell.view-list .dayCard.isOff .streamTime,
+.theme-roseglass.view-list .dayCard.isOff .streamTime,
+.theme-cybermint.view-list .dayCard.isOff .streamTime,
+.theme-goldenhour.view-list .dayCard.isOff .streamTime,
+.theme-abyssblue.view-list .dayCard.isOff .streamTime,
+.theme-candypop.view-list .dayCard.isOff .streamTime{opacity:.9}
+
+/* Variante spécifique : le violet est le plus proche de la référence fournie. */
+.theme-twilight.view-list .dayCard{border-color:rgba(216,180,254,.64);background:linear-gradient(90deg,rgba(15,12,25,.96),rgba(25,19,42,.96))}
+.theme-twilight.view-list .dayCard.isOff{background:linear-gradient(90deg,#c4b5fd,#f0abfc);--dayText:#ffffff;--dayTitle:#fff;--chipBg:rgba(255,255,255,.22);--chipText:#fff}
+
+/* --------------------------------------------------------------------------
+   V21 - Menus déroulants dans le panneau d'édition
+   Par défaut, seul "Informations générales" est ouvert.
+-------------------------------------------------------------------------- */
+.panel.accordionMenu{
+  padding:0;
+  overflow:hidden;
+}
+.accordionMenu > summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px;
+  user-select:none;
+}
+.accordionMenu > summary::-webkit-details-marker{display:none}
+.accordionMenu > summary .sectionTitle{margin-bottom:0;min-width:0;flex:1}
+.accordionMenu > summary::after{
+  content:"+";
+  flex:0 0 auto;
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.14);
+  background:#172133;
+  color:#fff;
+  font-size:15px;
+  font-weight:900;
+  line-height:1;
+}
+.accordionMenu[open] > summary::after{content:"−"}
+.accordionMenu[open] > summary{
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.panelBody{
+  padding:0 10px 10px;
+}
+.panelBody > :first-child{margin-top:8px}
+
+/* --------------------------------------------------------------------------
+   V22 - Modes spéciaux uniques
+   Ajouts : affiche événement, jour star, ticket cinéma, menu restaurant,
+   quête RPG, journal de bord, épisodes d'anime et QR code Twitch.
+-------------------------------------------------------------------------- */
+
+/* Correction grille : le nom des jours reste centré indépendamment du contenu. */
+.planningCanvas.view-grid .dayHeader{
+  align-items:center;
+  text-align:center;
+}
+.planningCanvas.view-grid .dayName{
+  width:100%;
+  text-align:center;
+}
+.planningCanvas.view-grid .dayStatus{
+  align-self:center;
+}
+
+.specialLabel{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:max-content;
+  max-width:100%;
+  min-height:1.7cqw;
+  margin:0 0 .7cqw;
+  padding:.25cqw .75cqw;
+  border-radius:999px;
+  border:1px solid var(--dayBorder);
+  background:var(--chipBg);
+  color:var(--chipText);
+  font-size:.78cqw;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.dayCard.isStar{
+  border-width:2px;
+  outline:.18cqw solid rgba(250,204,21,.34);
+  outline-offset:-.55cqw;
+}
+.starBadge{
+  position:static;
+  z-index:3;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  max-width:100%;
+  min-height:1.45cqw;
+  padding:.22cqw .65cqw;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.14);
+  color:var(--chipText);
+  font-size:.58cqw;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.planningCanvas.view-grid .dayHeader .starBadge{
+  align-self:center;
+  margin-top:-.1cqw;
+}
+.planningCanvas.view-list .starBadge{
+  justify-self:start;
+  align-self:center;
+  margin-top:.15cqw;
+}
+
+/* QR code Twitch */
+.qrBox{
+  display:none;
+  position:absolute;
+  right:2.15cqw;
+  top:2.15cqw;
+  bottom:auto;
+  z-index:6;
+  align-items:center;
+  gap:.55cqw;
+  padding:.42cqw .55cqw;
+  border-radius:.85cqw;
+  border:1px solid rgba(255,255,255,.26);
+  background:rgba(255,255,255,.94);
+  color:#111827;
+  font-size:.58cqw;
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  pointer-events:none;
+}
+.qrBox.isVisible{display:flex}
+.qrBox svg{display:block;width:3.4cqw;height:3.4cqw}
+.qrBox__code{width:3.4cqw;height:3.4cqw;display:grid;place-items:center}
+.qrBox__fallback{width:3.4cqw;height:3.4cqw;display:grid;place-items:center;border:2px solid #111827;font-weight:950}
+.planningCanvas.view-list .qrBox{right:2cqw;top:1.55cqw;bottom:auto}
+.planningCanvas.hasQr.view-grid .weekGrid{padding-bottom:0}
+
+/* Mode Affiche événement */
+.mode-poster{
+  --posterAccent:var(--chipText);
+  background:
+    radial-gradient(42cqw 25cqw at 50% 0%, rgba(255,255,255,.10), transparent 70%),
+    var(--canvasBg);
+}
+.mode-poster .canvasHero{
+  text-align:center;
+  margin-bottom:1.2cqw;
+  padding:.4cqw 0 1.1cqw;
+  border-bottom:1px solid rgba(255,255,255,.24);
+}
+.mode-poster .canvasHero span{letter-spacing:.42em}
+.mode-poster .canvasHero h2{font-size:5.7cqw;text-transform:uppercase}
+.mode-poster .dayCard{
+  background-image:linear-gradient(180deg, rgba(255,255,255,.06), transparent), var(--dayImage);
+}
+.mode-poster .dayCard.isStar{
+  background-image:linear-gradient(180deg, rgba(250,204,21,.16), transparent), var(--dayImage);
+}
+.mode-poster .dayCard.isStar .starBadge{background:#fff;color:#111827;border-color:#fff}
+
+/* Mode Ticket de cinéma */
+.mode-ticket .dayCard{
+  border-style:dashed;
+  border-width:2px;
+  background-image:linear-gradient(90deg, rgba(255,255,255,.07), transparent), var(--dayImage);
+}
+.mode-ticket .dayCard::before,
+.mode-ticket .dayCard::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:1.9cqw;
+  height:1.9cqw;
+  border-radius:999px;
+  background:var(--canvasBg);
+  border:1px solid var(--dayBorder);
+}
+.mode-ticket .dayCard::before{left:-1cqw}
+.mode-ticket .dayCard::after{right:-1cqw}
+.mode-ticket .specialLabel{
+  border-radius:.45cqw;
+  letter-spacing:.16em;
+}
+.mode-ticket .streamTitle{text-transform:uppercase;letter-spacing:.04em}
+.mode-ticket.view-list .dayCard::before,
+.mode-ticket.view-list .dayCard::after{width:1.35cqw;height:1.35cqw}
+
+/* Mode Menu de restaurant */
+.mode-restaurant{
+  --menuPaper:rgba(255,255,255,.055);
+}
+.mode-restaurant .canvasHero span::before{content:"Menu • "}
+.mode-restaurant .dayCard{
+  border-radius:.65cqw;
+  background-image:linear-gradient(180deg, var(--menuPaper), var(--dayBg)), var(--dayImage);
+  border:1px solid rgba(250,204,21,.42);
+}
+.mode-restaurant .dayName,
+.mode-restaurant .streamTitle{font-family:Georgia,'Times New Roman',serif}
+.mode-restaurant .specialLabel{
+  border-radius:0;
+  border-left:0;
+  border-right:0;
+  background:transparent;
+}
+.mode-restaurant .streamTime{font-family:Georgia,'Times New Roman',serif}
+
+/* Mode Quête RPG */
+.mode-rpg{
+  background:
+    radial-gradient(50cqw 30cqw at 50% -10%, rgba(251,191,36,.12), transparent 72%),
+    var(--canvasBg);
+}
+.mode-rpg .dayCard{
+  border-radius:.9cqw;
+  border:2px solid rgba(250,204,21,.46);
+  background-image:linear-gradient(180deg, rgba(113,63,18,.16), transparent), var(--dayImage);
+}
+.mode-rpg .specialLabel::before{content:"";}
+.mode-rpg .dayCard.isStar .specialLabel::before{content:"👑 ";}
+.mode-rpg .dayCard.isOff .specialLabel::before{content:"";}
+.mode-rpg .streamTitle{letter-spacing:.02em}
+.mode-rpg .starBadge{background:#facc15;color:#1f1300;border-color:#facc15}
+
+/* Mode Journal de bord */
+.mode-logbook{
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    var(--canvasBg);
+  background-size:100% 2.5cqw;
+}
+.mode-logbook .dayCard{
+  border-radius:.75cqw;
+  background-image:linear-gradient(180deg, rgba(255,255,255,.045), transparent), var(--dayImage);
+}
+.mode-logbook .dayName,
+.mode-logbook .specialLabel,
+.mode-logbook .streamTime,
+.mode-logbook .streamTitle{
+  font-family:'Courier New',ui-monospace,monospace;
+}
+.mode-logbook .specialLabel{
+  border-radius:.2cqw;
+  background:transparent;
+  border-color:rgba(255,255,255,.22);
+}
+.mode-logbook .dayCard.isStar{outline-style:dashed}
+
+/* Mode Épisodes d'anime */
+.mode-anime{
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.06), transparent), var(--canvasBg);
+}
+.mode-anime .canvasHero h2{
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.mode-anime .dayCard{
+  border-width:2px;
+  border-radius:.85cqw;
+  background-image:linear-gradient(135deg, rgba(255,255,255,.09), transparent 42%), var(--dayImage);
+}
+.mode-anime .specialLabel{
+  border-radius:.35cqw;
+  background:#fff;
+  color:#111827;
+  border-color:#fff;
+}
+.mode-anime .streamTitle{text-transform:uppercase;letter-spacing:.055em}
+.mode-anime .dayCard.isStar .starBadge{background:#fff;color:#111827;border-color:#fff}
+
+/* Adaptation des modes spéciaux en liste */
+.planningCanvas.view-list .specialLabel{
+  margin:0 0 .35cqw;
+  font-size:.72cqw;
+  min-height:1.35cqw;
+}
+.planningCanvas.view-list .dayCard.isStar{
+  outline-offset:-.35cqw;
+}
+.mode-poster.view-list .dayCard.isStar,
+.mode-rpg.view-list .dayCard.isStar,
+.mode-anime.view-list .dayCard.isStar{
+  min-height:8.8cqw;
+}
+.mode-ticket.view-list .dayCard{
+  border-style:dashed;
+}
+.mode-restaurant.view-list .dayCard,
+.mode-logbook.view-list .dayCard,
+.mode-anime.view-list .dayCard{
+  grid-template-columns:15cqw minmax(0,1fr);
+}
+
+/* Responsive : les nouveaux réglages restent compacts dans l'éditeur. */
+#specialModeInput{font-weight:900}
+@media (max-width:640px){
+  .starBadge{font-size:9px;min-height:18px;padding:2px 7px}
+  .specialLabel{font-size:9px;min-height:18px;padding:2px 7px}
+}
+
+
+/* --------------------------------------------------------------------------
+   V23 - Nouveaux thèmes visuels
+   Ajout uniquement cosmétique : variables de thème + petites signatures.
+-------------------------------------------------------------------------- */
+.theme-aurora{
+  --canvasBg:radial-gradient(44cqw 24cqw at 20% 0%, rgba(45,212,191,.28), transparent 68%),radial-gradient(42cqw 26cqw at 82% 10%, rgba(168,85,247,.26), transparent 70%),linear-gradient(135deg,#031018,#10123a 56%,#050816);
+  --canvasText:#f8fbff;--canvasMuted:#99f6e4;--dayBg:#0d1f2d;--dayBorder:rgba(125,211,252,.46);--dayText:#f8fbff;--dayTitle:#a7f3d0;--dayMuted:#dbeafe;--chipBg:#113546;--chipText:#99f6e4;
+}
+.theme-obsidian{
+  --canvasBg:radial-gradient(42cqw 28cqw at 50% -8%, rgba(250,204,21,.16), transparent 68%),linear-gradient(180deg,#030303,#101010 58%,#050505);
+  --canvasText:#fffaf0;--canvasMuted:#facc15;--dayBg:#121212;--dayBorder:rgba(250,204,21,.54);--dayText:#fffaf0;--dayTitle:#fde68a;--dayMuted:#fef3c7;--chipBg:#2f2612;--chipText:#fde68a;
+}
+.theme-sakura{
+  --canvasBg:radial-gradient(36cqw 24cqw at 6% 0%, rgba(244,114,182,.28), transparent 66%),linear-gradient(135deg,#fff1f7,#fde2ef 50%,#e0f2fe);
+  --canvasText:#321124;--canvasMuted:#be185d;--dayBg:#fff7fb;--dayBorder:rgba(219,39,119,.28);--dayText:#321124;--dayTitle:#9d174d;--dayMuted:#7c2d12;--chipBg:#fce7f3;--chipText:#9d174d;
+}
+.theme-volcanic{
+  --canvasBg:radial-gradient(42cqw 26cqw at 52% 0%, rgba(249,115,22,.28), transparent 70%),linear-gradient(180deg,#160404,#45110a 58%,#090202);
+  --canvasText:#fff7ed;--canvasMuted:#fdba74;--dayBg:#28100d;--dayBorder:rgba(251,146,60,.52);--dayText:#fff7ed;--dayTitle:#fed7aa;--dayMuted:#ffedd5;--chipBg:#7c2d12;--chipText:#ffedd5;
+}
+.theme-pixelnight{
+  --canvasBg:linear-gradient(135deg,#070915,#111d35 52%,#060818);
+  --canvasText:#ffffff;--canvasMuted:#93c5fd;--dayBg:#0f1830;--dayBorder:rgba(96,165,250,.52);--dayText:#ffffff;--dayTitle:#bfdbfe;--dayMuted:#dbeafe;--chipBg:#1e3a8a;--chipText:#dbeafe;
+}
+.theme-witchcore{
+  --canvasBg:radial-gradient(38cqw 26cqw at 85% 0%, rgba(192,132,252,.24), transparent 70%),linear-gradient(135deg,#0b0710,#20102e 58%,#06030a);
+  --canvasText:#faf5ff;--canvasMuted:#d8b4fe;--dayBg:#171020;--dayBorder:rgba(192,132,252,.48);--dayText:#faf5ff;--dayTitle:#e9d5ff;--dayMuted:#ddd6fe;--chipBg:#3b255a;--chipText:#f3e8ff;
+}
+.theme-cloudnine{
+  --canvasBg:linear-gradient(135deg,#eff6ff,#e0f2fe 46%,#f5f3ff);
+  --canvasText:#0f172a;--canvasMuted:#2563eb;--dayBg:#ffffff;--dayBorder:rgba(37,99,235,.22);--dayText:#0f172a;--dayTitle:#1d4ed8;--dayMuted:#475569;--chipBg:#dbeafe;--chipText:#1e3a8a;
+}
+.theme-toxiclime{
+  --canvasBg:radial-gradient(40cqw 24cqw at 12% 0%, rgba(132,204,22,.28), transparent 68%),linear-gradient(135deg,#061006,#13240b 54%,#050805);
+  --canvasText:#f7fee7;--canvasMuted:#bef264;--dayBg:#101c0d;--dayBorder:rgba(163,230,53,.52);--dayText:#f7fee7;--dayTitle:#d9f99d;--dayMuted:#ecfccb;--chipBg:#365314;--chipText:#ecfccb;
+}
+.theme-deepsea{
+  --canvasBg:radial-gradient(44cqw 28cqw at 50% -8%, rgba(14,165,233,.20), transparent 72%),linear-gradient(180deg,#02111c,#06304a 58%,#020617);
+  --canvasText:#ecfeff;--canvasMuted:#67e8f9;--dayBg:#082033;--dayBorder:rgba(34,211,238,.44);--dayText:#ecfeff;--dayTitle:#a5f3fc;--dayMuted:#cffafe;--chipBg:#164e63;--chipText:#cffafe;
+}
+.theme-copperpunk{
+  --canvasBg:linear-gradient(135deg,#170c06,#4a2511 55%,#1c0f09);
+  --canvasText:#fff7ed;--canvasMuted:#fdba74;--dayBg:#28170e;--dayBorder:rgba(251,146,60,.44);--dayText:#fff7ed;--dayTitle:#fed7aa;--dayMuted:#ffedd5;--chipBg:#7c2d12;--chipText:#ffedd5;
+}
+
+.theme-pixelnight .dayCard{
+  border-radius:.65cqw;
+  box-shadow:inset 0 0 0 .16cqw rgba(255,255,255,.04);
+}
+.theme-pixelnight .dayName,
+.theme-pixelnight .streamTime,
+.theme-pixelnight .streamTitle{
+  font-family:'Courier New',ui-monospace,monospace;
+  text-transform:uppercase;
+}
+.theme-sakura .dayCard,
+.theme-cloudnine .dayCard{
+  box-shadow:0 .75cqw 2.1cqw rgba(15,23,42,.10);
+}
+.theme-obsidian .dayCard.isStar,
+.theme-volcanic .dayCard.isStar,
+.theme-copperpunk .dayCard.isStar{
+  outline-color:rgba(251,191,36,.50);
+}
+.theme-aurora.view-list .dayCard,
+.theme-deepsea.view-list .dayCard,
+.theme-witchcore.view-list .dayCard,
+.theme-toxiclime.view-list .dayCard{
+  background-image:linear-gradient(90deg, rgba(255,255,255,.075), rgba(255,255,255,.025)), var(--dayImage);
+}
+.theme-sakura.view-list .dayCard,
+.theme-cloudnine.view-list .dayCard{
+  background-image:linear-gradient(90deg, rgba(255,255,255,.76), rgba(255,255,255,.46)), var(--dayImage);
+}
+@media (max-width:640px){
+  .duplicateChoices{grid-template-columns:1fr}
+  .duplicateDialog{padding:12px;border-radius:17px}
+}
+
+/* --------------------------------------------------------------------------
+   V25 - Favoris de thèmes + annuler/rétablir
+-------------------------------------------------------------------------- */
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.btn--icon{
+  min-width:96px;
+}
+.btn--tiny{
+  min-height:27px;
+  padding:4px 8px;
+  border-radius:9px;
+  font-size:11px;
+}
+.btn--tiny.isFavorite{
+  border-color:rgba(250,204,21,.45);
+  background:#322711;
+  color:#fde68a;
+}
+.themeFavoriteBar{
+  margin-top:8px;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#121c2e;
+}
+.themeFavoriteBar__head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:7px;
+}
+.themeFavoriteBar__head>span{
+  color:#dbeafe;
+  font-size:11px;
+  font-weight:900;
+}
+.favoriteThemeList{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  min-height:27px;
+  align-items:center;
+}
+.favoriteThemeChip{
+  min-height:27px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  padding:4px 9px;
+  background:#0f172a;
+  color:#e2e8f0;
+  font-size:11px;
+  font-weight:900;
+}
+.favoriteThemeChip:hover,
+.favoriteThemeChip:focus-visible{
+  border-color:rgba(96,165,250,.7);
+  background:#1a2840;
+  outline:none;
+}
+.favoriteThemeChip.isActive{
+  border-color:rgba(250,204,21,.58);
+  background:#3a2a0d;
+  color:#fde68a;
+}
+.favoriteThemeEmpty{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:750;
+}
+@media (max-width:640px){
+  .btn--icon{min-width:0}
+  .themeFavoriteBar__head{align-items:stretch;flex-direction:column}
+}
+
+/* --------------------------------------------------------------------------
+   V27.2 - Bandeau semaine spéciale + mise en avant visuelle indépendante
+   Important : "Jour star" reste réservé aux modes spéciaux.
+-------------------------------------------------------------------------- */
+.eventBanner{
+  display:none;
+  width:max-content;
+  max-width:100%;
+  margin:-.35cqw auto 1.35cqw;
+  padding:.55cqw 1.25cqw;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.13);
+  color:var(--canvasText);
+  box-shadow:0 .55cqw 1.7cqw rgba(0,0,0,.18);
+  font-size:1.05cqw;
+  line-height:1.1;
+  font-weight:950;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  text-align:center;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.eventBanner.isVisible{display:block}
+.planningCanvas.hasEventBanner.view-grid .dayCard{height:38.3cqw}
+.planningCanvas.hasEventBanner.format-square .dayCard{height:14.55cqw}
+
+.dayCard.isHighlighted{
+  z-index:4;
+  transform:scale(1.035);
+  transform-origin:center;
+  border-width:2px;
+  border-color:var(--chipText);
+  box-shadow:
+    0 0 0 .22cqw color-mix(in srgb, var(--chipText) 34%, transparent),
+    0 0 1.7cqw color-mix(in srgb, var(--chipText) 42%, transparent),
+    0 1.2cqw 2.4cqw rgba(0,0,0,.28);
+}
+.dayCard.isHighlighted::after{
+  content:"";
+  position:absolute;
+  inset:-.45cqw;
+  z-index:0;
+  border-radius:inherit;
+  pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--chipText) 20%, transparent), transparent 68%);
+  opacity:.85;
+}
+.dayCard.isHighlighted > *{position:relative;z-index:2}
+.highlightBadge{
+  position:static;
+  z-index:3;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  max-width:100%;
+  min-height:1.45cqw;
+  padding:.22cqw .65cqw;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--chipText) 70%, transparent);
+  background:color-mix(in srgb, var(--chipText) 24%, transparent);
+  color:var(--chipText);
+  font-size:.58cqw;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.planningCanvas.view-grid .dayHeader .highlightBadge{align-self:center;margin-top:-.1cqw}
+.planningCanvas.view-list .dayCard.isHighlighted{transform:scale(1.018)}
+.planningCanvas.view-list .highlightBadge{justify-self:start;align-self:center;margin-top:.15cqw}
+.planningCanvas.format-square .dayCard.isHighlighted{transform:scale(1.025)}
+
+@media (max-width:640px){
+  .eventBanner{font-size:10px;padding:5px 10px}
+  .highlightBadge{font-size:9px;min-height:18px;padding:2px 7px}
+}
+
+
+/* --------------------------------------------------------------------------
+   V27.6 - Alignement bas ajusté plus bas
+   La zone fixe reste commune à tous les jours, mais elle est encore un peu
+   moins haute que la V27.5. Résultat : les heures restent alignées entre
+   elles, avec un bloc texte légèrement plus bas dans la carte.
+-------------------------------------------------------------------------- */
+.planningCanvas.view-grid .dayCard{
+  grid-template-rows:auto minmax(0,1fr);
+}
+.planningCanvas.view-grid .dayContent{
+  height:10.4cqw;
+  min-height:10.4cqw;
+  max-height:10.4cqw;
+  align-self:var(--verticalAlign,end);
+  display:block;
+  overflow:hidden;
+  text-align:var(--textAlign,left);
+}
+.planningCanvas.view-grid .dayCard.v-top .dayContent{align-self:start}
+.planningCanvas.view-grid .dayCard.v-center .dayContent{align-self:center}
+.planningCanvas.view-grid .dayCard.v-bottom .dayContent{align-self:end}
+.planningCanvas.view-grid .streamTime{
+  margin:0;
+  white-space:nowrap;
+}
+.planningCanvas.view-grid .streamTitle,
+.planningCanvas.view-grid .streamNote{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.planningCanvas.view-grid .streamTitle{-webkit-line-clamp:2}
+.planningCanvas.view-grid .streamNote{
+  -webkit-line-clamp:3;
+  max-height:3.7cqw;
+}
+.planningCanvas.view-grid .dayCard.isOff .dayContent{
+  height:10.4cqw;
+  min-height:10.4cqw;
+  max-height:10.4cqw;
+}
+.planningCanvas.format-square.view-grid .dayContent{
+  height:6.65cqw;
+  min-height:6.65cqw;
+  max-height:6.65cqw;
+}
+.planningCanvas.format-square.view-grid .streamNote{
+  -webkit-line-clamp:2;
+  max-height:2.1cqw;
+}
+
+
+/* --------------------------------------------------------------------------
+   V28 - Correction anime + alertes anti-débordement + nouveaux thèmes
+-------------------------------------------------------------------------- */
+.planningCanvas.mode-anime.view-grid .dayContent{
+  height:12.9cqw;
+  min-height:12.9cqw;
+  max-height:12.9cqw;
+}
+.planningCanvas.mode-anime.view-grid .specialLabel{margin-bottom:.45cqw}
+.planningCanvas.mode-anime.view-grid .streamTitle{margin-top:.45cqw}
+.planningCanvas.mode-anime.view-grid .streamNote{margin-top:.45cqw}
+.planningCanvas.mode-anime.format-square.view-grid .dayContent{
+  height:7.7cqw;
+  min-height:7.7cqw;
+  max-height:7.7cqw;
+}
+
+.theme-horrorvhs{
+  --canvasBg:radial-gradient(55cqw 35cqw at 50% -12%, rgba(239,68,68,.16), transparent 70%),linear-gradient(135deg,#070707,#1b0509 48%,#090909);
+  --canvasText:#fff1f2;--canvasMuted:#fca5a5;
+  --dayBg:#17080c;--dayBorder:rgba(248,113,113,.48);
+  --dayText:#fff1f2;--dayTitle:#fecaca;--dayMuted:#fda4af;
+  --chipBg:#3b1117;--chipText:#fecaca;
+}
+.planningCanvas.theme-horrorvhs::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 5px),
+    radial-gradient(circle at 50% 50%, transparent 44%, rgba(0,0,0,.34) 100%);
+  opacity:.55;
+  mix-blend-mode:screen;
+}
+.planningCanvas.theme-horrorvhs > *{position:relative;z-index:2}
+.theme-horrorvhs .dayCard{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 .75cqw 1.9cqw rgba(0,0,0,.34);
+  filter:contrast(1.04) saturate(.92);
+}
+.theme-horrorvhs .canvasHero span,
+.theme-horrorvhs .dayName,
+.theme-horrorvhs .streamTime{
+  text-shadow:.08cqw 0 rgba(34,211,238,.32),-.08cqw 0 rgba(248,113,113,.28);
+}
+
+.theme-crystalfantasy{
+  --canvasBg:radial-gradient(42cqw 28cqw at 18% 0%, rgba(125,211,252,.28), transparent 70%),radial-gradient(46cqw 30cqw at 84% 12%, rgba(196,181,253,.26), transparent 72%),linear-gradient(135deg,#07111f,#17345e 52%,#0b1025);
+  --canvasText:#f8fbff;--canvasMuted:#bae6fd;
+  --dayBg:#102036;--dayBorder:rgba(186,230,253,.52);
+  --dayText:#f8fbff;--dayTitle:#e0f2fe;--dayMuted:#dbeafe;
+  --chipBg:#1d3f68;--chipText:#bae6fd;
+}
+.theme-crystalfantasy .dayCard{
+  background-image:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.025)), var(--dayImage);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),0 .9cqw 2.2cqw rgba(15,23,42,.22);
+}
+.theme-crystalfantasy .dayCard.isHighlighted{
+  box-shadow:
+    0 0 0 .22cqw rgba(186,230,253,.34),
+    0 0 1.8cqw rgba(196,181,253,.46),
+    0 1.2cqw 2.4cqw rgba(0,0,0,.28);
+}
+.theme-crystalfantasy .canvasHero h2,
+.theme-crystalfantasy .streamTime{
+  text-shadow:0 0 .9cqw rgba(125,211,252,.24);
+}
+
+/* --------------------------------------------------------------------------
+   V28.1 - Correction modes spéciaux en grille
+   Problème corrigé : les modes avec un libellé spécial ajoutent une ligne
+   supplémentaire au bloc bas. La zone V27.6 était parfaite pour le mode
+   classique, mais trop courte pour Affiche événement, Quête RPG, Ticket,
+   Menu restaurant et Épisodes d'anime. On crée donc une hauteur commune plus
+   grande uniquement pour les modes spéciaux, y compris OFF, sans toucher au
+   mode classique.
+-------------------------------------------------------------------------- */
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).view-grid .dayContent,
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).view-grid .dayCard.isOff .dayContent{
+  height:13.9cqw!important;
+  min-height:13.9cqw!important;
+  max-height:13.9cqw!important;
+  align-self:var(--verticalAlign,end);
+  overflow:hidden;
+}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).view-grid .dayCard.v-top .dayContent{align-self:start}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).view-grid .dayCard.v-center .dayContent{align-self:center}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).view-grid .dayCard.v-bottom .dayContent{align-self:end}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).view-grid .specialLabel{
+  margin-bottom:.42cqw;
+}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).view-grid .streamTitle{
+  margin-top:.48cqw;
+}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).view-grid .streamNote{
+  margin-top:.48cqw;
+  max-height:3.65cqw;
+}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).format-square.view-grid .dayContent,
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).format-square.view-grid .dayCard.isOff .dayContent{
+  height:8.15cqw!important;
+  min-height:8.15cqw!important;
+  max-height:8.15cqw!important;
+}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime).format-square.view-grid .streamNote{
+  -webkit-line-clamp:2;
+  max-height:2.15cqw;
+}
+
+/* --------------------------------------------------------------------------
+   V28.3 - QR code réellement agrandi de 20%
+   Correction : la V28.2 documentait l'agrandissement, mais les dimensions
+   CSS du QR étaient restées à 3.4cqw. Passage effectif à 4.08cqw.
+-------------------------------------------------------------------------- */
+.qrBox svg{
+  width:4.08cqw;
+  height:4.08cqw;
+}
+.qrBox__code{
+  width:4.08cqw;
+  height:4.08cqw;
+}
+.qrBox__fallback{
+  width:4.08cqw;
+  height:4.08cqw;
+}
+
+/* --------------------------------------------------------------------------
+   V28.4 - QR code agrandi et repositionné
+   Demande : augmenter le QR de 35% par rapport à la taille V28.3 et déplacer
+   le bloc QR plus loin du bord avec right/top à 6.15cqw.
+--------------------------------------------------------------------------- */
+.qrBox{
+  right:6.15cqw;
+  top:6.15cqw;
+}
+.qrBox svg{
+  width:5.51cqw;
+  height:5.51cqw;
+}
+.qrBox__code{
+  width:5.51cqw;
+  height:5.51cqw;
+}
+.qrBox__fallback{
+  width:5.51cqw;
+  height:5.51cqw;
+}
+
+
+/* --------------------------------------------------------------------------
+   V28.5 - Thèmes streamer affinés + alertes anti-débordement ajustées
+   - Horreur VHS : ambiance cassette, scanlines, rouge sombre, glitch léger.
+   - Fantasy Ciel Étoilé : inspiration JRPG ciel/nuit/étoiles, sans élément officiel.
+   - Les alertes anti-débordement utilisent des seuils différents selon grille,
+     carré, liste et modes spéciaux côté script.js.
+-------------------------------------------------------------------------- */
+.theme-horrorvhs{
+  --canvasBg:
+    radial-gradient(62cqw 42cqw at 50% -15%, rgba(190,18,60,.22), transparent 72%),
+    radial-gradient(38cqw 26cqw at 12% 88%, rgba(34,211,238,.08), transparent 70%),
+    linear-gradient(135deg,#030303,#170507 48%,#070707);
+  --canvasText:#fff1f2;--canvasMuted:#fda4af;
+  --dayBg:#130609;--dayBorder:rgba(248,113,113,.54);
+  --dayText:#fff1f2;--dayTitle:#fecaca;--dayMuted:#fda4af;
+  --chipBg:#3b0b11;--chipText:#fecaca;
+}
+.planningCanvas.theme-horrorvhs::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.055) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(90deg, rgba(239,68,68,.035) 0 1px, transparent 1px 9px),
+    radial-gradient(circle at 50% 50%, transparent 42%, rgba(0,0,0,.45) 100%);
+  opacity:.58;
+  mix-blend-mode:screen;
+}
+.planningCanvas.theme-horrorvhs > *{position:relative;z-index:2}
+.theme-horrorvhs .canvasHero h2,
+.theme-horrorvhs .streamTime,
+.theme-horrorvhs .dayName{
+  text-shadow:
+    .08cqw 0 rgba(34,211,238,.36),
+    -.08cqw 0 rgba(248,113,113,.38),
+    0 0 .75cqw rgba(239,68,68,.22);
+}
+.theme-horrorvhs .dayCard{
+  background-image:linear-gradient(180deg, rgba(255,255,255,.045), rgba(0,0,0,.18)), var(--dayImage);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 .75cqw 1.9cqw rgba(0,0,0,.36);
+  filter:contrast(1.06) saturate(.88);
+}
+.theme-horrorvhs .eventBanner{
+  background:rgba(127,29,29,.38);
+  border-color:rgba(248,113,113,.46);
+}
+
+.theme-crystalfantasy{
+  --canvasBg:
+    radial-gradient(34cqw 25cqw at 16% 2%, rgba(147,197,253,.34), transparent 70%),
+    radial-gradient(40cqw 30cqw at 83% 12%, rgba(196,181,253,.28), transparent 73%),
+    radial-gradient(32cqw 22cqw at 55% 105%, rgba(56,189,248,.18), transparent 70%),
+    linear-gradient(135deg,#06101f,#102b52 48%,#070a1f 100%);
+  --canvasText:#f8fbff;--canvasMuted:#bae6fd;
+  --dayBg:#0d2038;--dayBorder:rgba(191,219,254,.55);
+  --dayText:#f8fbff;--dayTitle:#e0f2fe;--dayMuted:#dbeafe;
+  --chipBg:#1e3a5f;--chipText:#bfdbfe;
+}
+.planningCanvas.theme-crystalfantasy::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 8% 18%, rgba(255,255,255,.95) 0 .07cqw, transparent .09cqw),
+    radial-gradient(circle at 20% 72%, rgba(186,230,253,.95) 0 .06cqw, transparent .09cqw),
+    radial-gradient(circle at 43% 24%, rgba(255,255,255,.85) 0 .055cqw, transparent .085cqw),
+    radial-gradient(circle at 65% 78%, rgba(196,181,253,.9) 0 .07cqw, transparent .1cqw),
+    radial-gradient(circle at 82% 34%, rgba(255,255,255,.92) 0 .06cqw, transparent .095cqw),
+    linear-gradient(135deg, rgba(255,255,255,.08), transparent 42%, rgba(125,211,252,.06));
+  opacity:.9;
+}
+.planningCanvas.theme-crystalfantasy > *{position:relative;z-index:2}
+.theme-crystalfantasy .canvasHero h2,
+.theme-crystalfantasy .streamTime{
+  text-shadow:0 0 1cqw rgba(125,211,252,.28),0 0 1.8cqw rgba(196,181,253,.18);
+}
+.theme-crystalfantasy .dayCard{
+  background-image:
+    linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.025) 55%, rgba(125,211,252,.055)),
+    var(--dayImage);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 .9cqw 2.2cqw rgba(15,23,42,.24);
+}
+.theme-crystalfantasy .dayName{color:#dbeafe}
+.theme-crystalfantasy .eventBanner{
+  background:rgba(191,219,254,.14);
+  border-color:rgba(186,230,253,.38);
+}
+.theme-crystalfantasy .dayCard.isHighlighted{
+  box-shadow:
+    0 0 0 .22cqw rgba(186,230,253,.36),
+    0 0 1.8cqw rgba(196,181,253,.48),
+    0 1.2cqw 2.4cqw rgba(0,0,0,.28);
+}
+
+/* --------------------------------------------------------------------------
+   V28.6 - Aperçu responsive sans scroll global
+   Objectif : l'application tient dans la hauteur de l'écran. L'aperçu 16:9
+   se redimensionne selon l'espace disponible au lieu de forcer le scroll de
+   la page. Le panneau de gauche garde son propre défilement si nécessaire.
+   Important : ces règles ciblent l'aperçu affiché à l'écran et ne modifient
+   pas le clone d'export PNG.
+-------------------------------------------------------------------------- */
+html,
+body{
+  height:100%;
+  overflow:hidden;
+}
+body{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.topbar{
+  flex:0 0 auto;
+}
+.layout{
+  flex:1 1 auto;
+  min-height:0;
+  height:auto;
+  overflow:hidden;
+}
+.editor{
+  min-height:0;
+  overflow:auto;
+  scrollbar-width:thin;
+}
+.preview{
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.previewHeader{
+  flex:0 0 auto;
+}
+.previewFrame{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.previewFrame .planningCanvas{
+  flex:0 0 auto;
+  margin:0 auto;
+  max-width:100%;
+  max-height:100%;
+}
+.previewFrame .planningCanvas.view-grid.format-wide,
+.previewFrame .planningCanvas.view-grid.format-square{
+  width:auto;
+  height:100%;
+}
+.previewFrame .planningCanvas.view-list{
+  width:100%;
+  height:auto;
+  max-height:100%;
+}
+.previewFrame:has(.planningCanvas.view-list){
+  overflow:auto;
+  align-items:flex-start;
+}
+.exportClone{
+  max-height:none!important;
+  height:1080px!important;
+}
+.exportClone.format-square{
+  height:1600px!important;
+}
+.exportClone.view-list{
+  height:auto!important;
+}
+
+@media (max-width:1100px){
+  html,
+  body{
+    height:auto;
+    min-height:100%;
+    overflow:auto;
+  }
+  body{display:block}
+  .layout{
+    height:auto;
+    overflow:visible;
+  }
+  .editor{
+    overflow:visible;
+  }
+  .preview{
+    min-height:auto;
+  }
+  .previewFrame{
+    min-height:auto;
+    overflow:auto;
+    display:block;
+  }
+  .previewFrame .planningCanvas.view-grid.format-wide,
+  .previewFrame .planningCanvas.view-grid.format-square{
+    width:100%;
+    height:auto;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   V28.7 - Vue liste responsive + aperçu fidèle à l'export
+   Correction : la V28.6 laissait le mode liste scroller dans l'aperçu, donc
+   tous les jours n'étaient pas visibles. Désormais, le script affiche la vue
+   liste avec la même largeur de référence que l'export puis la réduit à
+   l'écran avec CSS zoom. L'export nettoie ce zoom avant le PNG.
+-------------------------------------------------------------------------- */
+.previewFrame:has(.planningCanvas.view-list){
+  overflow:hidden;
+  align-items:flex-start;
+  justify-content:center;
+}
+.previewFrame .planningCanvas.view-list{
+  flex:0 0 auto;
+  max-width:none;
+  max-height:none;
+}
+.exportClone{
+  zoom:1!important;
+}
+.exportClone.view-list{
+  width:1600px!important;
+  max-width:none!important;
+  max-height:none!important;
+}
+
+/* --------------------------------------------------------------------------
+   V28.8 - Correction du défilement des menus
+   Problème corrigé : dans l'éditeur, les panneaux ouverts pouvaient rétrécir
+   quand la hauteur disponible était trop faible. Le contenu semblait alors se
+   superposer aux panneaux suivants. Les panneaux gardent maintenant leur
+   hauteur naturelle et c'est la colonne de menus qui défile.
+-------------------------------------------------------------------------- */
+.editor{
+  overflow-y:auto;
+  overflow-x:hidden;
+  min-height:0;
+  overscroll-behavior:contain;
+}
+.editor > .panel,
+.editor > .accordionMenu{
+  flex:0 0 auto;
+}
+.panel.accordionMenu{
+  flex-shrink:0;
+}
+
+@media (max-width:1100px){
+  .editor{
+    overflow-y:auto;
+    overflow-x:hidden;
+    max-height:calc(100vh - 78px);
+  }
+  .editor > .panel,
+  .editor > .accordionMenu{
+    flex:0 0 auto;
+  }
+}
+
+@media (max-width:640px){
+  .editor{
+    max-height:calc(100vh - 66px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   V28.9 - Scrollbars stylisées et adaptées au thème actif
+   Objectif : remplacer la barre de scroll système par une barre fine,
+   arrondie et cohérente avec le thème sélectionné dans l'aperçu.
+   Compatible surtout Chrome / Opera GX / Edge, avec fallback Firefox.
+-------------------------------------------------------------------------- */
+:root{
+  --uiScrollTrack:rgba(15,23,42,.62);
+  --uiScrollThumb:rgba(96,165,250,.62);
+  --uiScrollThumbHover:rgba(147,197,253,.92);
+  --uiScrollBorder:rgba(7,13,24,.96);
+}
+
+/* La couleur du menu suit le thème actuellement présent dans l'aperçu. */
+body:has(.planningCanvas.theme-clean),
+body:has(.planningCanvas.theme-pastel),
+body:has(.planningCanvas.theme-cloudnine){
+  --uiScrollTrack:rgba(226,232,240,.36);
+  --uiScrollThumb:rgba(100,116,139,.58);
+  --uiScrollThumbHover:rgba(51,65,85,.82);
+  --uiScrollBorder:rgba(245,247,251,.92);
+}
+body:has(.planningCanvas.theme-neon),
+body:has(.planningCanvas.theme-galaxy),
+body:has(.planningCanvas.theme-twilight),
+body:has(.planningCanvas.theme-lavenderline),
+body:has(.planningCanvas.theme-moonspell),
+body:has(.planningCanvas.theme-synthwave),
+body:has(.planningCanvas.theme-witchcore),
+body:has(.planningCanvas.theme-velvet){
+  --uiScrollThumb:rgba(168,85,247,.66);
+  --uiScrollThumbHover:rgba(216,180,254,.95);
+}
+body:has(.planningCanvas.theme-horror),
+body:has(.planningCanvas.theme-horrorvhs),
+body:has(.planningCanvas.theme-volcanic){
+  --uiScrollThumb:rgba(248,113,113,.64);
+  --uiScrollThumbHover:rgba(254,202,202,.96);
+}
+body:has(.planningCanvas.theme-crystalfantasy),
+body:has(.planningCanvas.theme-ocean),
+body:has(.planningCanvas.theme-abyssblue),
+body:has(.planningCanvas.theme-deepsea),
+body:has(.planningCanvas.theme-royal){
+  --uiScrollThumb:rgba(125,211,252,.64);
+  --uiScrollThumbHover:rgba(186,230,253,.96);
+}
+body:has(.planningCanvas.theme-forest),
+body:has(.planningCanvas.theme-emerald),
+body:has(.planningCanvas.theme-aurora),
+body:has(.planningCanvas.theme-cybermint),
+body:has(.planningCanvas.theme-toxiclime){
+  --uiScrollThumb:rgba(52,211,153,.62);
+  --uiScrollThumbHover:rgba(167,243,208,.96);
+}
+body:has(.planningCanvas.theme-noir),
+body:has(.planningCanvas.theme-goldenhour),
+body:has(.planningCanvas.theme-obsidian),
+body:has(.planningCanvas.theme-copperpunk),
+body:has(.planningCanvas.theme-cozy),
+body:has(.planningCanvas.theme-sunset){
+  --uiScrollThumb:rgba(251,191,36,.64);
+  --uiScrollThumbHover:rgba(254,240,138,.96);
+}
+body:has(.planningCanvas.theme-sakura),
+body:has(.planningCanvas.theme-roseglass),
+body:has(.planningCanvas.theme-candypop),
+body:has(.planningCanvas.theme-manga){
+  --uiScrollThumb:rgba(244,114,182,.62);
+  --uiScrollThumbHover:rgba(251,207,232,.96);
+}
+body:has(.planningCanvas.theme-arcade),
+body:has(.planningCanvas.theme-pixelnight){
+  --uiScrollThumb:rgba(34,211,238,.64);
+  --uiScrollThumbHover:rgba(165,243,252,.96);
+}
+
+/* Fallback Firefox. */
+body,
+.editor,
+.previewFrame{
+  scrollbar-width:thin;
+  scrollbar-color:var(--uiScrollThumb) var(--uiScrollTrack);
+}
+
+/* Scrollbar Chromium / Opera GX. */
+body::-webkit-scrollbar,
+.editor::-webkit-scrollbar,
+.previewFrame::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+}
+body::-webkit-scrollbar-track,
+.editor::-webkit-scrollbar-track,
+.previewFrame::-webkit-scrollbar-track{
+  background:var(--uiScrollTrack);
+  border-radius:999px;
+}
+body::-webkit-scrollbar-thumb,
+.editor::-webkit-scrollbar-thumb,
+.previewFrame::-webkit-scrollbar-thumb{
+  background:var(--uiScrollThumb);
+  background:linear-gradient(180deg, var(--uiScrollThumb), color-mix(in srgb, var(--uiScrollThumb) 72%, #ffffff 18%));
+  border:2px solid var(--uiScrollBorder);
+  border-radius:999px;
+  box-shadow:0 0 10px color-mix(in srgb, var(--uiScrollThumb) 44%, transparent);
+}
+body::-webkit-scrollbar-thumb:hover,
+.editor::-webkit-scrollbar-thumb:hover,
+.previewFrame::-webkit-scrollbar-thumb:hover{
+  background:var(--uiScrollThumbHover);
+  box-shadow:0 0 14px color-mix(in srgb, var(--uiScrollThumbHover) 56%, transparent);
+}
+body::-webkit-scrollbar-corner,
+.editor::-webkit-scrollbar-corner,
+.previewFrame::-webkit-scrollbar-corner{
+  background:transparent;
+}
+
+/* La colonne de gauche garde une petite marge visuelle avec la scrollbar. */
+.editor{
+  scrollbar-gutter:stable;
+  padding-right:4px;
+}
+
+@media (max-width:640px){
+  body::-webkit-scrollbar,
+  .editor::-webkit-scrollbar,
+  .previewFrame::-webkit-scrollbar{
+    width:8px;
+    height:8px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   V29.2 - Recadrage manuel responsive + dézoom large 10% / 300%
+   Objectif : garder une fenêtre de recadrage à taille maîtrisée, proche de
+   l'aperçu, avec dézoom large pour voir les images très panoramiques ou verticales.
+-------------------------------------------------------------------------- */
+.cropOpenBtn{
+  width:100%;
+  margin-top:8px;
+}
+.cropOpenBtn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.dayImageLayer{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  width:auto;
+  height:auto;
+  max-width:none;
+  max-height:none;
+  object-fit:fill;
+  object-position:center center;
+  transform:none;
+  transform-origin:center center;
+  pointer-events:none;
+  user-select:none;
+}
+.dayImageOverlay{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:rgba(0,0,0,.16);
+}
+.dayCard.isTransparent .dayImageOverlay{
+  background:rgba(0,0,0,.08);
+}
+.dayCard > .dayHeader,
+.dayCard > .dayContent{
+  position:relative;
+  z-index:2;
+}
+
+.cropDialog{
+  width:min(var(--crop-dialog-width, 980px), 1120px, calc(100vw - 24px));
+  max-height:min(var(--crop-dialog-max-height, 720px), calc(100vh - 24px));
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:22px;
+  background:linear-gradient(180deg,#111827,#0b1220);
+  box-shadow:0 24px 90px rgba(0,0,0,.52);
+  padding:12px;
+}
+.cropDialog__head{
+  margin-bottom:10px;
+}
+.cropDialog__body{
+  min-height:0;
+  flex:1 1 auto;
+  overflow:auto;
+  padding-right:3px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--uiScrollThumb) var(--uiScrollTrack);
+}
+.cropColumns{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
+  align-items:start;
+}
+.cropPane{
+  min-width:0;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  background:#101827;
+  display:flex;
+  flex-direction:column;
+}
+.cropPane__head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.cropPane__head strong{
+  font-size:15px;
+  font-weight:950;
+}
+.cropPane__head span{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  text-align:right;
+}
+.cropStage{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  border-radius:17px;
+  border:1px solid rgba(255,255,255,.20);
+  background:
+    linear-gradient(45deg, rgba(255,255,255,.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,.06) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,.06) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,.06) 75%),
+    #060b14;
+  background-size:22px 22px;
+  background-position:0 0,0 11px,11px -11px,-11px 0;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+}
+.cropStage.isDragging{
+  cursor:grabbing;
+}
+.cropStage--grid{
+  width:210px;
+  height:420px;
+  max-width:100%;
+  max-height:none;
+  margin:0 auto;
+  aspect-ratio:1/2.85;
+}
+.cropDialog.isSquareFormat .cropStage--grid,
+.modalOverlay.isSquareFormat .cropStage--grid{
+  max-width:100%;
+  aspect-ratio:2.15/1;
+}
+.cropStage--list{
+  width:100%;
+  height:96px;
+  max-width:100%;
+  max-height:none;
+  aspect-ratio:7.8/1;
+  margin:32px auto 0;
+}
+.cropStage__image{
+  position:absolute;
+  inset:0;
+  width:auto;
+  height:auto;
+  max-width:none;
+  max-height:none;
+  object-fit:fill;
+  object-position:center center;
+  transform:none;
+  transform-origin:center center;
+  user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+}
+.cropStage__overlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.18),
+    inset 0 0 0 999px rgba(0,0,0,.08);
+}
+.cropField{
+  margin-top:9px;
+}
+.cropField--tight{
+  margin-top:5px;
+}
+.cropField span{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.cropField b{
+  color:#fff;
+  font-size:11px;
+}
+.cropField input[type="range"]{
+  padding:0;
+  min-height:24px;
+  accent-color:var(--primary2);
+}
+.cropActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:9px;
+}
+.cropActions .btn{
+  min-height:36px;
+  padding:6px 8px;
+  font-size:12px;
+}
+.cropHint{
+  margin:10px 2px 0;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.35;
+  font-weight:750;
+}
+.cropDialog__actions{
+  flex:0 0 auto;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+
+.cropDialog__body::-webkit-scrollbar{
+  width:8px;
+  height:8px;
+}
+.cropDialog__body::-webkit-scrollbar-track{
+  background:var(--uiScrollTrack);
+  border-radius:999px;
+}
+.cropDialog__body::-webkit-scrollbar-thumb{
+  background:var(--uiScrollThumb);
+  border:2px solid var(--uiScrollBorder);
+  border-radius:999px;
+}
+
+.modalOverlay.isCompactCrop .cropColumns{
+  grid-template-columns:1fr;
+}
+.modalOverlay.isCompactCrop .cropStage--list{
+  margin-top:0;
+}
+
+@media (max-width:900px){
+  .cropDialog{
+    width:min(var(--crop-dialog-width, 680px), calc(100vw - 18px));
+    max-height:min(var(--crop-dialog-max-height, 720px), calc(100vh - 18px));
+  }
+  .cropColumns{
+    grid-template-columns:1fr;
+  }
+  .cropStage--list{
+    margin-top:0;
+  }
+}
+@media (max-width:640px){
+  .cropDialog{
+    padding:12px;
+    border-radius:18px;
+  }
+  .cropPane{
+    padding:10px;
+  }
+  .cropPane__head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .cropPane__head span{
+    text-align:left;
+  }
+  .cropActions{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   V29.4 - Correction cadre grille dans la modale de recadrage
+   Le cadre de recadrage est maintenant dimensionné par le script avec une
+   largeur ET une hauteur explicites. Cela évite que max-height casse le ratio
+   réel de la carte grille et désynchronise le rendu aperçu / recadrage.
+-------------------------------------------------------------------------- */
+.cropStage{
+  flex:0 0 auto;
+}
+
+
+/* --------------------------------------------------------------------------
+   V29.5 - Recadrage plus responsive + étirement ciblé
+   - La modale ne déborde plus : header/actions restent fixes et le contenu scrolle.
+   - Grille : étirement vertical via --imageCropStretchY.
+   - Liste : étirement horizontal via --imageCropStretchX.
+-------------------------------------------------------------------------- */
+
+
+/* --------------------------------------------------------------------------
+   V30.3 - Galerie miniatures de thèmes + modes stream spécial adaptatifs
+   Objectif : moderniser l'accès aux thèmes sans casser le select existant.
+-------------------------------------------------------------------------- */
+.themeGallery{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.themeCardMini{
+  min-height:78px;
+  padding:8px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:14px;
+  background:#111827;
+  color:#fff;
+  text-align:left;
+  overflow:hidden;
+}
+.themeCardMini:hover,
+.themeCardMini:focus-visible{
+  border-color:rgba(96,165,250,.78);
+  outline:none;
+}
+.themeCardMini.isActive{
+  border-color:rgba(250,204,21,.72);
+  box-shadow:0 0 0 2px rgba(250,204,21,.18);
+}
+.themeCardMini__preview{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:4px;
+  min-height:34px;
+  padding:6px;
+  border-radius:11px;
+  background:var(--canvasBg,#1e293b);
+  border:1px solid var(--dayBorder,rgba(255,255,255,.2));
+}
+.themeCardMini__preview i{
+  display:block;
+  border-radius:7px;
+  background:var(--dayBg,#27364f);
+  border:1px solid var(--dayBorder,rgba(255,255,255,.2));
+}
+.themeCardMini strong{
+  display:block;
+  margin-top:6px;
+  font-size:11px;
+  line-height:1.15;
+  font-weight:950;
+  color:var(--canvasText,#fff);
+}
+
+/* QR : rendu plus propre si la librairie locale n'est pas chargée ou si le lien est trop long. */
+.qrBox__fallback{
+  color:#111827;
+  background:#fff;
+  border-radius:.35cqw;
+  font-size:.7cqw;
+}
+.qrBox span{
+  max-width:9.5cqw;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.qrBox svg rect{fill:#fff}
+.qrBox svg path{fill:#111827}
+
+/* Modes spéciaux historiques : couleurs adaptées au thème actif au lieu d'or/rouge fixes. */
+.mode-restaurant .dayCard,
+.mode-rpg .dayCard,
+.mode-ticket .dayCard,
+.mode-poster .dayCard,
+.mode-logbook .dayCard,
+.mode-anime .dayCard{
+  border-color:color-mix(in srgb, var(--chipText) 52%, var(--dayBorder));
+}
+.mode-restaurant .dayCard{border-color:color-mix(in srgb, var(--chipText) 48%, var(--dayBorder));}
+.mode-rpg{background:radial-gradient(50cqw 30cqw at 50% -10%, color-mix(in srgb, var(--chipText) 14%, transparent), transparent 72%), var(--canvasBg);}
+.mode-rpg .dayCard{background-image:linear-gradient(180deg, color-mix(in srgb, var(--chipText) 12%, transparent), transparent), var(--dayImage);}
+.mode-rpg .starBadge{background:var(--chipText);color:var(--canvasBg);border-color:var(--chipText)}
+.mode-anime .specialLabel{background:var(--chipText);color:var(--canvasBg);border-color:var(--chipText)}
+.mode-restaurant .specialLabel{border-color:var(--chipText);color:var(--chipText)}
+
+/* Nettoyage V30.12 : ancien bloc V30.3 des modes stream supprimé, car les modes actifs sont redéfinis proprement plus bas en V30.7. */
+
+
+/* --------------------------------------------------------------------------
+   V30.4 - Modes spéciaux vraiment distincts + adaptation aux thèmes
+   Principe : chaque mode garde les couleurs du thème via les variables CSS,
+   mais change sa structure visuelle : rythme, texture, labels, cartes et liste.
+-------------------------------------------------------------------------- */
+.planningCanvas{
+  --modeAccent:var(--chipText);
+  --modeAccent2:var(--dayTitle);
+  --modeSoft:color-mix(in srgb, var(--modeAccent) 18%, transparent);
+  --modeLine:color-mix(in srgb, var(--modeAccent) 52%, transparent);
+}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime,.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge){
+  background:
+    radial-gradient(48cqw 28cqw at 16% -8%, color-mix(in srgb, var(--modeAccent) 18%, transparent), transparent 72%),
+    radial-gradient(38cqw 24cqw at 86% 4%, color-mix(in srgb, var(--modeAccent2) 14%, transparent), transparent 72%),
+    var(--canvasBg);
+}
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime,.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge) .eventBanner,
+.planningCanvas:is(.mode-poster,.mode-ticket,.mode-restaurant,.mode-rpg,.mode-logbook,.mode-anime,.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge) .specialLabel{
+  background:color-mix(in srgb, var(--modeAccent) 20%, rgba(255,255,255,.08));
+  border-color:color-mix(in srgb, var(--modeAccent) 68%, transparent);
+  color:var(--modeAccent);
+}
+
+/* Anciens modes : plus marqués et moins neutres. */
+.mode-poster .dayCard{background-image:linear-gradient(180deg, color-mix(in srgb, var(--modeAccent) 18%, transparent), rgba(0,0,0,.16)), var(--dayImage);box-shadow:inset 0 0 0 .18cqw var(--modeLine)}
+.mode-ticket .dayCard{background-image:linear-gradient(90deg, color-mix(in srgb, var(--modeAccent) 16%, transparent) 0 12%, transparent 12% 88%, color-mix(in srgb, var(--modeAccent) 16%, transparent) 88% 100%), var(--dayImage);border-style:dashed}
+.mode-restaurant .dayCard{background-image:linear-gradient(180deg, rgba(255,255,255,.08), color-mix(in srgb, var(--modeAccent) 9%, transparent)), var(--dayImage);box-shadow:inset 0 0 0 .12cqw color-mix(in srgb, var(--modeAccent) 30%, transparent)}
+.mode-rpg .dayCard{background-image:radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--modeAccent) 18%, transparent), transparent 48%), linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.22)), var(--dayImage);border-style:double}
+.mode-logbook .dayCard{background-image:repeating-linear-gradient(0deg, color-mix(in srgb, var(--modeAccent) 10%, transparent) 0 1px, transparent 1px 1.05cqw), var(--dayImage);border-radius:.75cqw}
+.mode-anime .dayCard{background-image:linear-gradient(135deg, color-mix(in srgb, var(--modeAccent) 20%, transparent) 0 20%, transparent 20% 64%, color-mix(in srgb, var(--modeAccent2) 15%, transparent) 64% 100%), var(--dayImage)}
+
+/* Marathon : sensation de progression / étapes. */
+.mode-marathon .canvasHero span::before{content:"Marathon • "}
+.mode-marathon .dayCard{
+  border-radius:1.1cqw;
+  background-image:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--modeAccent) 18%, transparent) 0 .45cqw, transparent .45cqw 1.1cqw),
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.18)),
+    var(--dayImage);
+}
+.mode-marathon .streamTime{letter-spacing:.06em}
+.mode-marathon .dayCard.isStar{transform:scale(1.05);box-shadow:0 0 2.3cqw color-mix(in srgb, var(--modeAccent) 45%, transparent)}
+
+/* Sortie jeu : lancement, nouveauté, gros focus. */
+.mode-release .canvasHero span::before{content:"Launch week • "}
+.mode-release .dayCard{
+  border-radius:2.3cqw .85cqw 2.3cqw .85cqw;
+  background-image:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--modeAccent) 32%, transparent), transparent 45%),
+    linear-gradient(135deg, color-mix(in srgb, var(--modeAccent2) 18%, transparent), transparent 58%),
+    var(--dayImage);
+}
+.mode-release .specialLabel{border-radius:.45cqw;text-transform:uppercase;letter-spacing:.16em}
+.mode-release .dayCard.isStar{outline:.28cqw solid color-mix(in srgb, var(--modeAccent) 52%, transparent)}
+
+/* Subathon : barres d'objectifs. */
+.mode-subathon .canvasHero span::before{content:"Subathon • "}
+.mode-subathon .dayCard{
+  background-image:
+    linear-gradient(90deg, color-mix(in srgb, var(--modeAccent) 34%, transparent) 0 34%, transparent 34% 100%),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.16)),
+    var(--dayImage);
+}
+.mode-subathon .dayStatus,.mode-subathon .streamTime{background:color-mix(in srgb, var(--modeAccent) 18%, transparent);border-radius:999px;padding:.2cqw .55cqw}
+
+/* Découverte indé : carte sticker / festival indé. */
+.mode-indie .canvasHero span::before{content:"Indie corner • "}
+.mode-indie .dayCard{
+  border-radius:.9cqw 2.2cqw .9cqw 2.2cqw;
+  background-image:
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--modeAccent) 14%, transparent) 0 .28cqw, transparent .28cqw 1.15cqw),
+    linear-gradient(180deg, rgba(255,255,255,.05), transparent),
+    var(--dayImage);
+}
+.mode-indie .dayName,.mode-indie .streamTime{font-family:'Courier New',ui-monospace,monospace}
+
+/* Challenge : warning / défi. */
+.mode-challenge .canvasHero span::before{content:"Challenge run • "}
+.mode-challenge .dayCard{
+  border-radius:.75cqw;
+  background-image:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--modeAccent) 24%, transparent) 0 .55cqw, transparent .55cqw 1.15cqw),
+    linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.22)),
+    var(--dayImage);
+}
+.mode-challenge .streamTime{text-shadow:.08cqw .08cqw 0 rgba(0,0,0,.45)}
+.mode-challenge .dayCard.isStar{filter:saturate(1.25) contrast(1.08)}
+
+/* Adaptation liste : chaque mode garde une silhouette différente même en liste. */
+.planningCanvas.view-list:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge) .dayCard{min-height:8.2cqw}
+.mode-marathon.view-list .dayCard{border-left:.55cqw solid var(--modeAccent)}
+.mode-release.view-list .dayCard{border-radius:2.2cqw .8cqw 2.2cqw .8cqw}
+.mode-subathon.view-list .dayCard{background-image:linear-gradient(90deg, color-mix(in srgb, var(--modeAccent) 28%, transparent) 0 28%, transparent 28% 100%), var(--dayImage)}
+.mode-indie.view-list .dayCard{border-radius:.8cqw 2cqw .8cqw 2cqw}
+.mode-challenge.view-list .dayCard{border-radius:.7cqw;border-style:dashed}
+
+
+/* --------------------------------------------------------------------------
+   V30.7 - Reprise propre depuis V30.4
+   - Conservation du menu Apparence & Export avec miniatures.
+   - Suppression des modes non souhaités : anniversaire, Halloween/Noël/été,
+     tournoi, collaboration et caritatif.
+   - Les modes restants gardent une silhouette vraiment distincte et utilisent
+     uniquement les couleurs du thème actif via --modeAccent / --modeAccent2.
+   - Correction visuelle du mode Découverte indé : moins compressé, labels plus
+     lisibles, aucune sensation de texte coincé dans la carte.
+-------------------------------------------------------------------------- */
+.planningCanvas{
+  --modeAccent:var(--chipText);
+  --modeAccent2:var(--dayTitle);
+  --modeSoft:color-mix(in srgb, var(--modeAccent) 18%, transparent);
+  --modeLine:color-mix(in srgb, var(--modeAccent) 56%, transparent);
+  --modeDeep:color-mix(in srgb, var(--canvasBg) 78%, #000);
+}
+
+/* Limitation officielle des modes actifs V30.7. */
+.planningCanvas:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge){
+  background:
+    radial-gradient(46cqw 28cqw at 14% -8%, color-mix(in srgb, var(--modeAccent) 20%, transparent), transparent 72%),
+    radial-gradient(38cqw 24cqw at 88% 6%, color-mix(in srgb, var(--modeAccent2) 16%, transparent), transparent 72%),
+    var(--canvasBg);
+}
+.planningCanvas:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge) .eventBanner,
+.planningCanvas:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge) .specialLabel{
+  background:color-mix(in srgb, var(--modeAccent) 20%, rgba(255,255,255,.08));
+  border-color:color-mix(in srgb, var(--modeAccent) 68%, transparent);
+  color:var(--modeAccent);
+}
+
+/* Hauteur stable du bloc texte pour éviter les labels coincés. */
+.planningCanvas:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge).view-grid .dayContent,
+.planningCanvas:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge).view-grid .dayCard.isOff .dayContent{
+  height:13.9cqw!important;
+  min-height:13.9cqw!important;
+  max-height:13.9cqw!important;
+  overflow:hidden;
+}
+.planningCanvas:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge).format-square.view-grid .dayContent,
+.planningCanvas:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge).format-square.view-grid .dayCard.isOff .dayContent{
+  height:8.15cqw!important;
+  min-height:8.15cqw!important;
+  max-height:8.15cqw!important;
+}
+.planningCanvas:is(.mode-marathon,.mode-release,.mode-subathon,.mode-indie,.mode-challenge) .specialLabel{
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Marathon : rythme / endurance / progression. */
+.mode-marathon .canvasHero span::before{content:"Marathon • "}
+.mode-marathon .dayCard{
+  border-radius:1.05cqw;
+  border-width:2px;
+  border-color:color-mix(in srgb, var(--modeAccent) 58%, var(--dayBorder));
+  background-image:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--modeAccent) 20%, transparent) 0 .42cqw, transparent .42cqw 1.05cqw),
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(0,0,0,.18)),
+    var(--dayImage);
+  box-shadow:inset 0 -.24cqw 0 color-mix(in srgb, var(--modeAccent) 28%, transparent);
+}
+.mode-marathon .streamTime{letter-spacing:.07em}
+.mode-marathon .dayCard.isStar{box-shadow:0 0 2.3cqw color-mix(in srgb, var(--modeAccent) 46%, transparent), inset 0 -.3cqw 0 var(--modeAccent)}
+.mode-marathon.view-list .dayCard{border-left:.55cqw solid var(--modeAccent)}
+
+/* Sortie jeu : lancement / affiche premium / focus central. */
+.mode-release .canvasHero span::before{content:"Launch week • "}
+.mode-release .dayCard{
+  border-width:2px;
+  border-radius:2.25cqw .85cqw 2.25cqw .85cqw;
+  border-color:color-mix(in srgb, var(--modeAccent) 62%, var(--dayBorder));
+  background-image:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--modeAccent) 34%, transparent), transparent 45%),
+    linear-gradient(135deg, color-mix(in srgb, var(--modeAccent2) 18%, transparent), transparent 58%),
+    var(--dayImage);
+  box-shadow:inset 0 0 0 .16cqw color-mix(in srgb, var(--modeAccent) 22%, transparent);
+}
+.mode-release .specialLabel{border-radius:.45cqw;text-transform:uppercase;letter-spacing:.15em}
+.mode-release .dayCard.isStar{outline:.28cqw solid color-mix(in srgb, var(--modeAccent) 54%, transparent)}
+.mode-release.view-list .dayCard{border-radius:2.2cqw .8cqw 2.2cqw .8cqw}
+
+/* Subathon : objectifs / jauges / paliers. */
+.mode-subathon .canvasHero span::before{content:"Subathon • "}
+.mode-subathon .dayCard{
+  border-width:2px;
+  border-color:color-mix(in srgb, var(--modeAccent) 55%, var(--dayBorder));
+  background-image:
+    linear-gradient(90deg, color-mix(in srgb, var(--modeAccent) 34%, transparent) 0 34%, transparent 34% 100%),
+    repeating-linear-gradient(0deg, transparent 0 1.3cqw, color-mix(in srgb, var(--modeAccent) 11%, transparent) 1.3cqw 1.42cqw),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.16)),
+    var(--dayImage);
+}
+.mode-subathon .dayStatus,
+.mode-subathon .streamTime{background:color-mix(in srgb, var(--modeAccent) 18%, transparent);border-radius:999px;padding:.2cqw .55cqw}
+.mode-subathon.view-list .dayCard{background-image:linear-gradient(90deg, color-mix(in srgb, var(--modeAccent) 28%, transparent) 0 28%, transparent 28% 100%), var(--dayImage)}
+
+/* Découverte indé : festival prototype / sticker propre, sans effet coincé. */
+.mode-indie .canvasHero span::before{content:"Indie corner • "}
+.mode-indie .dayCard{
+  border-width:2px;
+  border-radius:1.05cqw 2.1cqw 1.05cqw 2.1cqw;
+  border-color:color-mix(in srgb, var(--modeAccent) 58%, var(--dayBorder));
+  background-image:
+    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--modeAccent) 18%, transparent), transparent 34%),
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--modeAccent) 10%, transparent) 0 .22cqw, transparent .22cqw 1.15cqw),
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(0,0,0,.12)),
+    var(--dayImage);
+  box-shadow:inset 0 0 0 .12cqw color-mix(in srgb, var(--modeAccent) 22%, transparent);
+}
+.mode-indie .dayName,
+.mode-indie .streamTime{font-family:'Courier New',ui-monospace,monospace}
+.mode-indie .specialLabel{
+  min-height:1.45cqw;
+  padding:.23cqw .62cqw;
+  font-size:.62cqw;
+  letter-spacing:.09em;
+  border-radius:.38cqw;
+  transform:rotate(-1.2deg);
+  transform-origin:center;
+  background:color-mix(in srgb, var(--modeAccent) 16%, rgba(255,255,255,.08));
+}
+.mode-indie.view-grid .streamTitle{margin-top:.46cqw}
+.mode-indie.view-grid .streamNote{margin-top:.48cqw}
+.mode-indie.view-list .dayCard{border-radius:.8cqw 2cqw .8cqw 2cqw;min-height:8.2cqw}
+.mode-indie.view-list .specialLabel{transform:none}
+
+/* Challenge : warning / défi / impact visuel. */
+.mode-challenge .canvasHero span::before{content:"Challenge run • "}
+.mode-challenge .dayCard{
+  border-width:2px;
+  border-style:dashed;
+  border-radius:.72cqw;
+  border-color:color-mix(in srgb, var(--modeAccent) 64%, var(--dayBorder));
+  background-image:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--modeAccent) 24%, transparent) 0 .55cqw, transparent .55cqw 1.15cqw),
+    linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.24)),
+    var(--dayImage);
+}
+.mode-challenge .streamTime{text-shadow:.08cqw .08cqw 0 rgba(0,0,0,.45)}
+.mode-challenge .dayCard.isStar{filter:saturate(1.25) contrast(1.08);box-shadow:0 0 2cqw color-mix(in srgb, var(--modeAccent) 38%, transparent)}
+.mode-challenge.view-list .dayCard{border-radius:.7cqw;border-style:dashed;min-height:8.2cqw}
+
+
+/* --------------------------------------------------------------------------
+   V30.8 - Correction damier global à l'ouverture du menu Apparence & Export
+   Les miniatures de thèmes portent aussi des classes .theme-*. Les pseudo-
+   éléments décoratifs des thèmes doivent donc être limités au vrai planning,
+   sinon ils peuvent se dessiner sur toute la page quand la galerie est visible.
+-------------------------------------------------------------------------- */
+.themeCardMini{
+  position:relative;
+}
+.themeCardMini::before,
+.themeCardMini::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* --------------------------------------------------------------------------
+   V30.9 - Correction label Découverte indé coupé
+   Le mode indé garde son style sticker, mais le libellé Prototype ne doit
+   plus être rogné sur son coin haut droit. Le clipping venait du label incliné
+   dans une zone .dayContent en overflow hidden.
+-------------------------------------------------------------------------- */
+.planningCanvas.mode-indie.view-grid .dayContent,
+.planningCanvas.mode-indie.view-grid .dayCard.isOff .dayContent{
+  overflow:visible!important;
+}
+.planningCanvas.mode-indie.format-square.view-grid .dayContent,
+.planningCanvas.mode-indie.format-square.view-grid .dayCard.isOff .dayContent{
+  overflow:visible!important;
+}
+.planningCanvas.mode-indie .specialLabel{
+  position:relative;
+  top:.12cqw;
+  max-width:calc(100% - .45cqw);
+  min-height:1.55cqw;
+  padding:.3cqw .76cqw .32cqw;
+  line-height:1.05;
+  overflow:visible!important;
+  text-overflow:clip;
+  clip-path:none!important;
+  border-radius:.44cqw .88cqw .44cqw .88cqw;
+  transform:rotate(-.65deg);
+  transform-origin:center;
+}
+.planningCanvas.mode-indie.view-grid .specialLabel{
+  margin-top:.16cqw;
+  margin-bottom:.58cqw;
+}
+.planningCanvas.mode-indie.view-list .specialLabel{
+  top:0;
+  max-width:100%;
+  transform:none;
+  overflow:hidden!important;
+}
+
+/* --------------------------------------------------------------------------
+   V30.11 - Correction Mise en avant visuelle + recadrage image
+   Important : on ne force plus `inset:0!important` sur l'image.
+   Les valeurs inline posées par script.js après recadrage (left/top/width/height)
+   peuvent donc rester prioritaires, même quand la carte est mise en avant.
+-------------------------------------------------------------------------- */
+.dayCard.isHighlighted > .dayImageLayer{
+  position:absolute!important;
+  top:0;
+  left:0;
+  right:auto;
+  bottom:auto;
+  z-index:0!important;
+  width:auto;
+  height:auto;
+  max-width:none;
+  max-height:none;
+  object-fit:fill;
+  object-position:center center;
+  transform:none;
+  pointer-events:none;
+  user-select:none;
+}
+.dayCard.isHighlighted > .dayImageOverlay{
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none;
+}
+.dayCard.isHighlighted > .dayHeader,
+.dayCard.isHighlighted > .dayContent{
+  position:relative!important;
+  z-index:3!important;
+}
+
+/* --------------------------------------------------------------------------
+   V30.12 - Couleur d'écriture par jour
+   La palette agit uniquement sur le jour sélectionné. Un changement de thème
+   réinitialise ces couleurs pour laisser le thème reprendre la main.
+-------------------------------------------------------------------------- */
+.dayColorToggle{
+  min-height:29px;
+  padding:4px 4px;
+  border-radius:9px;
+  border:1px solid rgba(255,255,255,.16);
+  background:#111827;
+  color:#fff;
+  font-size:16px;
+  line-height:1;
+  font-weight:900;
+  text-align:center;
+}
+.dayColorToggle:hover,
+.dayColorToggle.isActive{
+  border-color:rgba(96,165,250,.7);
+  background:#1d2b45;
+}
+.dayTab.hasCustomTextColor,
+.dayColorToggle.hasCustomTextColor{
+  border-color:rgba(250,204,21,.55);
+  box-shadow:0 0 0 1px rgba(250,204,21,.16),0 0 14px rgba(250,204,21,.12);
+}
+.dayColorPanel{
+  margin:-2px 0 9px;
+  padding:9px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#121c2e;
+}
+.dayColorPanel[hidden]{display:none!important}
+.dayColorPanel__head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+}
+.dayColorPanel__head strong{
+  font-size:12px;
+  font-weight:950;
+}
+.dayColorPanel__head span{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:900;
+}
+.dayColorSwatches{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:6px;
+}
+.dayColorSwatch{
+  min-height:28px;
+  border-radius:9px;
+  border:1px solid rgba(255,255,255,.20);
+  background:var(--swatch);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);
+}
+.dayColorSwatch.isActive{
+  outline:2px solid #60a5fa;
+  outline-offset:2px;
+}
+.dayColorCustomLine{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:7px;
+  align-items:end;
+  margin-top:8px;
+}
+.dayColorPicker{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.dayColorPicker span{
+  color:#dbeafe;
+  font-size:11px;
+  font-weight:900;
+}
+.dayColorPicker input[type="color"]{
+  width:100%;
+  min-height:34px;
+  padding:4px;
+}
+.dayColorHint{
+  margin:7px 0 0;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.25;
+  font-weight:750;
+}
+.dayCard.hasCustomTextColor .dayName,
+.dayCard.hasCustomTextColor .dayStatus,
+.dayCard.hasCustomTextColor .specialLabel,
+.dayCard.hasCustomTextColor .starBadge,
+.dayCard.hasCustomTextColor .highlightBadge,
+.dayCard.hasCustomTextColor .streamTime,
+.dayCard.hasCustomTextColor .streamTitle,
+.dayCard.hasCustomTextColor .streamNote{
+  color:var(--dayCustomText)!important;
+}
+.dayCard.hasCustomTextColor .specialLabel,
+.dayCard.hasCustomTextColor .starBadge,
+.dayCard.hasCustomTextColor .highlightBadge{
+  border-color:color-mix(in srgb, var(--dayCustomText) 62%, transparent)!important;
+}
+@media (max-width:640px){
+  .dayColorCustomLine{grid-template-columns:1fr}
+}

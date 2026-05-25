@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>PlanningGPT — Planning Twitch</title>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="topbar">
+<div class="brand">
+<div>
+<h1>Éditeur de planning Twitch</h1>
+<p>Crée, Sauvegarde et Exporte</p>
+</div>
+</div>
+<div class="topActions">
+<button class="btn btn--soft" id="saveBtn" type="button">Sauvegarder</button>
+<button class="btn btn--ghost btn--icon" id="undoBtn" type="button" title="Annuler la dernière action">↶ Annuler</button>
+<button class="btn btn--ghost btn--icon" id="redoBtn" type="button" title="Rétablir l’action annulée">↷ Rétablir</button>
+<button class="btn btn--danger" id="resetBtn" type="button">Réinitialiser</button>
+<button class="btn btn--primary" id="exportPngBtn" type="button">Exporter PNG</button>
+</div>
+</header>
+<main class="layout">
+<aside aria-label="Éditeur du planning" class="editor">
+<details class="panel accordionMenu" open=""><summary><div class="sectionTitle">
+<span>1</span>
+<div>
+<h2>Informations générales</h2>
+<p>Titre affiché sur le rendu final.</p>
+</div>
+</div></summary><div class="panelBody">
+
+<label class="field">
+<span>Titre du planning</span>
+<input autocomplete="off" id="titleInput" type="text"/>
+</label>
+<label class="field">
+<span>Sous-titre / lien Twitch</span>
+<input autocomplete="off" id="subtitleInput" type="text"/>
+</label>
+</div></details>
+<details class="panel accordionMenu"><summary><div class="sectionTitle">
+<span>2</span>
+<div>
+<h2>Jour à modifier</h2>
+<p>Sélectionne un jour puis modifie son contenu</p>
+</div>
+</div></summary><div class="panelBody">
+
+<div aria-label="Jours de la semaine" class="dayTabs" id="dayTabs" role="tablist"></div>
+<div class="dayColorPanel" id="dayColorPanel" hidden>
+<div class="dayColorPanel__head">
+<strong>Couleur d’écriture du jour</strong>
+<span id="dayColorStatus">Couleur du thème</span>
+</div>
+<div aria-label="Couleurs rapides" class="dayColorSwatches" id="dayColorSwatches"></div>
+<div class="dayColorCustomLine">
+<label class="dayColorPicker">
+<span>Personnalisée</span>
+<input id="dayTextColorInput" type="color" value="#ffffff"/>
+</label>
+<button class="btn btn--ghost btn--tiny" id="dayTextColorResetBtn" type="button">Revenir au thème</button>
+</div>
+<p class="dayColorHint">Info : si tu changes de thème, les couleurs d’écriture personnalisées sont réinitialisées pour laisser le thème reprendre la main.</p>
+</div>
+<div class="dayEditor">
+<div class="dayEditor__head">
+<strong id="currentDayLabel">Lundi</strong>
+<label class="switchLine">
+<input id="dayVisibleInput" type="checkbox"/>
+<span>Afficher</span>
+</label>
+</div>
+<div class="grid2">
+<label class="field">
+<span>Heure</span>
+<input autocomplete="off" id="timeInput" placeholder="21h / OFF" type="text"/>
+</label>
+<label class="field">
+<span>Catégorie / jeu</span>
+<input autocomplete="off" id="categoryInput" placeholder="Just Chatting" type="text"/>
+</label>
+</div>
+<label class="field">
+<span>Description du stream</span>
+<textarea id="noteInput" placeholder="Optionnel" rows="2"></textarea>
+</label>
+<div class="grid2">
+<label class="field">
+<span>Alignement</span>
+<select id="textAlignInput">
+<option value="left">Gauche</option>
+<option value="center">Centre</option>
+<option value="right">Droite</option>
+</select>
+</label>
+<label class="field">
+<span>Position verticale</span>
+<select id="textVAlignInput">
+<option value="top">Haut</option>
+<option value="center">Centre</option>
+<option value="bottom">Bas</option>
+</select>
+</label>
+</div>
+<label class="switchBox">
+<input id="dayHighlightInput" type="checkbox"/>
+<span>
+<strong>Mise en avant visuelle</strong>
+<small>Agrandit légèrement ce jour et ajoute une aura fluo adaptée au thème</small>
+</span>
+</label>
+<div class="quickActions">
+<button class="btn btn--soft" id="offBtn" type="button">Mettre OFF</button>
+<button class="btn btn--ghost" id="clearDayBtn" type="button">Vider</button>
+<button class="btn btn--ghost" id="duplicateBtn" type="button">Dupliquer</button>
+</div>
+</div>
+</div></details>
+<details class="panel accordionMenu"><summary><div class="sectionTitle">
+<span>3</span>
+<div>
+<h2>Image du jour / Transparence</h2>
+<p>Image optimisée automatiquement et transparence du bloc complet</p>
+</div>
+</div></summary><div class="panelBody">
+
+<input accept="image/*" class="hiddenFile" id="imageInput" type="file"/>
+<div class="quickActions quickActions--two">
+<button class="btn btn--soft" id="chooseImageBtn" type="button">Choisir image</button>
+<button class="btn btn--ghost" id="removeImageBtn" type="button">Retirer</button>
+</div>
+<p class="fileHint" id="imageName">Aucune image choisie</p>
+<button class="btn btn--soft cropOpenBtn" id="cropImageBtn" type="button">Recadrer image</button>
+<p class="fileHint">Les grandes images sont compressées automatiquement pour protéger la sauvegarde locale</p>
+<div class="grid2">
+<label class="field">
+<span>Affichage image</span>
+<select id="imageFitInput">
+<option value="cover">Remplir</option>
+<option value="contain">Image entière</option>
+</select>
+</label>
+<label class="field">
+<span>Position image</span>
+<select id="imagePositionInput">
+<option value="center center">Centre</option>
+<option value="center top">Haut</option>
+<option value="center bottom">Bas</option>
+<option value="left center">Gauche</option>
+<option value="right center">Droite</option>
+</select>
+</label>
+</div>
+<label class="switchBox">
+<input id="dayTransparentInput" type="checkbox"/>
+<span>
+<strong>Carte du jour transparente</strong>
+<small>Retire le fond de la carte sélectionnée</small>
+</span>
+</label>
+</div></details>
+<details class="panel accordionMenu" open><summary><div class="sectionTitle">
+<span>4</span>
+<div>
+<h2>Apparence &amp; Export</h2>
+<p>Thème, format et transparence du PNG.</p>
+</div>
+</div></summary><div class="panelBody">
+
+<div class="themeFavoriteBar">
+<div class="themeFavoriteBar__head">
+<span>Thèmes favoris</span>
+<button class="btn btn--ghost btn--tiny" id="toggleThemeFavoriteBtn" type="button">Ajouter aux favoris</button>
+</div>
+<div aria-label="Thèmes favoris" class="favoriteThemeList" id="favoriteThemeList"></div>
+</div>
+<label class="field">
+<span>Thème visuel</span>
+<select id="themeInput">
+<option value="midnight">Midnight Stream</option>
+<option value="clean">Minimal clair</option>
+<option value="neon">Néon violet</option>
+<option value="galaxy">Galaxy violet</option>
+<option value="twilight">Twilight Violet</option>
+<option value="lavenderline">Lavender Line</option>
+<option value="moonspell">Moonspell</option>
+<option value="roseglass">Rose Glass</option>
+<option value="cybermint">Cyber Mint</option>
+<option value="goldenhour">Golden Hour</option>
+<option value="abyssblue">Abyss Blue</option>
+<option value="candypop">Candy Pop</option>
+<option value="ocean">Ocean bleu</option>
+<option value="forest">Forêt émeraude</option>
+<option value="sunset">Sunset chaud</option>
+<option value="noir">Noir &amp; Or</option>
+<option value="pastel">Pastel doux</option>
+<option value="arcade">Arcade Pixel</option>
+<option value="horror">Horror Night</option>
+<option value="horrorvhs">Horreur VHS</option>
+<option value="cozy">Cozy Café</option>
+<option value="royal">Royal Blue</option>
+<option value="crystalfantasy">Fantasy Ciel Étoilé</option>
+<option value="manga">Manga Pop</option>
+<option value="synthwave">Synthwave Sunset</option>
+<option value="emerald">Emerald Glass</option>
+<option value="velvet">Red Velvet</option>
+<option value="aurora">Aurora Stream</option>
+<option value="obsidian">Obsidian Gold</option>
+<option value="sakura">Sakura Dream</option>
+<option value="volcanic">Volcanic Raid</option>
+<option value="pixelnight">Pixel Night</option>
+<option value="witchcore">Witchcore</option>
+<option value="cloudnine">Cloud Nine</option>
+<option value="toxiclime">Toxic Lime</option>
+<option value="deepsea">Deep Sea</option>
+<option value="copperpunk">Copper Punk</option>
+</select>
+</label>
+<div class="themeGallery" id="themeGallery" aria-label="Miniatures des thèmes"></div>
+<div class="choiceGroup">
+<span>Vue</span>
+<div class="segmented">
+<button class="segBtn" data-option="view" data-value="grid" type="button">Grille</button>
+<button class="segBtn" data-option="view" data-value="list" type="button">Liste</button>
+</div>
+</div>
+<div class="choiceGroup">
+<span>Format export</span>
+<div class="segmented">
+<button class="segBtn" data-option="format" data-value="wide" type="button">16:9</button>
+<button class="segBtn" data-option="format" data-value="square" type="button">Carré</button>
+</div>
+</div>
+<label class="switchBox">
+<input id="transparentPngInput" type="checkbox"/>
+<span>
+<strong>Fond du PNG transparent</strong>
+<small>Retire uniquement le fond global du planning à l’export</small>
+</span>
+</label>
+<label class="switchBox">
+<input id="checkerInput" type="checkbox"/>
+<span>
+<strong>Aperçu transparence</strong>
+<small>Affiche le damier pour visualiser la transparence</small>
+</span>
+</label>
+</div></details>
+
+<details class="panel accordionMenu"><summary><div class="sectionTitle">
+<span>5</span>
+<div>
+<h2>Modificateur de thème</h2>
+<p>Des rendus uniques pour les semaines importantes.</p>
+</div>
+</div></summary><div class="panelBody">
+<label class="field">
+<span>Mode spécial</span>
+<select id="specialModeInput">
+<option value="none">Aucun</option>
+<option value="poster">Affiche d’événement</option>
+<option value="ticket">Ticket de cinéma</option>
+<option value="restaurant">Menu de restaurant</option>
+<option value="rpg">Quête RPG</option>
+<option value="logbook">Journal de bord</option>
+<option value="anime">Épisodes d’anime</option>
+<option value="marathon">Marathon</option>
+<option value="release">Sortie jeu</option>
+<option value="subathon">Subathon</option>
+<option value="indie">Découverte indé</option>
+<option value="challenge">Challenge</option>
+</select>
+</label>
+<label class="field">
+<span>Bandeau semaine spéciale</span>
+<input autocomplete="off" id="eventBannerInput" placeholder="Ex : SEMAINE HORREUR / MARATHON RPG" type="text"/>
+</label>
+<label class="switchBox">
+<input id="starDayInput" type="checkbox"/>
+<span>
+<strong>Jour star</strong>
+<small>Met le jour sélectionné en avant dans les modes spéciaux</small>
+</span>
+</label>
+<label class="switchBox">
+<input id="qrInput" type="checkbox"/>
+<span>
+<strong>QR code Twitch</strong>
+<small>Ajoute un QR code vers le lien Twitch saisi en haut</small>
+</span>
+</label>
+</div></details>
+</aside>
+<section aria-label="Aperçu du planning" class="preview">
+<div class="previewHeader">
+<div>
+<strong>Aperçu du planning</strong>
+<p>Grille, liste, images et transparence visibles ici avant export.</p>
+</div>
+<div class="statusLine">
+<span id="saveStatus">Non sauvegardé</span>
+<span id="viewStatus">Grille</span>
+<span class="overflowStatus" id="overflowStatus" hidden>Texte à vérifier</span>
+</div>
+</div>
+<div class="previewFrame" id="previewFrame">
+<div aria-label="Planning visuel" class="planningCanvas theme-midnight view-grid format-wide" id="planningCanvas" role="img">
+<div class="canvasHero">
+<span>Planning Twitch</span>
+<h2 id="previewTitle">Planning de la semaine</h2>
+<p id="previewSubtitle">twitch.tv/herettoc</p>
+</div>
+<div class="eventBanner" id="previewEventBanner" aria-hidden="true"></div>
+<div class="weekGrid" id="weekGrid"></div>
+<div class="qrBox" id="qrBox" aria-hidden="true"></div>
+</div>
+</div>
+</section>
+</main>
+<div aria-hidden="true" class="modalOverlay" id="duplicateModal">
+<div aria-labelledby="duplicateModalTitle" aria-modal="true" class="duplicateDialog" role="dialog">
+<div class="duplicateDialog__head">
+<div>
+<strong id="duplicateModalTitle">Dupliquer un jour</strong>
+<p id="duplicateModalText">Choisis le jour de destination.</p>
+</div>
+<button aria-label="Fermer" class="modalClose" id="duplicateCancelBtn" type="button">×</button>
+</div>
+<div class="duplicateChoices" id="duplicateChoices"></div>
+<p class="duplicateHint">Le contenu du jour choisi remplacera celui du jour de destination.</p>
+</div>
+</div>
+<div aria-hidden="true" class="modalOverlay" id="resetModal">
+<div aria-labelledby="resetModalTitle" aria-modal="true" class="duplicateDialog resetDialog" role="dialog">
+<div class="duplicateDialog__head">
+<div>
+<strong id="resetModalTitle">Réinitialiser le planning</strong>
+<p>Cette action remettra tous les champs à zéro et retirera les images importées.</p>
+</div>
+<button aria-label="Fermer" class="modalClose" id="resetCancelBtn" type="button">×</button>
+</div>
+<div class="resetWarning">
+<strong>Attention</strong>
+<span>La sauvegarde locale actuelle sera remplacée par le planning par défaut.</span>
+</div>
+<div class="resetActions">
+<button class="btn btn--ghost" id="resetKeepBtn" type="button">Annuler</button>
+<button class="btn btn--danger" id="resetConfirmBtn" type="button">Oui, réinitialiser</button>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="modalOverlay" id="cropModal">
+<div aria-labelledby="cropModalTitle" aria-modal="true" class="cropDialog" role="dialog">
+<div class="duplicateDialog__head cropDialog__head">
+<div>
+<strong id="cropModalTitle">Recadrer l’image</strong>
+<p id="cropModalText">Ajuste séparément le cadrage pour la grille et la liste, avec zoom et étirement ciblé.</p>
+</div>
+<button aria-label="Fermer" class="modalClose" id="cropCancelBtn" type="button">×</button>
+</div>
+<div class="cropDialog__body">
+<div class="cropColumns">
+<section class="cropPane" aria-label="Recadrage mode grille">
+<div class="cropPane__head">
+<strong>Mode grille</strong>
+<span>Cadre du format actuel</span>
+</div>
+<div class="cropStage cropStage--grid" id="cropGridStage">
+<img alt="" class="cropStage__image" draggable="false" id="cropGridImg"/>
+<div class="cropStage__overlay" aria-hidden="true"></div>
+</div>
+<label class="field cropField">
+<span>Zoom grille <b id="cropGridZoomValue">100%</b></span>
+<input id="cropGridZoomInput" max="3" min="0.1" step="0.01" type="range" value="1"/>
+</label>
+<label class="field cropField cropField--tight">
+<span>Étirer hauteur <b id="cropGridStretchYValue">100%</b></span>
+<input id="cropGridStretchYInput" max="3" min="0.5" step="0.01" type="range" value="1"/>
+</label>
+<div class="cropActions">
+<button class="btn btn--ghost" id="cropGridResetBtn" type="button">Réinitialiser grille</button>
+<button class="btn btn--soft" id="cropCopyGridToListBtn" type="button">Copier vers liste</button>
+</div>
+</section>
+<section class="cropPane" aria-label="Recadrage mode liste">
+<div class="cropPane__head">
+<strong>Mode liste</strong>
+<span>Cadre horizontal de l’export liste</span>
+</div>
+<div class="cropStage cropStage--list" id="cropListStage">
+<img alt="" class="cropStage__image" draggable="false" id="cropListImg"/>
+<div class="cropStage__overlay" aria-hidden="true"></div>
+</div>
+<label class="field cropField">
+<span>Zoom liste <b id="cropListZoomValue">100%</b></span>
+<input id="cropListZoomInput" max="3" min="0.1" step="0.01" type="range" value="1"/>
+</label>
+<label class="field cropField cropField--tight">
+<span>Étirer largeur <b id="cropListStretchXValue">100%</b></span>
+<input id="cropListStretchXInput" max="3" min="0.5" step="0.01" type="range" value="1"/>
+</label>
+<div class="cropActions">
+<button class="btn btn--ghost" id="cropListResetBtn" type="button">Réinitialiser liste</button>
+<button class="btn btn--soft" id="cropCopyListToGridBtn" type="button">Copier vers grille</button>
+</div>
+</section>
+</div>
+<p class="cropHint">Astuce : maintiens l’image et déplace-la dans le cadre. La molette ajuste le zoom de 10% à 300%. En grille, l’étirement agit sur la hauteur ; en liste, il agit sur la largeur.</p>
+</div>
+<div class="resetActions cropDialog__actions">
+<button class="btn btn--ghost" id="cropKeepBtn" type="button">Annuler</button>
+<button class="btn btn--primary" id="cropApplyBtn" type="button">Valider le recadrage</button>
+</div>
+</div>
+</div>
+<div aria-live="polite" class="toastContainer" id="toastContainer"></div>
+<script src="libs/html2canvas.local.js"></script>
+<script src="libs/qrcode.local.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
