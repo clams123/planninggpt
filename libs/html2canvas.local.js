@@ -16,7 +16,28 @@
     return {x:r.left - rootRect.left, y:r.top - rootRect.top, w:r.width, h:r.height};
   }
   function css(el){ return getComputedStyle(el); }
-  function textOf(el){ return (el && el.textContent ? el.textContent : '').trim(); }
+  function cssPseudoContent(el, pseudo){
+    if (!el) return '';
+    var raw = '';
+    try { raw = getComputedStyle(el, pseudo).content || ''; } catch(e) { return ''; }
+    raw = String(raw).trim();
+    if (!raw || raw === 'none' || raw === 'normal' || raw === 'initial' || raw === 'inherit' || raw === '""' || raw === "''") return '';
+
+    if ((raw[0] === '"' && raw[raw.length - 1] === '"') || (raw[0] === "'" && raw[raw.length - 1] === "'")) {
+      raw = raw.slice(1, -1);
+    }
+
+    return raw
+      .replace(/\\A/g, '\n')
+      .replace(/\\a/g, '\n')
+      .replace(/\\"/g, '"')
+      .replace(/\\'/g, "'")
+      .replace(/\\\\/g, '\\');
+  }
+  function textOf(el){
+    if (!el) return '';
+    return (cssPseudoContent(el, '::before') + (el.textContent || '') + cssPseudoContent(el, '::after')).trim();
+  }
   function applyTextTransform(text, styles){
     var t = styles.textTransform;
     if (t === 'uppercase') return text.toUpperCase();
@@ -308,6 +329,35 @@
     ctx.drawImage(img, dx, dy, dw, dh);
     ctx.restore();
   }
+  function drawHighlightHalo(ctx, x, y, w, h, r, color, lineWidth){
+    // V30.14 : le halo de la mise en avant visuelle ne doit pas devenir
+    // un double contour massif à l'export. On le rend en ombre douce,
+    // proche du box-shadow CSS de l'aperçu, sans grands cadres opaques.
+    if (!color || color === 'transparent' || color === 'rgba(0,0,0,0)') return;
+
+    var glow = Math.max(12, Math.min(34, Math.min(w, h) * 0.07));
+    var spread = Math.max(2, Math.min(6, Math.min(w, h) * 0.014));
+
+    ctx.save();
+    ctx.globalAlpha = 0.40;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = glow;
+    ctx.lineWidth = Math.max(2, lineWidth + spread);
+    ctx.strokeStyle = color;
+    roundedPath(ctx, x, y, w, h, r);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalAlpha = 0.20;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = glow * 1.45;
+    ctx.lineWidth = Math.max(1.5, lineWidth);
+    ctx.strokeStyle = color;
+    roundedPath(ctx, x, y, w, h, r);
+    ctx.stroke();
+    ctx.restore();
+  }
   function drawCard(ctx, card, rootRect){
     var styles = css(card);
     var r = relRect(card, rootRect);
@@ -316,12 +366,7 @@
     var lineWidth = px(styles.borderTopWidth, 1);
 
     if (card.classList.contains('isHighlighted')) {
-      ctx.save();
-      ctx.globalAlpha = 0.32;
-      drawRoundedBox(ctx, r.x - 10, r.y - 10, r.w + 20, r.h + 20, radius + 10, null, stroke, Math.max(4, lineWidth * 3));
-      ctx.globalAlpha = 0.18;
-      drawRoundedBox(ctx, r.x - 22, r.y - 22, r.w + 44, r.h + 44, radius + 22, null, stroke, Math.max(8, lineWidth * 5));
-      ctx.restore();
+      drawHighlightHalo(ctx, r.x, r.y, r.w, r.h, radius, stroke, lineWidth);
     }
 
     ctx.save();

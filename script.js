@@ -18,7 +18,7 @@ const els = {
   off: $('offBtn'), clearDay: $('clearDayBtn'), duplicate: $('duplicateBtn'),
   imageInput: $('imageInput'), chooseImage: $('chooseImageBtn'), removeImage: $('removeImageBtn'), cropImage: $('cropImageBtn'), imageName: $('imageName'),
   imageFit: $('imageFitInput'), imagePosition: $('imagePositionInput'), dayTransparent: $('dayTransparentInput'),
-  theme: $('themeInput'), themeGallery: $('themeGallery'), favoriteThemeList: $('favoriteThemeList'), toggleThemeFavorite: $('toggleThemeFavoriteBtn'), specialMode: $('specialModeInput'), eventBanner: $('eventBannerInput'), starDay: $('starDayInput'), qr: $('qrInput'),
+  theme: $('themeInput'), themeGallery: $('themeGallery'), favoriteThemeList: $('favoriteThemeList'), toggleThemeFavorite: $('toggleThemeFavoriteBtn'), specialMode: $('specialModeInput'), hideSpecialLabels: $('hideSpecialLabelsInput'), eventBanner: $('eventBannerInput'), starDay: $('starDayInput'), qr: $('qrInput'),
   transparentPng: $('transparentPngInput'), checker: $('checkerInput'),
   previewFrame: $('previewFrame'), canvas: $('planningCanvas'), weekGrid: $('weekGrid'), qrBox: $('qrBox'), previewTitle: $('previewTitle'), previewSubtitle: $('previewSubtitle'), previewEventBanner: $('previewEventBanner'), overflowStatus: $('overflowStatus'),
   saveStatus: $('saveStatus'), viewStatus: $('viewStatus'), exportPng: $('exportPngBtn'), save: $('saveBtn'), undo: $('undoBtn'), redo: $('redoBtn'), reset: $('resetBtn'),
@@ -64,6 +64,7 @@ const DEFAULT_STATE = {
   view:'grid',
   format:'wide',
   specialMode:'none',
+  hideSpecialLabels:false,
   eventBanner:'',
   showQr:false,
   transparentPng:false,
@@ -159,6 +160,7 @@ function normalizeState(raw){
   base.view = oneOf(input.view, ['grid','list'], 'grid');
   base.format = oneOf(input.format, ['wide','square'], 'wide');
   base.specialMode = oneOf(input.specialMode, ['none','poster','ticket','restaurant','rpg','logbook','anime','marathon','release','subathon','indie','challenge'], 'none');
+  base.hideSpecialLabels = !!input.hideSpecialLabels;
   base.eventBanner = String(input.eventBanner ?? '');
   base.showQr = !!input.showQr;
   base.transparentPng = !!input.transparentPng;
@@ -273,6 +275,7 @@ function renderControls(){
   els.subtitle.value = state.subtitle;
   els.theme.value = state.theme;
   els.specialMode.value = state.specialMode;
+  if (els.hideSpecialLabels) els.hideSpecialLabels.checked = !!state.hideSpecialLabels;
   if (els.eventBanner) els.eventBanner.value = state.eventBanner || '';
   els.qr.checked = state.showQr;
   els.transparentPng.checked = state.transparentPng;
@@ -571,6 +574,7 @@ function renderPreview(){
     `view-${state.view}`,
     `format-${state.format}`,
     `mode-${state.specialMode}`,
+    state.hideSpecialLabels ? 'hideSpecialLabels' : '',
     state.showQr ? 'hasQr' : '',
     String(state.eventBanner || '').trim() ? 'hasEventBanner' : '',
     state.transparentPng ? 'canvasTransparent' : ''
@@ -599,7 +603,7 @@ function renderPreview(){
     const status = isOff ? 'Pause' : (day.time || 'À définir');
     const category = day.category || (isOff ? 'Repos' : 'Programme à définir');
     const note = day.note ? `<p class="streamNote">${esc(day.note)}</p>` : '';
-    const special = specialLabel(day, isOff);
+    const special = state.hideSpecialLabels ? '' : specialLabel(day, isOff);
     const specialHtml = special ? `<div class="specialLabel">${esc(special)}</div>` : '';
     const starHtml = day.star ? '<div class="starBadge">Stream spécial</div>' : '';
     const highlightHtml = day.highlighted ? '<div class="highlightBadge">À ne pas manquer</div>' : '';
@@ -1248,6 +1252,7 @@ function bind(){
   els.transparentPng.addEventListener('change', () => { state.transparentPng = els.transparentPng.checked; renderPreview(); scheduleSave(); });
   els.checker.addEventListener('change', () => { state.checker = els.checker.checked; renderPreview(); scheduleSave(); });
   els.specialMode.addEventListener('change', () => { state.specialMode = els.specialMode.value; renderControls(); renderPreview(); scheduleSave(); });
+  if (els.hideSpecialLabels) els.hideSpecialLabels.addEventListener('change', () => { state.hideSpecialLabels = els.hideSpecialLabels.checked; renderControls(); renderPreview(); scheduleSave(); });
   els.eventBanner.addEventListener('input', () => { state.eventBanner = els.eventBanner.value; renderPreview(); scheduleSave(); });
   els.qr.addEventListener('change', () => { state.showQr = els.qr.checked; renderPreview(); scheduleSave(); });
   document.querySelectorAll('.segBtn').forEach(btn => {
