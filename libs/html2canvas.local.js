@@ -791,21 +791,37 @@
     if (!root || !root.classList.contains('mode-ticket')) return;
     var styles = css(card);
     var stroke = safeColor(styles.borderTopColor, 'rgba(255,255,255,.2)');
-    var size = Math.max(16, Math.min(r.w, r.h) * (root.classList.contains('view-list') ? 0.085 : 0.10));
+
+    // V30.32 : les découpes de Ticket doivent respecter la vraie géométrie CSS.
+    // En CSS, ::before / ::after appartiennent à la carte et sont donc coupés
+    // par overflow:hidden + border-radius. Les versions précédentes dessinaient
+    // des cercles complets hors de la carte, ce qui créait des superpositions
+    // entre deux jours voisins, surtout sur Sakura Dream.
+    var cqw = Math.max(1, rootRect.width / 100);
+    var isList = root.classList.contains('view-list');
+    var size = (isList ? 1.35 : 1.9) * cqw;
+    var offset = 1 * cqw;
     var cy = r.y + r.h * 0.50;
-    var left = r.x;
-    var right = r.x + r.w;
-    [left, right].forEach(function(cx){
+    var centers = [
+      r.x - offset + size / 2,
+      r.x + r.w + offset - size / 2
+    ];
+
+    centers.forEach(function(cx){
+      // Fond de découpe : limité à la surface réelle de la carte.
       ctx.save();
+      roundedPath(ctx, r.x, r.y, r.w, r.h, radius);
+      ctx.clip();
       ctx.beginPath();
       ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
       ctx.clip();
-      // Le pseudo-élément CSS du ticket utilise var(--canvasBg).
-      // On redessine donc le fond du canvas dans le cercle, au lieu d'une couleur plate.
       drawCssBackground(ctx, root, 0, 0, rootRect.width, rootRect.height);
       ctx.restore();
 
+      // Bord du trou : lui aussi clipsé dans la carte pour ne pas mordre le voisin.
       ctx.save();
+      roundedPath(ctx, r.x, r.y, r.w, r.h, radius);
+      ctx.clip();
       ctx.strokeStyle = stroke;
       ctx.lineWidth = Math.max(1, px(styles.borderTopWidth, 1));
       ctx.beginPath();
@@ -844,9 +860,9 @@
     }
     ctx.restore();
 
-    drawStyledRoundedBorder(ctx, r.x, r.y, r.w, r.h, radius, stroke, lineWidth, styles.borderTopStyle || styles.borderStyle);
-    drawModeCardFrame(ctx, card, card.closest ? card.closest('.planningCanvas') : null, r, radius);
-    drawTicketCutouts(ctx, card, rootRect, r, radius);
+    // V30.32 : le contour et les découpes Ticket sont dessinés une seule fois
+    // dans la passe finale, après les images. Les dessiner ici puis les refaire
+    // plus bas épaississait les pointillés et les cercles du mode Ticket.
 
     if (card.classList.contains('isToday')) {
       ctx.save();
