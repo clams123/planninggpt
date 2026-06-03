@@ -1,7 +1,7 @@
 /*
   PlanningGPT - moteur d'export PNG local hors ligne.
-  Version corrigée : rendu canvas natif, sans rendu SVG externe.
-  Objectif : éviter les canvas "tainted" et conserver un export PNG lisible par getImageData/toBlob.
+  Version V30.31 : rendu canvas natif, modificateurs stabilisés sans surcouches parasites.
+  Objectif : éviter les canvas "tainted", conserver l’export PNG local et rapprocher les modificateurs de l’aperçu sans foncer le thème de base.
 */
 (function(){
   'use strict';
@@ -48,15 +48,191 @@
   function safeColor(value, fallback){
     value = String(value || '').trim();
     if (!value || value === 'transparent' || value === 'rgba(0, 0, 0, 0)') return fallback || 'rgba(0,0,0,0)';
-    return value;
+    return normalizeCanvasColor(value, fallback);
   }
   function getCssVar(el, name){
     return css(el).getPropertyValue(name).trim();
   }
+  function resolveCssVars(el, value){
+    value = String(value || '');
+    for (var i = 0; i < 6 && value.indexOf('var(') !== -1; i++) {
+      value = value.replace(/var\((--[A-Za-z0-9_-]+)(?:,[^)]+)?\)/g, function(_, name){
+        return getCssVar(el, name) || 'transparent';
+      });
+    }
+    return value;
+  }
   function extractColors(input){
     input = String(input || '');
-    var matches = input.match(/rgba?\([^)]*\)|#[0-9a-fA-F]{3,8}/g);
+    var matches = input.match(/color\([^)]*\)|rgba?\([^)]*\)|#[0-9a-fA-F]{3,8}|transparent/g);
     return matches && matches.length ? matches : [];
+  }
+  function normalizeCanvasColor(value, fallback){
+    value = String(value || '').trim();
+    if (!value || value === 'none') return fallback || 'rgba(0,0,0,0)';
+    if (value === 'transparent') return 'rgba(0,0,0,0)';
+
+    // Chrome peut retourner les couleurs calculées des color-mix() sous la forme
+    // color(srgb r g b / a). Le canvas accepte mal cette syntaxe selon les
+    // versions : on la convertit en rgba() pour que les modificateurs gardent
+    // leurs bandes, contours et halos à l'export.
+    var srgb = value.match(/^color\(\s*srgb\s+([^\s]+)\s+([^\s]+)\s+([^\s\/]+)(?:\s*\/\s*([^\)]+))?\s*\)$/i);
+    if (srgb) {
+      var r = Math.round(clamp(parseFloat(srgb[1]), 0, 1) * 255);
+      var g = Math.round(clamp(parseFloat(srgb[2]), 0, 1) * 255);
+      var b = Math.round(clamp(parseFloat(srgb[3]), 0, 1) * 255);
+      var aRaw = srgb[4] == null ? 1 : String(srgb[4]).trim();
+      var a = aRaw.indexOf('%') !== -1 ? parseFloat(aRaw) / 100 : parseFloat(aRaw);
+      if (!Number.isFinite(a)) a = 1;
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + clamp(a, 0, 1) + ')';
+    }
+
+    // Les exports anciens ou certains navigateurs peuvent garder rgb() séparé
+    // par espaces : rgb(255 255 255 / .5). On normalise aussi ce cas.
+    var spaceRgb = value.match(/^rgba?\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([^\)]+))?\s*\)$/i);
+    if (spaceRgb) {
+      var rr = Math.round(clamp(parseFloat(spaceRgb[1]), 0, 255));
+      var gg = Math.round(clamp(parseFloat(spaceRgb[2]), 0, 255));
+      var bb = Math.round(clamp(parseFloat(spaceRgb[3]), 0, 255));
+      var aaRaw = spaceRgb[4] == null ? 1 : String(spaceRgb[4]).trim();
+      var aa = aaRaw.indexOf('%') !== -1 ? parseFloat(aaRaw) / 100 : parseFloat(aaRaw);
+      if (!Number.isFinite(aa)) aa = 1;
+      return 'rgba(' + rr + ',' + gg + ',' + bb + ',' + clamp(aa, 0, 1) + ')';
+    }
+
+    return value;
+  }
+  function alphaColor(color, alpha){
+    color = String(color || '').trim();
+    alpha = clamp(Number(alpha), 0, 1);
+    if (!color || color === 'transparent') return 'rgba(0,0,0,0)';
+    var hex = color.match(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+    if (hex) {
+      var h = hex[1];
+      if (h.length === 3) h = h.split('').map(function(c){ return c + c; }).join('');
+      var r = parseInt(h.slice(0,2), 16);
+      var g = parseInt(h.slice(2,4), 16);
+      var b = parseInt(h.slice(4,6), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+    var rgb = color.match(/^rgba?\(([^)]+)\)$/);
+    if (rgb) {
+      var parts = rgb[1].split(',').map(function(v){ return parseFloat(v); });
+      if (parts.length >= 3) return 'rgba(' + parts[0] + ',' + parts[1] + ',' + parts[2] + ',' + alpha + ')';
+    }
+    return color;
+  }
+  function colorFromStopPart(part){
+    part = String(part || '').trim();
+    var mix = part.match(/color-mix\(\s*in\s+srgb\s*,\s*(#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)|color\([^)]*\))\s+(-?\d+(?:\.\d+)?)%\s*,\s*transparent\s*\)/i);
+    if (mix) return alphaColor(mix[1], parseFloat(mix[2]) / 100);
+    mix = part.match(/color-mix\(\s*in\s+srgb\s*,\s*transparent\s*,\s*(#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)|color\([^)]*\))\s+(-?\d+(?:\.\d+)?)%\s*\)/i);
+    if (mix) return alphaColor(mix[1], parseFloat(mix[2]) / 100);
+    var colors = extractColors(part);
+    return colors[0] || 'rgba(0,0,0,0)';
+  }
+  function splitTopLevel(value, separator){
+    value = String(value || '');
+    separator = separator || ',';
+    var parts = [];
+    var current = '';
+    var depth = 0;
+    var quote = '';
+    for (var i = 0; i < value.length; i++){
+      var ch = value[i];
+      if (quote) {
+        current += ch;
+        if (ch === quote && value[i - 1] !== '\\') quote = '';
+        continue;
+      }
+      if (ch === '"' || ch === "'") { quote = ch; current += ch; continue; }
+      if (ch === '(') depth++;
+      if (ch === ')') depth = Math.max(0, depth - 1);
+      if (ch === separator && depth === 0) {
+        if (current.trim()) parts.push(current.trim());
+        current = '';
+        continue;
+      }
+      current += ch;
+    }
+    if (current.trim()) parts.push(current.trim());
+    return parts;
+  }
+  function gradientBody(layer){
+    var start = layer.indexOf('(');
+    var end = layer.lastIndexOf(')');
+    return start >= 0 && end > start ? layer.slice(start + 1, end) : '';
+  }
+  function parseStop(part, fallbackIndex, fallbackCount){
+    part = String(part || '').trim();
+    var color = colorFromStopPart(part);
+    var rest = part;
+    if (/color-mix\(/i.test(rest)) rest = rest.slice(rest.lastIndexOf(')') + 1);
+    else rest = rest.replace(color, '');
+    rest = rest.trim();
+    var pctMatches = rest.match(/(-?\d+(?:\.\d+)?)%/g);
+    var fallback = fallbackCount <= 1 ? 0 : fallbackIndex / (fallbackCount - 1);
+    var normalizedColor = normalizeCanvasColor(color);
+
+    // Les modificateurs utilisent souvent des arrêts CSS doubles :
+    // ex. transparent 12% 88%. Canvas a besoin des deux arrêts pour garder
+    // les bandes nettes du mode Ticket / Subathon / Challenge.
+    if (pctMatches && pctMatches.length >= 2) {
+      var first = clamp(parseFloat(pctMatches[0]) / 100, 0, 1);
+      var second = clamp(parseFloat(pctMatches[pctMatches.length - 1]) / 100, 0, 1);
+      return [
+        {color:normalizedColor, stop:first},
+        {color:normalizedColor, stop:Math.max(first, second)}
+      ];
+    }
+
+    var pct = pctMatches && pctMatches.length ? parseFloat(pctMatches[0]) / 100 : fallback;
+    if (!Number.isFinite(pct)) pct = fallback;
+    return [{color:normalizedColor, stop:clamp(pct, 0, 1)}];
+  }
+  function normalizeStops(parts, startIndex){
+    var raw = parts.slice(startIndex || 0).filter(function(part){ return extractColors(part).length; });
+    if (!raw.length) return [];
+    var stops = [];
+    raw.forEach(function(part, index){
+      parseStop(part, index, raw.length).forEach(function(stop){ stops.push(stop); });
+    });
+    // Les stops CSS peuvent être omis ou répétés. On force seulement la progression,
+    // sans supprimer les doublons indispensables aux transitions franches.
+    for (var i = 1; i < stops.length; i++){
+      if (stops[i].stop < stops[i - 1].stop) stops[i].stop = stops[i - 1].stop;
+    }
+    if (stops[0].stop > 0.001) stops.unshift({color:stops[0].color, stop:0});
+    var last = stops[stops.length - 1];
+    if (last.stop < 0.999) stops.push({color:last.color, stop:1});
+    return stops;
+  }
+  function angleFromLinearHeader(header){
+    header = String(header || '').trim().toLowerCase();
+    var m = header.match(/(-?\d+(?:\.\d+)?)deg/);
+    if (m) return parseFloat(m[1]);
+    if (header.indexOf('to right') !== -1) return 90;
+    if (header.indexOf('to left') !== -1) return 270;
+    if (header.indexOf('to top') !== -1) return 0;
+    if (header.indexOf('to bottom') !== -1) return 180;
+    return 180;
+  }
+  function linearGradientCoords(x, y, w, h, angleDeg){
+    // Approximation stable de l'angle CSS : suffisante pour que l'export suive les thèmes.
+    var rad = (angleDeg - 90) * Math.PI / 180;
+    var dx = Math.cos(rad);
+    var dy = Math.sin(rad);
+    var len = Math.abs(w * dx) + Math.abs(h * dy);
+    var cx = x + w / 2;
+    var cy = y + h / 2;
+    return {x0:cx - dx * len / 2, y0:cy - dy * len / 2, x1:cx + dx * len / 2, y1:cy + dy * len / 2};
+  }
+  function applyStops(fill, stops){
+    if (!stops.length) return false;
+    stops.forEach(function(stop){
+      try { fill.addColorStop(clamp(stop.stop, 0, 1), stop.color); } catch(e) {}
+    });
+    return true;
   }
   function fillLinear(ctx, x, y, w, h, colors){
     var fill = ctx.createLinearGradient(x, y, x + w, y + h);
@@ -70,24 +246,113 @@
     ctx.fillStyle = fill;
     ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
   }
+  function drawLinearLayer(ctx, layer, x, y, w, h){
+    var body = gradientBody(layer);
+    var parts = splitTopLevel(body);
+    if (!parts.length) return false;
+    var header = parts[0];
+    var firstHasColor = extractColors(header).length > 0;
+    var angle = firstHasColor ? 180 : angleFromLinearHeader(header);
+    var stops = normalizeStops(parts, firstHasColor ? 0 : 1);
+    if (stops.length < 2) return false;
+    var c = linearGradientCoords(x, y, w, h, angle);
+    var fill = ctx.createLinearGradient(c.x0, c.y0, c.x1, c.y1);
+    applyStops(fill, stops);
+    ctx.fillStyle = fill;
+    ctx.fillRect(x, y, w, h);
+    return true;
+  }
+  function drawRadialLayer(ctx, layer, x, y, w, h){
+    var body = gradientBody(layer);
+    var parts = splitTopLevel(body);
+    if (!parts.length) return false;
+    var header = parts[0];
+    var firstHasColor = extractColors(header).length > 0;
+    var start = firstHasColor ? 0 : 1;
+    var cx = x + w * 0.5;
+    var cy = y + h * 0.5;
+    if (!firstHasColor && header.indexOf('at') !== -1) {
+      var afterAt = header.split('at').pop();
+      var nums = afterAt.match(/-?\d+(?:\.\d+)?%/g);
+      if (nums && nums.length >= 2) {
+        cx = x + w * (parseFloat(nums[0]) / 100);
+        cy = y + h * (parseFloat(nums[1]) / 100);
+      }
+    }
+    var stops = normalizeStops(parts, start);
+    if (stops.length < 2) return false;
+    var radius = Math.max(w, h) * 0.75;
+    var fill = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    applyStops(fill, stops);
+    ctx.fillStyle = fill;
+    ctx.fillRect(x, y, w, h);
+    return true;
+  }
+  function drawRepeatingLinearLayer(ctx, layer, x, y, w, h){
+    var body = gradientBody(layer);
+    var parts = splitTopLevel(body);
+    if (!parts.length) return false;
+    var angle = extractColors(parts[0]).length ? 180 : angleFromLinearHeader(parts[0]);
+    var color = extractColors(body)[0] || 'rgba(255,255,255,.08)';
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.clip();
+    ctx.fillStyle = normalizeCanvasColor(color);
+    var step = Math.max(4, Math.min(w, h) / 120);
+    var thick = Math.max(1, step * 0.18);
+    if (Math.abs(angle % 180) < 1) {
+      for (var yy = y; yy <= y + h; yy += step) ctx.fillRect(x, yy, w, thick);
+    } else if (Math.abs((angle - 90) % 180) < 1) {
+      for (var xx = x; xx <= x + w; xx += step) ctx.fillRect(xx, y, thick, h);
+    } else {
+      ctx.translate(x + w / 2, y + h / 2);
+      ctx.rotate((angle - 90) * Math.PI / 180);
+      for (var i = -w - h; i <= w + h; i += step) ctx.fillRect(i, -h - w, thick, h * 2 + w * 2);
+    }
+    ctx.restore();
+    return true;
+  }
+  function drawCssBackgroundLayers(ctx, bgImage, bgColor, x, y, w, h){
+    var drew = false;
+    if (bgColor && bgColor !== 'rgba(0,0,0,0)' && bgColor !== 'transparent') {
+      ctx.fillStyle = normalizeCanvasColor(bgColor);
+      ctx.fillRect(x, y, w, h);
+      drew = true;
+    }
+    var layers = splitTopLevel(bgImage || '');
+    if (!layers.length || bgImage === 'none') return drew;
+    // CSS dessine la première couche au-dessus. Canvas doit donc partir de la dernière.
+    layers.reverse().forEach(function(layer){
+      layer = layer.trim();
+      if (!layer || layer === 'none' || layer.indexOf('var(--dayImage)') !== -1) return;
+      if (layer.indexOf('repeating-linear-gradient') === 0) { drew = drawRepeatingLinearLayer(ctx, layer, x, y, w, h) || drew; return; }
+      if (layer.indexOf('linear-gradient') === 0) { drew = drawLinearLayer(ctx, layer, x, y, w, h) || drew; return; }
+      if (layer.indexOf('radial-gradient') === 0) { drew = drawRadialLayer(ctx, layer, x, y, w, h) || drew; return; }
+    });
+    return drew;
+  }
   function drawPlanningThemeBackground(ctx, el, x, y, w, h){
     if (!el || !el.classList || !el.classList.contains('planningCanvas')) return false;
+    // Le moteur sait maintenant lire les fonds CSS en couches. Les deux thèmes
+    // ci-dessous gardent uniquement un léger supplément manuel pour rapprocher
+    // les scanlines/étoiles de l'aperçu navigateur.
+    var styles = css(el);
+    var drew = drawCssBackgroundLayers(ctx, styles.backgroundImage || getCssVar(el, '--canvasBg'), safeColor(styles.backgroundColor, 'rgba(0,0,0,0)'), x, y, w, h);
+
+    if (el.classList.contains('theme-horrorvhs')) {
+      ctx.save();
+      ctx.globalAlpha = 0.23;
+      ctx.fillStyle = 'rgba(255,255,255,.18)';
+      var step = Math.max(4, h / 190);
+      for (var yy = y; yy < y + h; yy += step) ctx.fillRect(x, yy, w, 1);
+      ctx.restore();
+      return true;
+    }
 
     if (el.classList.contains('theme-crystalfantasy')) {
-      fillLinear(ctx, x, y, w, h, [
-        [0, '#06101f'],
-        [0.48, '#102b52'],
-        [1, '#070a1f']
-      ]);
       ctx.save();
-      ctx.globalAlpha = 0.72;
-      fillRadial(ctx, x + w * 0.16, y + h * 0.02, Math.max(w, h) * 0.34, [[0, 'rgba(147,197,253,.34)'], [1, 'rgba(147,197,253,0)']]);
-      fillRadial(ctx, x + w * 0.83, y + h * 0.12, Math.max(w, h) * 0.38, [[0, 'rgba(196,181,253,.28)'], [1, 'rgba(196,181,253,0)']]);
-      fillRadial(ctx, x + w * 0.55, y + h * 1.05, Math.max(w, h) * 0.28, [[0, 'rgba(56,189,248,.18)'], [1, 'rgba(56,189,248,0)']]);
-      ctx.restore();
-
-      ctx.save();
-      ctx.globalAlpha = 0.86;
+      ctx.globalAlpha = 0.78;
       ctx.fillStyle = 'rgba(255,255,255,.90)';
       var stars = [[.08,.18,1.4],[.20,.72,1.2],[.43,.24,1.1],[.65,.78,1.4],[.82,.34,1.2],[.33,.52,.9],[.91,.68,.9]];
       stars.forEach(function(star){
@@ -99,68 +364,72 @@
       return true;
     }
 
-    if (el.classList.contains('theme-horrorvhs')) {
-      fillLinear(ctx, x, y, w, h, [
-        [0, '#030303'],
-        [0.48, '#170507'],
-        [1, '#070707']
-      ]);
-      ctx.save();
-      ctx.globalAlpha = 0.7;
-      fillRadial(ctx, x + w * 0.5, y - h * 0.15, Math.max(w, h) * 0.46, [[0, 'rgba(190,18,60,.22)'], [1, 'rgba(190,18,60,0)']]);
-      fillRadial(ctx, x + w * 0.12, y + h * 0.88, Math.max(w, h) * 0.28, [[0, 'rgba(34,211,238,.08)'], [1, 'rgba(34,211,238,0)']]);
-      ctx.restore();
-      ctx.save();
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#ffffff';
-      var step = Math.max(3, Math.round(h / 180));
-      for (var yy = y; yy < y + h; yy += step * 5) ctx.fillRect(x, yy, w, 1);
-      ctx.restore();
-      return true;
-    }
-
-    return false;
+    return drew;
   }
 
   function drawCssBackground(ctx, el, x, y, w, h){
     if (drawPlanningThemeBackground(ctx, el, x, y, w, h)) return;
     var styles = css(el);
-    var bgImage = styles.backgroundImage || '';
-    var bgColor = safeColor(styles.backgroundColor, 'rgba(0,0,0,0)');
-    var colors = extractColors(bgImage);
-
-    if (colors.length >= 2 && bgImage !== 'none') {
-      var fill;
-      if (bgImage.indexOf('radial-gradient') !== -1) {
-        fill = ctx.createRadialGradient(x + w * 0.5, y, 0, x + w * 0.5, y + h * 0.35, Math.max(w, h) * 0.75);
-      } else {
-        fill = ctx.createLinearGradient(x, y, x + w, y + h);
-      }
-      colors.forEach(function(color, index){
-        fill.addColorStop(colors.length === 1 ? 0 : index / (colors.length - 1), color);
-      });
-      ctx.fillStyle = fill;
-      ctx.fillRect(x, y, w, h);
-      return;
+    var bgImage = resolveCssVars(el, styles.backgroundImage || '');
+    var bgColor = safeColor(resolveCssVars(el, styles.backgroundColor || ''), 'rgba(0,0,0,0)');
+    if (drawCssBackgroundLayers(ctx, bgImage, bgColor, x, y, w, h)) return;
+  }
+  function drawPseudoBackground(ctx, el, pseudo, x, y, w, h){
+    if (!el) return;
+    var styles;
+    try { styles = getComputedStyle(el, pseudo); } catch(e) { return; }
+    if (!styles || styles.content === 'none' || styles.content === 'normal') return;
+    var opacity = num(styles.opacity, 1);
+    ctx.save();
+    ctx.globalAlpha *= clamp(opacity, 0, 1);
+    drawCssBackgroundLayers(ctx, resolveCssVars(el, styles.backgroundImage || ''), safeColor(resolveCssVars(el, styles.backgroundColor || ''), 'rgba(0,0,0,0)'), x, y, w, h);
+    ctx.restore();
+  }
+  function normalizeRadii(r, w, h){
+    var max = Math.min(w, h) / 2;
+    if (r && typeof r === 'object') {
+      return {
+        tl:clamp(num(r.tl, 0), 0, max),
+        tr:clamp(num(r.tr, 0), 0, max),
+        br:clamp(num(r.br, 0), 0, max),
+        bl:clamp(num(r.bl, 0), 0, max)
+      };
     }
-
-    if (bgColor !== 'rgba(0,0,0,0)') {
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(x, y, w, h);
+    var v = clamp(r || 0, 0, max);
+    return {tl:v, tr:v, br:v, bl:v};
+  }
+  function adjustRadii(r, delta){
+    if (r && typeof r === 'object') {
+      return {
+        tl:Math.max(0, num(r.tl, 0) + delta),
+        tr:Math.max(0, num(r.tr, 0) + delta),
+        br:Math.max(0, num(r.br, 0) + delta),
+        bl:Math.max(0, num(r.bl, 0) + delta)
+      };
     }
+    return Math.max(0, num(r, 0) + delta);
+  }
+  function radiiFromStyles(styles, fallback){
+    fallback = fallback || 0;
+    return {
+      tl:px(styles.borderTopLeftRadius, fallback),
+      tr:px(styles.borderTopRightRadius, fallback),
+      br:px(styles.borderBottomRightRadius, fallback),
+      bl:px(styles.borderBottomLeftRadius, fallback)
+    };
   }
   function roundedPath(ctx, x, y, w, h, r){
-    r = clamp(r || 0, 0, Math.min(w, h) / 2);
+    var rr = normalizeRadii(r, w, h);
     ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.moveTo(x + rr.tl, y);
+    ctx.lineTo(x + w - rr.tr, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + rr.tr);
+    ctx.lineTo(x + w, y + h - rr.br);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - rr.br, y + h);
+    ctx.lineTo(x + rr.bl, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - rr.bl);
+    ctx.lineTo(x, y + rr.tl);
+    ctx.quadraticCurveTo(x, y, x + rr.tl, y);
     ctx.closePath();
   }
   function drawRoundedBox(ctx, x, y, w, h, r, fill, stroke, lineWidth){
@@ -174,6 +443,87 @@
       ctx.strokeStyle = stroke;
       ctx.stroke();
     }
+  }
+  function drawStyledRoundedBorder(ctx, x, y, w, h, r, color, lineWidth, style){
+    if (!color || color === 'rgba(0,0,0,0)' || color === 'transparent') return;
+    lineWidth = Math.max(1, lineWidth || 1);
+    style = String(style || 'solid').toLowerCase();
+
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+
+    if (style === 'dashed') ctx.setLineDash([Math.max(6, lineWidth * 5), Math.max(4, lineWidth * 3)]);
+    if (style === 'dotted') ctx.setLineDash([Math.max(1, lineWidth * 1.2), Math.max(3, lineWidth * 3)]);
+
+    if (style === 'double' && Math.min(w, h) > lineWidth * 8) {
+      ctx.setLineDash([]);
+      roundedPath(ctx, x + lineWidth * 0.6, y + lineWidth * 0.6, w - lineWidth * 1.2, h - lineWidth * 1.2, adjustRadii(r, -lineWidth * 0.6));
+      ctx.stroke();
+      roundedPath(ctx, x + lineWidth * 2.4, y + lineWidth * 2.4, w - lineWidth * 4.8, h - lineWidth * 4.8, adjustRadii(r, -lineWidth * 2.4));
+      ctx.stroke();
+    } else {
+      roundedPath(ctx, x, y, w, h, r);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function applyElementRotation(ctx, el, rect){
+    var styles = css(el);
+    var transform = styles.transform || '';
+    if (!transform || transform === 'none') return false;
+    var match = transform.match(/matrix\(([^)]+)\)/);
+    if (!match) return false;
+    var values = match[1].split(',').map(function(v){ return parseFloat(v); });
+    if (values.length < 2 || !Number.isFinite(values[0]) || !Number.isFinite(values[1])) return false;
+    var angle = Math.atan2(values[1], values[0]);
+    if (Math.abs(angle) < 0.001) return false;
+    ctx.translate(rect.x + rect.w / 2, rect.y + rect.h / 2);
+    ctx.rotate(angle);
+    ctx.translate(-(rect.x + rect.w / 2), -(rect.y + rect.h / 2));
+    return true;
+  }
+  function parseFirstShadowColor(value){
+    var colors = extractColors(value);
+    return colors.length ? normalizeCanvasColor(colors[0]) : '';
+  }
+  function drawElementBoxShadow(ctx, el, rootRect, rect, radius){
+    var styles = css(el);
+    var shadow = styles.boxShadow || '';
+    if (!shadow || shadow === 'none') return;
+    var color = parseFirstShadowColor(shadow);
+    if (!color || color === 'transparent' || color === 'rgba(0,0,0,0)') return;
+
+    var root = el.closest ? el.closest('.planningCanvas') : null;
+    var inset = shadow.indexOf('inset') !== -1;
+    var blurMatch = shadow.match(/(-?\d+(?:\.\d+)?)px/g);
+    var blur = 16;
+    if (blurMatch && blurMatch.length >= 3) blur = Math.abs(parseFloat(blurMatch[2]));
+
+    ctx.save();
+    if (inset) {
+      ctx.globalAlpha = 0.9;
+      drawStyledRoundedBorder(ctx, rect.x + 4, rect.y + 4, rect.w - 8, rect.h - 8, adjustRadii(radius, -4), color, Math.max(2, Math.min(8, blur / 5)), 'solid');
+    } else {
+      ctx.globalAlpha = root && root.classList.contains('mode-challenge') ? 0.75 : 0.42;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = Math.max(6, Math.min(44, blur));
+      ctx.fillStyle = color;
+      roundedPath(ctx, rect.x, rect.y, rect.w, rect.h, radius);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(1, Math.min(5, (px(styles.borderTopWidth, 1) || 1)));
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawElementOutline(ctx, el, rect, radius){
+    var styles = css(el);
+    var outlineStyle = String(styles.outlineStyle || 'none').toLowerCase();
+    var outlineWidth = px(styles.outlineWidth, 0);
+    if (!outlineWidth || outlineStyle === 'none' || outlineStyle === 'hidden') return;
+    var color = safeColor(styles.outlineColor, 'rgba(255,255,255,.35)');
+    var offset = px(styles.outlineOffset, 0);
+    drawStyledRoundedBorder(ctx, rect.x - offset, rect.y - offset, rect.w + offset * 2, rect.h + offset * 2, adjustRadii(radius, offset), color, outlineWidth, outlineStyle);
   }
   function fontFrom(styles){
     var weight = styles.fontWeight || '700';
@@ -221,6 +571,17 @@
     ctx.save();
     ctx.font = fontFrom(styles);
     ctx.fillStyle = safeColor(styles.color, '#ffffff');
+    var textShadow = styles.textShadow || '';
+    if (textShadow && textShadow !== 'none') {
+      var shadowColor = parseFirstShadowColor(textShadow);
+      if (shadowColor) {
+        ctx.shadowColor = shadowColor;
+        var nums = textShadow.match(/(-?\d+(?:\.\d+)?)px/g);
+        ctx.shadowOffsetX = nums && nums[0] ? parseFloat(nums[0]) : 0;
+        ctx.shadowOffsetY = nums && nums[1] ? parseFloat(nums[1]) : 0;
+        ctx.shadowBlur = nums && nums[2] ? Math.min(24, Math.abs(parseFloat(nums[2]))) : 0;
+      }
+    }
     ctx.textAlign = align;
     ctx.textBaseline = 'alphabetic';
 
@@ -274,8 +635,12 @@
     var styles = css(el);
     var r = relRect(el, rootRect);
     var radius = px(styles.borderRadius, r.h / 2);
-    drawRoundedBox(ctx, r.x, r.y, r.w, r.h, radius, safeColor(styles.backgroundColor, 'rgba(255,255,255,.12)'), safeColor(styles.borderTopColor, 'rgba(255,255,255,.22)'), px(styles.borderTopWidth, 1));
+    ctx.save();
+    applyElementRotation(ctx, el, r);
+    drawRoundedBox(ctx, r.x, r.y, r.w, r.h, radius, safeColor(styles.backgroundColor, 'rgba(255,255,255,.12)'), null, 0);
+    drawStyledRoundedBorder(ctx, r.x, r.y, r.w, r.h, radius, safeColor(styles.borderTopColor, 'rgba(255,255,255,.22)'), px(styles.borderTopWidth, 1), styles.borderTopStyle || styles.borderStyle);
     drawTextBlock(ctx, el, rootRect, {align:'center', singleLine:true, verticalCenter:true, maxWidth:Math.max(4, r.w - 8)});
+    ctx.restore();
   }
   function extractUrl(value){
     value = String(value || '').trim();
@@ -358,12 +723,106 @@
     ctx.stroke();
     ctx.restore();
   }
+
+  function rootMode(root){
+    if (!root || !root.classList) return '';
+    var modes = ['poster','ticket','restaurant','rpg','logbook','anime','marathon','release','subathon','indie','challenge'];
+    for (var i = 0; i < modes.length; i++) if (root.classList.contains('mode-' + modes[i])) return modes[i];
+    return '';
+  }
+  function cssVarColor(el, name, fallback){
+    return safeColor(resolveCssVars(el, 'var(' + name + ')'), fallback || 'rgba(255,255,255,.35)');
+  }
+  function drawDiagonalStripes(ctx, x, y, w, h, color, alpha, gap, thickness, angleDeg){
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.clip();
+    ctx.globalAlpha *= clamp(alpha, 0, 1);
+    ctx.strokeStyle = normalizeCanvasColor(color, 'rgba(255,255,255,.25)');
+    ctx.lineWidth = Math.max(1, thickness || 2);
+    ctx.translate(x + w / 2, y + h / 2);
+    ctx.rotate((angleDeg || -35) * Math.PI / 180);
+    var extent = Math.max(w, h) * 2;
+    gap = Math.max(6, gap || Math.min(w, h) / 10);
+    for (var pos = -extent; pos <= extent; pos += gap) {
+      ctx.beginPath();
+      ctx.moveTo(pos, -extent);
+      ctx.lineTo(pos, extent);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawHorizontalScan(ctx, x, y, w, h, color, alpha, gap, thickness){
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.clip();
+    ctx.globalAlpha *= clamp(alpha, 0, 1);
+    ctx.fillStyle = normalizeCanvasColor(color, 'rgba(255,255,255,.22)');
+    gap = Math.max(5, gap || h / 28);
+    thickness = Math.max(1, thickness || 1);
+    for (var yy = y; yy <= y + h; yy += gap) ctx.fillRect(x, yy, w, thickness);
+    ctx.restore();
+  }
+  function drawModeCanvasOverlay(ctx, root, x, y, w, h){
+    // V30.31 : on ne force plus de calque décoratif global.
+    // Les modificateurs sont déjà présents dans le background CSS calculé
+    // de .planningCanvas. Les surcouches V30.30 fonçaient le thème, surtout
+    // sur les côtés, et créaient un rendu différent de l’aperçu.
+    return;
+  }
+  function drawModeCardOverlay(ctx, card, root, r, radius){
+    // V30.31 : pas de surcouche manuelle sur les cartes.
+    // Les fonds de cartes des modes spéciaux sont lus depuis
+    // getComputedStyle(card).backgroundImage par drawCssBackground().
+    // Cela évite de doubler les bandes/gradients et de créer des chevauchements.
+    return;
+  }
+  function drawModeCardFrame(ctx, card, root, r, radius){
+    // V30.31 : les contours spéciaux (dashed, outline, double, arrondis)
+    // sont désormais rendus par drawStyledRoundedBorder() et drawElementOutline()
+    // à partir des styles CSS calculés. On évite donc un deuxième contour forcé.
+    return;
+  }
+
+  function drawTicketCutouts(ctx, card, rootRect, r, radius){
+    var root = card.closest ? card.closest('.planningCanvas') : null;
+    if (!root || !root.classList.contains('mode-ticket')) return;
+    var styles = css(card);
+    var stroke = safeColor(styles.borderTopColor, 'rgba(255,255,255,.2)');
+    var size = Math.max(16, Math.min(r.w, r.h) * (root.classList.contains('view-list') ? 0.085 : 0.10));
+    var cy = r.y + r.h * 0.50;
+    var left = r.x;
+    var right = r.x + r.w;
+    [left, right].forEach(function(cx){
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
+      ctx.clip();
+      // Le pseudo-élément CSS du ticket utilise var(--canvasBg).
+      // On redessine donc le fond du canvas dans le cercle, au lieu d'une couleur plate.
+      drawCssBackground(ctx, root, 0, 0, rootRect.width, rootRect.height);
+      ctx.restore();
+
+      ctx.save();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = Math.max(1, px(styles.borderTopWidth, 1));
+      ctx.beginPath();
+      ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
   function drawCard(ctx, card, rootRect){
     var styles = css(card);
     var r = relRect(card, rootRect);
-    var radius = px(styles.borderTopLeftRadius, 16);
+    var radius = radiiFromStyles(styles, 16);
     var stroke = safeColor(styles.borderTopColor, 'rgba(255,255,255,.2)');
     var lineWidth = px(styles.borderTopWidth, 1);
+
+    drawElementBoxShadow(ctx, card, rootRect, r, radius);
+    drawElementOutline(ctx, card, r, radius);
 
     if (card.classList.contains('isHighlighted')) {
       drawHighlightHalo(ctx, r.x, r.y, r.w, r.h, radius, stroke, lineWidth);
@@ -374,6 +833,7 @@
     ctx.clip();
 
     drawCssBackground(ctx, card, r.x, r.y, r.w, r.h);
+    drawModeCardOverlay(ctx, card, card.closest ? card.closest('.planningCanvas') : null, r, radius);
 
     var bg = extractUrl(getCssVar(card, '--exportDayImage') || getCssVar(card, '--dayImage') || styles.backgroundImage);
     var fit = getCssVar(card, '--imageFit') || styles.backgroundSize || 'cover';
@@ -384,13 +844,15 @@
     }
     ctx.restore();
 
-    drawRoundedBox(ctx, r.x, r.y, r.w, r.h, radius, null, stroke, lineWidth);
+    drawStyledRoundedBorder(ctx, r.x, r.y, r.w, r.h, radius, stroke, lineWidth, styles.borderTopStyle || styles.borderStyle);
+    drawModeCardFrame(ctx, card, card.closest ? card.closest('.planningCanvas') : null, r, radius);
+    drawTicketCutouts(ctx, card, rootRect, r, radius);
 
     if (card.classList.contains('isToday')) {
       ctx.save();
       ctx.lineWidth = Math.max(2, Math.round(Math.min(r.w, r.h) * 0.016));
       ctx.strokeStyle = 'rgba(56,189,248,.72)';
-      drawRoundedBox(ctx, r.x + 4, r.y + 4, r.w - 8, r.h - 8, Math.max(2, radius - 4), null, ctx.strokeStyle, ctx.lineWidth);
+      drawRoundedBox(ctx, r.x + 4, r.y + 4, r.w - 8, r.h - 8, adjustRadii(radius, -4), null, ctx.strokeStyle, ctx.lineWidth);
       ctx.restore();
     }
 
@@ -398,7 +860,7 @@
       ctx.save();
       ctx.lineWidth = Math.max(2, Math.round(Math.min(r.w, r.h) * 0.018));
       ctx.strokeStyle = 'rgba(250,204,21,.48)';
-      drawRoundedBox(ctx, r.x + 6, r.y + 6, r.w - 12, r.h - 12, Math.max(2, radius - 6), null, ctx.strokeStyle, ctx.lineWidth);
+      drawRoundedBox(ctx, r.x + 6, r.y + 6, r.w - 12, r.h - 12, adjustRadii(radius, -6), null, ctx.strokeStyle, ctx.lineWidth);
       ctx.restore();
     }
   }
@@ -407,7 +869,7 @@
     var cs = css(card);
     var cr = relRect(card, rootRect);
     ctx.save();
-    roundedPath(ctx, cr.x, cr.y, cr.w, cr.h, px(cs.borderTopLeftRadius, 16));
+    roundedPath(ctx, cr.x, cr.y, cr.w, cr.h, radiiFromStyles(cs, 16));
     ctx.clip();
 
     var dayName = card.querySelector('.dayName span') || card.querySelector('.dayName');
@@ -483,6 +945,8 @@
     }
 
     drawCssBackground(ctx, node, 0, 0, width, height);
+    drawModeCanvasOverlay(ctx, node, 0, 0, width, height);
+    drawPseudoBackground(ctx, node, '::before', 0, 0, width, height);
 
     var cards = Array.prototype.slice.call(node.querySelectorAll('.dayCard'));
     cards.sort(function(a, b){
@@ -500,7 +964,7 @@
       var img = await loadImage(src);
       if (!img) continue;
       ctx.save();
-      roundedPath(ctx, cr.x, cr.y, cr.w, cr.h, px(cs.borderTopLeftRadius, 16));
+      roundedPath(ctx, cr.x, cr.y, cr.w, cr.h, radiiFromStyles(cs, 16));
       ctx.clip();
       drawImageFit(ctx, img, cr.x, cr.y, cr.w, cr.h, getCssVar(card, '--imageFit') || cs.backgroundSize, getCssVar(card, '--imagePosition') || cs.backgroundPosition, cropFromCard(card));
       // Léger voile pour préserver la lisibilité, similaire aux rendus CSS existants.
@@ -513,7 +977,9 @@
     cards.forEach(function(card){
       var cs = css(card);
       var cr = relRect(card, rect);
-      drawRoundedBox(ctx, cr.x, cr.y, cr.w, cr.h, px(cs.borderTopLeftRadius, 16), null, safeColor(cs.borderTopColor, 'rgba(255,255,255,.2)'), px(cs.borderTopWidth, 1));
+      drawStyledRoundedBorder(ctx, cr.x, cr.y, cr.w, cr.h, radiiFromStyles(cs, 16), safeColor(cs.borderTopColor, 'rgba(255,255,255,.2)'), px(cs.borderTopWidth, 1), cs.borderTopStyle || cs.borderStyle);
+      drawTicketCutouts(ctx, card, rect, cr, radiiFromStyles(cs, 16));
+      drawElementOutline(ctx, card, cr, radiiFromStyles(cs, 16));
     });
 
     // Hero au-dessus du fond.
