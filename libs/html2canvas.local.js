@@ -1,6 +1,6 @@
 /*
   PlanningGPT - moteur d'export PNG local hors ligne.
-  Version V30.31 : rendu canvas natif, modificateurs stabilisés sans surcouches parasites.
+  Version V30.33 : rendu canvas natif, correction Fantasy Ciel Étoilé à l’export.
   Objectif : éviter les canvas "tainted", conserver l’export PNG local et rapprocher les modificateurs de l’aperçu sans foncer le thème de base.
 */
 (function(){
@@ -332,11 +332,102 @@
     });
     return drew;
   }
+  function drawEllipseRadialGlow(ctx, x, y, w, h, cxPct, cyPct, rxCqw, ryCqw, stops){
+    var cqw = Math.max(1, w / 100);
+    var rx = Math.max(1, rxCqw * cqw);
+    var ry = Math.max(1, ryCqw * cqw);
+    var cx = x + w * cxPct;
+    var cy = y + h * cyPct;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.clip();
+    ctx.translate(cx, cy);
+    ctx.scale(rx, ry);
+    var fill = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+    stops.forEach(function(stop){
+      try { fill.addColorStop(clamp(stop[0], 0, 1), stop[1]); } catch(e) {}
+    });
+    ctx.fillStyle = fill;
+    ctx.fillRect((x - cx) / rx, (y - cy) / ry, w / rx, h / ry);
+    ctx.restore();
+  }
+
+  function drawCrystalFantasyBase(ctx, x, y, w, h){
+    // V30.33 : correction ciblée Fantasy Ciel Étoilé.
+    // Les radial-gradient CSS en cqw + les mini étoiles du ::before étaient
+    // interprétés comme d'énormes halos blancs par le moteur canvas.
+    // On redessine donc le fond du thème avec des ellipses bornées, ce qui
+    // garde le rendu sombre/bleuté visible dans l'aperçu.
+    var linear = ctx.createLinearGradient(x, y, x + w, y + h);
+    linear.addColorStop(0, '#06101f');
+    linear.addColorStop(0.48, '#102b52');
+    linear.addColorStop(1, '#070a1f');
+    ctx.fillStyle = linear;
+    ctx.fillRect(x, y, w, h);
+
+    drawEllipseRadialGlow(ctx, x, y, w, h, 0.16, 0.02, 34, 25, [
+      [0, 'rgba(147,197,253,.34)'],
+      [0.70, 'rgba(147,197,253,0)'],
+      [1, 'rgba(147,197,253,0)']
+    ]);
+    drawEllipseRadialGlow(ctx, x, y, w, h, 0.83, 0.12, 40, 30, [
+      [0, 'rgba(196,181,253,.28)'],
+      [0.73, 'rgba(196,181,253,0)'],
+      [1, 'rgba(196,181,253,0)']
+    ]);
+    drawEllipseRadialGlow(ctx, x, y, w, h, 0.55, 1.05, 32, 22, [
+      [0, 'rgba(56,189,248,.18)'],
+      [0.70, 'rgba(56,189,248,0)'],
+      [1, 'rgba(56,189,248,0)']
+    ]);
+  }
+
+  function drawCrystalFantasyStars(ctx, x, y, w, h){
+    var cqw = Math.max(1, w / 100);
+    ctx.save();
+    ctx.globalAlpha *= 0.9;
+
+    var overlay = ctx.createLinearGradient(x, y, x + w, y + h);
+    overlay.addColorStop(0, 'rgba(255,255,255,.08)');
+    overlay.addColorStop(0.42, 'rgba(255,255,255,0)');
+    overlay.addColorStop(1, 'rgba(125,211,252,.06)');
+    ctx.fillStyle = overlay;
+    ctx.fillRect(x, y, w, h);
+
+    var stars = [
+      [0.08,0.18,0.07,'rgba(255,255,255,.95)'],
+      [0.20,0.72,0.06,'rgba(186,230,253,.95)'],
+      [0.43,0.24,0.055,'rgba(255,255,255,.85)'],
+      [0.65,0.78,0.07,'rgba(196,181,253,.90)'],
+      [0.82,0.34,0.06,'rgba(255,255,255,.92)']
+    ];
+    stars.forEach(function(star){
+      var r = Math.max(0.75, star[2] * cqw);
+      var sx = x + w * star[0];
+      var sy = y + h * star[1];
+      var fill = ctx.createRadialGradient(sx, sy, 0, sx, sy, r * 1.45);
+      fill.addColorStop(0, star[3]);
+      fill.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = fill;
+      ctx.beginPath();
+      ctx.arc(sx, sy, r * 1.45, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
   function drawPlanningThemeBackground(ctx, el, x, y, w, h){
     if (!el || !el.classList || !el.classList.contains('planningCanvas')) return false;
-    // Le moteur sait maintenant lire les fonds CSS en couches. Les deux thèmes
-    // ci-dessous gardent uniquement un léger supplément manuel pour rapprocher
-    // les scanlines/étoiles de l'aperçu navigateur.
+    // Le moteur sait maintenant lire les fonds CSS en couches. Certains thèmes
+    // très complexes gardent une correction ciblée quand le CSS contient des
+    // unités/pseudo-éléments que le canvas ne peut pas reproduire directement.
+    if (el.classList.contains('theme-crystalfantasy')) {
+      drawCrystalFantasyBase(ctx, x, y, w, h);
+      return true;
+    }
+
     var styles = css(el);
     var drew = drawCssBackgroundLayers(ctx, styles.backgroundImage || getCssVar(el, '--canvasBg'), safeColor(styles.backgroundColor, 'rgba(0,0,0,0)'), x, y, w, h);
 
@@ -346,20 +437,6 @@
       ctx.fillStyle = 'rgba(255,255,255,.18)';
       var step = Math.max(4, h / 190);
       for (var yy = y; yy < y + h; yy += step) ctx.fillRect(x, yy, w, 1);
-      ctx.restore();
-      return true;
-    }
-
-    if (el.classList.contains('theme-crystalfantasy')) {
-      ctx.save();
-      ctx.globalAlpha = 0.78;
-      ctx.fillStyle = 'rgba(255,255,255,.90)';
-      var stars = [[.08,.18,1.4],[.20,.72,1.2],[.43,.24,1.1],[.65,.78,1.4],[.82,.34,1.2],[.33,.52,.9],[.91,.68,.9]];
-      stars.forEach(function(star){
-        ctx.beginPath();
-        ctx.arc(x + w * star[0], y + h * star[1], Math.max(0.8, star[2] * (w / 1600)), 0, Math.PI * 2);
-        ctx.fill();
-      });
       ctx.restore();
       return true;
     }
@@ -379,6 +456,16 @@
     var styles;
     try { styles = getComputedStyle(el, pseudo); } catch(e) { return; }
     if (!styles || styles.content === 'none' || styles.content === 'normal') return;
+
+    if (pseudo === '::before' && el.classList && el.classList.contains('theme-crystalfantasy')) {
+      var fantasyOpacity = num(styles.opacity, 1);
+      ctx.save();
+      ctx.globalAlpha *= clamp(fantasyOpacity, 0, 1);
+      drawCrystalFantasyStars(ctx, x, y, w, h);
+      ctx.restore();
+      return;
+    }
+
     var opacity = num(styles.opacity, 1);
     ctx.save();
     ctx.globalAlpha *= clamp(opacity, 0, 1);
