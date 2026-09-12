@@ -5,9 +5,11 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 ## Ce que permet la V2
 
 - Modifier le contenu des sept jours indépendamment de la composition graphique.
+- Afficher ou masquer chaque jour directement depuis la rangée hebdomadaire, sans supprimer son contenu, avec des raccourcis pour tout afficher ou masquer les jours de repos.
 - Associer une image à chaque jour : elle remplit automatiquement toute la carte et suit directement sa taille et sa forme, tout en restant ajustable sans modifier le fichier original.
 - Utiliser le dégradé du modèle, importer une image comme fond global ou exporter le planning sur un fond entièrement transparent.
-- Choisir parmi quinze modèles structurellement différents, dont Affiche duo, Colonnes gaming, Grille pop, Horreur VHS et Partition de violon.
+- Choisir parmi quinze modèles structurellement différents, dont Duo et +, Colonnes gaming, Grille pop, Horreur VHS et Partition de violon.
+- Composer librement Duo et + avec deux à sept jours choisis dans la semaine ; les cartes sont automatiquement recentrées et redimensionnées quand leur nombre change.
 - Le modèle Partition de violon compose les sept jours comme des mesures réparties en deux mouvements, avec portées, clés de sol, cadre gravé, ornements et filigrane vectoriel original.
 - Recomposer chaque carte en mode classique, affiche illustrée, jour en vedette ou image seule, puis afficher ou masquer séparément le jour, l’horaire, le titre et la note. Une composition peut être appliquée à toutes les cartes en un clic.
 - Transformer n’importe quel modèle avec onze modificateurs accessibles directement sous les modèles : affiche, ticket, restaurant, RPG, journal de bord, anime, marathon, sortie de jeu, subathon, découverte indé et challenge.

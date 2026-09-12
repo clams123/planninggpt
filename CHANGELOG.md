@@ -4,6 +4,8 @@
 
 ### Compléments de la refonte
 
+- Transformation d’Affiche duo en « Duo et + » : choix libre de deux à sept jours, réorganisation automatique et migration des anciennes compositions à deux cartes.
+- Simplification de l’affichage des jours : commande visible sous chaque jour, compteur hebdomadaire, « Tout afficher » et « Masquer les repos », sans suppression des données ni de la position des cartes.
 - Placement de « Réinitialiser le planning » directement sous « Jour star », sans icône ni doublon dans la barre supérieure.
 - Ajout de six emojis : microphone, violon, partition, note musicale, crâne et cassette VHS.
 - Correction du faux effet de texte doublé avec Saison anime et Subathon lorsque la typographie globale reste sur « Style du modèle », y compris pour les projets déjà sauvegardés.

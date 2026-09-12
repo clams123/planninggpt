@@ -57,7 +57,7 @@
   const els = {
     app:$('appRoot'),
     projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'),
-    title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
+    title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
     artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
     inspector:$('inspector'), closeInspector:$('closeInspectorBtn'), emptyInspector:$('emptyInspector'), propertyPanel:$('propertyPanel'), layerList:$('layerList'), layerSelect:$('layerSelect'),
     propX:$('propX'), propY:$('propY'), propW:$('propW'), propH:$('propH'), propRotation:$('propRotation'), propText:$('propText'), propFontSize:$('propFontSize'), propFont:$('propFont'), propWeight:$('propWeight'), propFontStyle:$('propFontStyle'), propTransform:$('propTransform'), propAlign:$('propAlign'), propLetterSpacing:$('propLetterSpacing'), propLetterSpacingValue:$('propLetterSpacingValue'), propTextEffect:$('propTextEffect'), propColor:$('propColor'), propFill:$('propFill'), propColorField:$('propColorField'), propFillField:$('propFillField'), propOpacity:$('propOpacity'), textProperties:$('textProperties'), textContentField:$('textContentField'), imageProperties:$('imageProperties'), propImageFit:$('propImageFit'), cropImage:$('cropImageBtn'), replaceImage:$('replaceImageInput'), dayCardProperties:$('dayCardProperties'), propDayLayout:$('propDayLayout'), propShowDayName:$('propShowDayName'), propShowDayTime:$('propShowDayTime'), propShowDayTitle:$('propShowDayTitle'), propShowDayNote:$('propShowDayNote'), propDayOverlay:$('propDayOverlay'), propDayOverlayValue:$('propDayOverlayValue'), applyDayStyleAll:$('applyDayStyleAllBtn'), duplicate:$('duplicateElementBtn'), remove:$('deleteElementBtn'),
@@ -92,7 +92,7 @@
   function minimumElementSize(element){return element?.type==='shape'?1:20;}
 
   function defaultProject(){
-    return {version:VERSION,name:'Mon planning Twitch',format:'wide',width:1600,height:900,template:'cloud',modifier:'none',typePreset:'',hideModifierLabels:false,eventBanner:'',showQr:false,qrUrl:'https://twitch.tv/ton_lien',title:'Planning de la semaine',subtitle:'twitch.tv/ton_lien',background:{colors:['#f7b7df','#8399f5'],angle:135,transparent:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()},days:clone(DEFAULT_DAYS).map(day=>({...day,star:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()})),elements:[]};
+    return {version:VERSION,name:'Mon planning Twitch',format:'wide',width:1600,height:900,template:'cloud',spotlightInitialized:false,modifier:'none',typePreset:'',hideModifierLabels:false,eventBanner:'',showQr:false,qrUrl:'https://twitch.tv/ton_lien',title:'Planning de la semaine',subtitle:'twitch.tv/ton_lien',background:{colors:['#f7b7df','#8399f5'],angle:135,transparent:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()},days:clone(DEFAULT_DAYS).map(day=>({...day,visible:true,star:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()})),elements:[]};
   }
   let project = defaultProject();
 
@@ -101,11 +101,11 @@
     if(!['wide','square'].includes(raw.format)||(raw.format==='wide'&&(Number(raw.width)!==1600||Number(raw.height)!==900))||(raw.format==='square'&&(Number(raw.width)!==1080||Number(raw.height)!==1080)))throw new Error('Format V2 invalide');
     if(raw.template==='candy')raw.template='horror';if(!TEMPLATE_STYLE[raw.template])raw.template='cloud';
     raw.modifier=MODIFIERS.includes(raw.modifier)?raw.modifier:'none';raw.typePreset=TYPE_PRESET_ALIASES[raw.typePreset]||raw.typePreset;raw.typePreset=TYPE_PRESETS[raw.typePreset]?raw.typePreset:'';raw.hideModifierLabels=!!raw.hideModifierLabels;raw.eventBanner=String(raw.eventBanner||'');raw.showQr=!!raw.showQr;raw.qrUrl=String(raw.qrUrl||raw.subtitle||'https://twitch.tv/ton_lien');
-    raw.name=String(raw.name||'Mon planning Twitch');raw.title=String(raw.title||'Planning de la semaine');raw.subtitle=String(raw.subtitle||'');raw.version=VERSION;
+    raw.name=String(raw.name||'Mon planning Twitch');raw.title=String(raw.title||'Planning de la semaine');raw.subtitle=String(raw.subtitle||'');raw.spotlightInitialized=!!raw.spotlightInitialized;raw.version=VERSION;
     raw.background=raw.background&&Array.isArray(raw.background.colors)&&raw.background.colors.length===2?raw.background:clone(TEMPLATE_STYLE[raw.template].bg);
     if(Array.isArray(raw.background))raw.background={colors:raw.background,angle:135};
     raw.background.colors=[color(raw.background.colors[0],TEMPLATE_STYLE[raw.template].bg[0]),color(raw.background.colors[1],TEMPLATE_STYLE[raw.template].bg[1])];raw.background.angle=Number(raw.background.angle)||135;raw.background.transparent=!!raw.background.transparent;raw.background.imageSrc=String(raw.background.imageSrc||'');raw.background.imageAssetId=String(raw.background.imageAssetId||'');raw.background.imageName=String(raw.background.imageName||'');raw.background.imageFit=['cover','contain','fill'].includes(raw.background.imageFit)?raw.background.imageFit:'cover';Object.assign(raw.background,normalizeImageCrop(raw.background));
-    raw.days=raw.days.map((day,index)=>({name:String(day?.name||DEFAULT_DAYS[index].name),time:String(day?.time||''),title:String(day?.title||''),note:String(day?.note||''),status:day?.status==='off'?'off':'live',star:!!day?.star,imageSrc:String(day?.imageSrc||''),imageAssetId:String(day?.imageAssetId||''),imageName:String(day?.imageName||''),imageFit:['cover','contain','fill'].includes(day?.imageFit)?day.imageFit:'cover',...normalizeImageCrop(day)}));
+    raw.days=raw.days.map((day,index)=>({name:String(day?.name||DEFAULT_DAYS[index].name),time:String(day?.time||''),title:String(day?.title||''),note:String(day?.note||''),status:day?.status==='off'?'off':'live',visible:day?.visible!==false,star:!!day?.star,imageSrc:String(day?.imageSrc||''),imageAssetId:String(day?.imageAssetId||''),imageName:String(day?.imageName||''),imageFit:['cover','contain','fill'].includes(day?.imageFit)?day.imageFit:'cover',...normalizeImageCrop(day)}));
     raw.elements=raw.elements.filter(element=>element&&typeof element==='object'&&['text','emoji','shape','image','day','qr'].includes(element.type)&&typeof element.id==='string').map(element=>{
       const minimum=minimumElementSize(element),normalized={...element,x:Number(element.x)||0,y:Number(element.y)||0,w:Math.max(minimum,Number(element.w)||100),h:Math.max(minimum,Number(element.h)||100),rotation:Number(element.rotation)||0,opacity:clamp(element.opacity??1,0,1),dayIndex:element.type==='day'?clamp(element.dayIndex,0,6):element.dayIndex};if(normalized.variant==='candy')normalized.variant='horror';
       if(element.type==='image')Object.assign(normalized,normalizeImageCrop(element),{fit:['cover','contain','fill'].includes(element.fit)?element.fit:'cover'});
@@ -139,9 +139,20 @@
     }[variant] || {fill:'#ffffff',color:'#111827'};
   }
 
+  function spotlightPositions(width,height,count){
+    const square=width===height,gap=square?18:28,margin=square?55:105;
+    if(count<=4){const cardW=Math.min(square?300:430,(width-margin*2-gap*Math.max(0,count-1))/Math.max(1,count)),cardH=square?590:535,rowWidth=count*cardW+Math.max(0,count-1)*gap;return Array.from({length:count},(_,index)=>({x:(width-rowWidth)/2+index*(cardW+gap),y:square?300:255,w:cardW,h:cardH}));}
+    const columns=count===7?4:3,cardH=square?285:255,top=square?300:285,positions=[];
+    for(let row=0;row<2;row++){const rowCount=Math.min(columns,count-row*columns);if(rowCount<=0)continue;const cardW=Math.min(square?245:330,(width-margin*2-gap*(rowCount-1))/rowCount),rowWidth=rowCount*cardW+(rowCount-1)*gap;for(let column=0;column<rowCount;column++)positions.push({x:(width-rowWidth)/2+column*(cardW+gap),y:top+row*(cardH+gap),w:cardW,h:cardH});}
+    return positions;
+  }
+  function spotlightCardLayout(width,height){const visibleIndexes=project.days.map((day,index)=>day.visible!==false?index:-1).filter(index=>index>=0),positions=spotlightPositions(width,height,visibleIndexes.length),byDay=new Map(visibleIndexes.map((dayIndex,index)=>[dayIndex,positions[index]])),fallback={x:width/2-150,y:height/2-120,w:300,h:240};return project.days.map((day,dayIndex)=>({dayIndex,...(byDay.get(dayIndex)||fallback)}));}
+  function reflowSpotlightCards(){if(project.template!=='spotlight')return;const layouts=spotlightCardLayout(project.width,project.height);layouts.forEach(layout=>{const card=project.elements.find(element=>element.type==='day'&&element.dayIndex===layout.dayIndex);if(card)Object.assign(card,{x:layout.x,y:layout.y,w:layout.w,h:layout.h});});}
+  function ensureSpotlightCards(){if(project.template!=='spotlight')return;const existing=project.elements.filter(element=>element.type==='day');if(!project.spotlightInitialized){const used=new Set(existing.map(element=>element.dayIndex));project.days.forEach((day,index)=>{day.visible=used.size?used.has(index):index===1||index===4;});project.spotlightInitialized=true;}if(project.days.filter(day=>day.visible!==false).length<2)project.days.filter(day=>day.visible===false).slice(0,2-project.days.filter(day=>day.visible!==false).length).forEach(day=>{day.visible=true;});spotlightCardLayout(project.width,project.height).forEach(layout=>{if(existing.some(card=>card.dayIndex===layout.dayIndex))return;const card=dayElement(layout.dayIndex,layout.x,layout.y,layout.w,layout.h,'spotlight');Object.assign(card,{contentLayout:'feature',align:'center',font:'condensed',fontSize:30,imageOverlay:48,builtIn:true});project.elements.push(card);});reflowSpotlightCards();}
+
   function cardLayout(style,width,height){
     const square = width===height;
-    if(style==='spotlight'&&!square)return [{dayIndex:1,x:260,y:245,w:430,h:570},{dayIndex:4,x:910,y:245,w:430,h:570}];
+    if(style==='spotlight')return spotlightCardLayout(width,height);
     if(style==='columns'&&!square){const gap=18,margin=45,cardW=(width-margin*2-gap*6)/7;return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:285,w:cardW,h:490}));}
     if(style==='bubblegrid'&&!square){const gap=10,margin=34,cardW=(width-margin*2-gap*6)/7;return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:220,w:cardW,h:610}));}
     if(style==='horror'&&!square){const spots=[[70,250],[440,225],[810,260],[1180,230],[255,555],[650,530],[1045,565]];return spots.map(([x,y])=>({x,y,w:300,h:245}));}
@@ -167,6 +178,7 @@
   function buildTemplate(name){
     const style=TEMPLATE_STYLE[name]||TEMPLATE_STYLE.cloud;
     const {width,height}=project;
+    if(name==='spotlight'&&!project.spotlightInitialized){project.days.forEach((day,index)=>{day.visible=index===1||index===4;});project.spotlightInitialized=true;}
     const elements=[];
     const dark=name==='manga' ? '#17121f' : style.text;
     const heading=textElement(project.title,70,45,width-140,105,width===height?64:76,dark,'rounded',900,'center');heading.role='title';elements.push(heading);
@@ -327,7 +339,7 @@
       fresh.modifier=MODIFIERS.includes(old.specialMode)?old.specialMode:'none';fresh.hideModifierLabels=!!old.hideSpecialLabels;fresh.eventBanner=String(old.eventBanner||'');fresh.showQr=!!old.showQr;fresh.qrUrl=fresh.subtitle;
       if(Array.isArray(old.days))fresh.days=DEFAULT_DAYS.map((fallback,index)=>{
         const day=old.days[index]||{};
-        const legacyCrop=day.imageCropGrid||{};return {name:fallback.name,time:String(day.time||fallback.time),title:String(day.category||fallback.title),note:String(day.note||''),status:String(day.time||'').toUpperCase()==='OFF'?'off':'live',star:!!day.star,imageSrc:String(day.image||''),imageAssetId:'',imageName:String(day.imageName||''),imageFit:['cover','contain','fill'].includes(day.imageFit)?day.imageFit:'cover',cropZoom:Number(legacyCrop.zoom)||1,cropX:Number(legacyCrop.x)||0,cropY:Number(legacyCrop.y)||0,stretchX:Number(legacyCrop.stretchX)||1,stretchY:Number(legacyCrop.stretchY)||1};
+        const legacyCrop=day.imageCropGrid||{};return {name:fallback.name,time:String(day.time||fallback.time),title:String(day.category||fallback.title),note:String(day.note||''),status:String(day.time||'').toUpperCase()==='OFF'?'off':'live',visible:true,star:!!day.star,imageSrc:String(day.image||''),imageAssetId:'',imageName:String(day.imageName||''),imageFit:['cover','contain','fill'].includes(day.imageFit)?day.imageFit:'cover',cropZoom:Number(legacyCrop.zoom)||1,cropX:Number(legacyCrop.x)||0,cropY:Number(legacyCrop.y)||0,stretchX:Number(legacyCrop.stretchX)||1,stretchY:Number(legacyCrop.stretchY)||1};
       });
       project=fresh;buildTemplate('cloud');applyModifierTypography();return project;
     }catch{return null;}
@@ -346,10 +358,12 @@
     renderDays();renderModifierControls();renderTypePresetControls();renderBackgroundControls();renderCanvas();renderInspector();renderLayers();updateZoom();updateHistoryButtons();
   }
   function renderDays(){
-    els.dayStrip.innerHTML=DAY_SHORT.map((name,index)=>`<button class="dayPick${index===selectedDay?' isActive':''}" data-day="${index}" type="button">${project.days[index].star?'★ ':''}${name}</button>`).join('');
+    els.dayStrip.innerHTML=DAY_SHORT.map((name,index)=>{const day=project.days[index],visible=day.visible!==false,action=visible?'Masquer':'Afficher';return `<div class="dayPickWrap${index===selectedDay?' isActive':''}${visible?'':' isHidden'}"><button class="dayPick" data-day="${index}" type="button">${day.star?'★ ':''}${name}</button><button class="dayToggle" data-toggle-day="${index}" type="button" aria-pressed="${visible}" title="${action} ${escapeHtml(day.name)}" aria-label="${action} ${escapeHtml(day.name)}">${visible?'●':'○'}</button></div>`;}).join('');
+    const visibleCount=project.days.filter(day=>day.visible!==false).length;els.visibleDaysStatus.textContent=`${visibleCount} jour${visibleCount>1?'s':''} affiché${visibleCount>1?'s':''} sur 7`;
     const day=project.days[selectedDay];els.dayName.value=day.name;els.dayTime.value=day.time;els.dayTitle.value=day.title;els.dayNote.value=day.note;els.dayStatus.value=day.status;els.dayStar.checked=!!day.star;els.dayImageStatus.textContent=day.imageSrc?(day.imageName||'Image ajoutée'):'Aucune image';els.dayImageFit.value=day.imageFit||'cover';els.dayImageFit.disabled=!day.imageSrc;els.cropDayImage.disabled=!day.imageSrc;els.removeDayImage.disabled=!day.imageSrc;
   }
-  function selectDayForEditing(index){selectedDay=clamp(index,0,6);const card=project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay);selectedId=card?.id||'';renderDays();renderCanvas();renderInspector();renderLayers();}
+  function selectDayForEditing(index){selectedDay=clamp(index,0,6);const card=project.days[selectedDay].visible===false?null:project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay);selectedId=card?.id||'';renderDays();renderCanvas();renderInspector();renderLayers();}
+  function setDayVisibility(index,visible){const day=project.days[clamp(index,0,6)];if(project.template==='spotlight'&&!visible&&project.days.filter(item=>item.visible!==false).length<=2)return toast('Duo et + conserve au moins deux jours affichés.');day.visible=visible;if(!visible&&selectedElement()?.type==='day'&&selectedElement().dayIndex===index)selectedId='';reflowSpotlightCards();renderAll();pushHistory();save();toast(`${day.name} ${visible?'affiché':'masqué'} sans supprimer ses données.`);}
   function renderModifierControls(){
     els.modifierSelect.value=project.modifier;els.eventBanner.value=project.eventBanner||'';els.hideModifierLabels.checked=!!project.hideModifierLabels;
   }
@@ -392,6 +406,7 @@
   }
   function qrSvg(element){try{return (makeQr()?.createSvgTag(5,2)||'<span>QR indisponible</span>').replace('#fff',color(element?.fill,'#ffffff')).replace('#111827',color(element?.color,'#111827'));}catch{return '<span>QR indisponible</span>';}}
   function renderElement(element){
+    if(element.type==='day'&&project.days[element.dayIndex].visible===false)return '';
     const selected=element.id===selectedId?' isSelected':'';const locked=element.locked?' isLocked':'';
     let content='';
     if(element.type==='text')content=`<div class="elText textEffect-${element.effect||'none'}" style="width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};${typographyStyle(element)}">${escapeHtml(element.text)}</div>`;
@@ -426,8 +441,8 @@
   }
   function renderPreflightStatus(){
     const warnings=[];
-    if(project.elements.some(element=>element.opacity>0&&(element.x<0||element.y<0||element.x+element.w>project.width||element.y+element.h>project.height)))warnings.push('élément hors du planning');
-    if(project.elements.some(element=>element.type==='image'&&!element.src)||project.days.some(day=>day.imageAssetId&&!day.imageSrc)||(project.background.imageAssetId&&!project.background.imageSrc))warnings.push('image introuvable');
+    if(project.elements.some(element=>element.opacity>0&&!(element.type==='day'&&project.days[element.dayIndex].visible===false)&&(element.x<0||element.y<0||element.x+element.w>project.width||element.y+element.h>project.height)))warnings.push('élément hors du planning');
+    if(project.elements.some(element=>element.type==='image'&&!element.src)||project.days.some(day=>day.visible!==false&&day.imageAssetId&&!day.imageSrc)||(project.background.imageAssetId&&!project.background.imageSrc))warnings.push('image introuvable');
     if(project.showQr&&!makeQr())warnings.push('QR invalide');
     const overflow=[...els.artboard.querySelectorAll('.elText,.elDay')].some(node=>node.scrollHeight>node.clientHeight+2||node.scrollWidth>node.clientWidth+2);if(overflow)warnings.push('texte potentiellement coupé');
     els.preflightStatus.textContent=warnings.length?`${warnings.length} point${warnings.length>1?'s':''} à vérifier`:'Prêt à exporter';els.preflightStatus.title=warnings.join(' · ');els.preflightStatus.classList.toggle('hasWarnings',!!warnings.length);
@@ -454,7 +469,7 @@
     return element.name||({shape:'Forme',image:'Image',qr:'QR Code'}[element.type]||'Élément');
   }
   function renderLayers(){
-    const ordered=[...project.elements].reverse();
+    const ordered=project.elements.filter(element=>element.type!=='day'||project.days[element.dayIndex].visible!==false).reverse();
     els.layerSelect.innerHTML=`<option value="">Choisir un calque…</option>${ordered.map(element=>`<option value="${element.id}">${escapeHtml(layerName(element))}${element.locked?' · verrouillé':''}</option>`).join('')}`;els.layerSelect.value=selectedId;
     els.layerList.innerHTML=ordered.map(element=>`<div class="layerItem${element.id===selectedId?' isActive':''}" data-layer="${element.id}" tabindex="0" role="button" draggable="${!element.locked}"><b>${element.type==='text'?'T':element.type==='day'?'▦':element.type==='shape'?'◆':element.type==='emoji'?'☺':'▧'}</b><span>${escapeHtml(layerName(element))}</span><button data-lock="${element.id}" title="${element.locked?'Déverrouiller':'Verrouiller'}" aria-label="${element.locked?'Déverrouiller':'Verrouiller'} ${escapeHtml(layerName(element))}">${element.locked?'🔒':'○'}</button></div>`).join('');
   }
@@ -616,12 +631,13 @@
   }
   async function exportPng(){
     if(project.showQr&&!makeQr())return toast('Corrige le lien du QR Code avant l’export.');
-    if(project.elements.some(element=>element.type==='image'&&!element.src)||project.days.some(day=>day.imageAssetId&&!day.imageSrc)||(project.background.imageAssetId&&!project.background.imageSrc))return toast('Remplace les images introuvables avant l’export.');
+    if(project.elements.some(element=>element.type==='image'&&!element.src)||project.days.some(day=>day.visible!==false&&day.imageAssetId&&!day.imageSrc)||(project.background.imageAssetId&&!project.background.imageSrc))return toast('Remplace les images introuvables avant l’export.');
     const old=els.export.textContent;els.export.disabled=true;els.export.textContent='Création…';
     try{
       const canvas=document.createElement('canvas');canvas.width=project.width;canvas.height=project.height;const ctx=canvas.getContext('2d');
       if(!project.background.transparent){const radians=((project.background.angle||135)-90)*Math.PI/180,cx=project.width/2,cy=project.height/2,length=Math.abs(project.width*Math.cos(radians))+Math.abs(project.height*Math.sin(radians));const gradient=ctx.createLinearGradient(cx-Math.cos(radians)*length/2,cy-Math.sin(radians)*length/2,cx+Math.cos(radians)*length/2,cy+Math.sin(radians)*length/2);gradient.addColorStop(0,project.background.colors[0]);gradient.addColorStop(1,project.background.colors[1]);ctx.fillStyle=gradient;ctx.fillRect(0,0,canvas.width,canvas.height);if(project.background.imageSrc)try{drawCroppedImage(ctx,await loadImage(project.background.imageSrc),{w:canvas.width,h:canvas.height,fit:project.background.imageFit||'cover',...normalizeImageCrop(project.background)});}catch{}}
       for(const element of project.elements){
+        if(element.type==='day'&&project.days[element.dayIndex].visible===false)continue;
         ctx.save();ctx.globalAlpha=element.opacity??1;ctx.translate(element.x+element.w/2,element.y+element.h/2);ctx.rotate((element.rotation||0)*Math.PI/180);ctx.translate(-element.w/2,-element.h/2);
         if(element.type==='text')drawText(ctx,element);
         if(element.type==='emoji'){ctx.font=`${element.fontSize||80}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(element.text,element.w/2,element.h/2);}
@@ -698,7 +714,9 @@
     els.cropStage.addEventListener('wheel',event=>{if(!cropDraft)return;event.preventDefault();cropDraft.cropZoom=clamp(cropDraft.cropZoom+(event.deltaY<0 ? .05 : -.05),.1,3);renderCropEditor();},{passive:false});
     els.showQr.addEventListener('change',()=>{project.showQr=els.showQr.checked;if(project.showQr){let qr=project.elements.find(element=>element.type==='qr');if(!qr){qr=qrElement(project.width,project.height);project.elements.push(qr);}selectedId=qr.id;}else{const removedSelected=selectedElement()?.type==='qr';project.elements=project.elements.filter(element=>element.type!=='qr');if(removedSelected)selectedId='';}renderAll();pushHistory();save();});
     els.qrUrl.addEventListener('input',()=>{project.qrUrl=els.qrUrl.value;renderQrControls();renderCanvas();commit();});
-    els.dayStrip.addEventListener('click',event=>{const button=event.target.closest('[data-day]');if(!button)return;selectDayForEditing(Number(button.dataset.day));});
+    els.dayStrip.addEventListener('click',event=>{const toggle=event.target.closest('[data-toggle-day]');if(toggle){setDayVisibility(Number(toggle.dataset.toggleDay),toggle.getAttribute('aria-pressed')!=='true');return;}const button=event.target.closest('[data-day]');if(button)selectDayForEditing(Number(button.dataset.day));});
+    els.showAllDays.addEventListener('click',()=>{project.days.forEach(day=>{day.visible=true;});reflowSpotlightCards();renderAll();pushHistory();save();toast('Tous les jours sont affichés.');});
+    els.hideOffDays.addEventListener('click',()=>{let offDays=project.days.filter(day=>day.status==='off'&&day.visible!==false);if(project.template==='spotlight')offDays=offDays.slice(0,Math.max(0,project.days.filter(day=>day.visible!==false).length-2));if(!offDays.length)return toast(project.template==='spotlight'?'Duo et + doit conserver au moins deux jours.':'Aucun jour de repos à masquer.');offDays.forEach(day=>{day.visible=false;});if(selectedElement()?.type==='day'&&project.days[selectedElement().dayIndex].visible===false)selectedId='';reflowSpotlightCards();renderAll();pushHistory();save();toast(`${offDays.length} jour${offDays.length>1?'s':''} de repos masqué${offDays.length>1?'s':''}.`);});
     [els.dayName,els.dayTime,els.dayTitle,els.dayNote].forEach(input=>input.addEventListener('input',updateDay));els.dayStatus.addEventListener('change',updateDay);els.dayStar.addEventListener('change',()=>{updateDay();renderDays();});
     els.title.addEventListener('input',()=>{project.title=els.title.value;const title=project.elements.find(element=>element.role==='title')||project.elements.find(element=>element.type==='text'&&element.y<140&&element.fontSize>50);if(title)title.text=project.title;renderCanvas();commit();});
     els.subtitle.addEventListener('input',()=>{project.subtitle=els.subtitle.value;const subtitle=project.elements.find(element=>element.role==='subtitle')||project.elements.find(element=>element.type==='text'&&element.y>=120&&element.y<220);if(subtitle)subtitle.text=project.subtitle;renderCanvas();commit();});
@@ -733,6 +751,6 @@
   function fitZoom(){const available=Math.max(320,els.viewport.clientWidth-80);zoom=clamp(Math.floor(available/project.width*100),20,100);updateZoom();}
   function toast(message){const node=document.createElement('div');node.className='toast';node.textContent=message;els.toast.replaceChildren(node);setTimeout(()=>node.remove(),2400);}
 
-  async function start(){await load();await externalizeInlineImages();if(project.showQr&&!project.elements.some(element=>element.type==='qr'))project.elements.push(qrElement(project.width,project.height));bind();history=[JSON.stringify(persistable())];historyIndex=0;renderAll();requestAnimationFrame(fitZoom);save();if(window.PlanningAssetStore){const used=[...project.elements.filter(element=>element.type==='image'&&element.assetId).map(element=>element.assetId),...project.days.map(day=>day.imageAssetId).filter(Boolean),project.background.imageAssetId].filter(Boolean);window.PlanningAssetStore.keepOnly(used).catch(()=>{});}if(missingImageCount)toast(`${missingImageCount} image${missingImageCount>1?'s':''} à remplacer.`);}
+  async function start(){await load();ensureSpotlightCards();await externalizeInlineImages();if(project.showQr&&!project.elements.some(element=>element.type==='qr'))project.elements.push(qrElement(project.width,project.height));bind();history=[JSON.stringify(persistable())];historyIndex=0;renderAll();requestAnimationFrame(fitZoom);save();if(window.PlanningAssetStore){const used=[...project.elements.filter(element=>element.type==='image'&&element.assetId).map(element=>element.assetId),...project.days.map(day=>day.imageAssetId).filter(Boolean),project.background.imageAssetId].filter(Boolean);window.PlanningAssetStore.keepOnly(used).catch(()=>{});}if(missingImageCount)toast(`${missingImageCount} image${missingImageCount>1?'s':''} à remplacer.`);}
   start().catch(error=>{console.error(error);toast('PlanningGPT V2 n’a pas pu démarrer.');});
 })();

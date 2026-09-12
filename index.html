@@ -37,8 +37,9 @@
         <label class="field"><span>Sous-titre</span><input id="planningSubtitle" maxlength="100"></label>
         <label class="switchBox"><input id="showQr" type="checkbox"><span><strong>QR Code</strong><small>Ajoute un QR déplaçable dans le planning et le PNG.</small></span></label>
         <label class="field" id="qrUrlField"><span>Lien du QR Code</span><input id="qrUrl" maxlength="100" placeholder="https://twitch.tv/ton_lien"><small class="fieldStatus" id="qrStatus"></small></label>
-        <div class="sectionDivider"><strong>Jour à modifier</strong><small>Choisir un jour sélectionne aussi sa carte.</small></div>
+        <div class="sectionDivider"><strong>Jours de la semaine</strong><small>Choisis le jour puis affiche ou masque sa carte.</small></div>
         <div class="dayStrip" id="dayStrip" aria-label="Jour à modifier"></div>
+        <div class="dayDisplayActions"><span id="visibleDaysStatus">7 jours affichés</span><button class="btn" id="showAllDaysBtn" type="button">Tout afficher</button><button class="btn" id="hideOffDaysBtn" type="button">Masquer les repos</button></div>
         <label class="field"><span>Nom du jour</span><input id="dayName" maxlength="20"></label>
         <div class="grid2">
           <label class="field"><span>Horaire</span><input id="dayTime" maxlength="18"></label>
@@ -64,7 +65,7 @@
           <button class="templateCard" data-template="polaroid" type="button"><span class="templatePreview tp-polaroid"></span><strong>Mur Polaroid</strong></button>
           <button class="templateCard" data-template="roadmap" type="button"><span class="templatePreview tp-roadmap"></span><strong>Parcours live</strong></button>
           <button class="templateCard" data-template="constellation" type="button"><span class="templatePreview tp-constellation"></span><strong>Constellation</strong></button>
-          <button class="templateCard" data-template="spotlight" type="button"><span class="templatePreview tp-spotlight"></span><strong>Affiche duo</strong></button>
+          <button class="templateCard" data-template="spotlight" type="button"><span class="templatePreview tp-spotlight"></span><strong>Duo et +</strong></button>
           <button class="templateCard" data-template="columns" type="button"><span class="templatePreview tp-columns"></span><strong>Colonnes gaming</strong></button>
           <button class="templateCard" data-template="bubblegrid" type="button"><span class="templatePreview tp-bubblegrid"></span><strong>Grille pop</strong></button>
           <button class="templateCard" data-template="horror" type="button"><span class="templatePreview tp-horror"></span><strong>Horreur VHS</strong></button>

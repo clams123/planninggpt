@@ -47,6 +47,16 @@ test('les modèles inspirés des références ont une composition dédiée',()=>
   }
 });
 
+test('Duo et plus accepte de deux à sept jours et se réorganise',()=>{
+  assert.match(html,/data-template="spotlight"[\s\S]*<strong>Duo et \+<\/strong>/);
+  assert.match(script,/function spotlightPositions\(width,height,count\)/);
+  assert.match(script,/function spotlightCardLayout\(width,height\)/);
+  assert.match(script,/function reflowSpotlightCards\(\)/);
+  assert.match(script,/function ensureSpotlightCards\(\)/);
+  assert.match(script,/Duo et \+ conserve au moins deux jours affichés/);
+  assert.match(script,/await load\(\);ensureSpotlightCards\(\)/);
+});
+
 test('colonnes, grille pop et horreur ont des structures visuelles propres',()=>{
   assert.match(script,/if\(name==='columns'\)[\s\S]*STREAM/);
   assert.match(script,/if\(name==='bubblegrid'\)[\s\S]*const header=/);
@@ -176,6 +186,16 @@ test('choisir un jour sélectionne directement sa carte',()=>{
   assert.match(script,/selectedId=card\?\.id\|\|''/);
   assert.match(script,/if\(element\?\.type==='day'\)\{selectedDay=element\.dayIndex;renderDays\(\);\}/);
   assert.doesNotMatch(html,/selectDayCardBtn/);
+});
+
+test('les jours se masquent depuis la semaine sans supprimer leurs données',()=>{
+  for(const id of ['visibleDaysStatus','showAllDaysBtn','hideOffDaysBtn'])assert.match(html,new RegExp(`id="${id}"`));
+  assert.match(script,/visible:day\?\.visible!==false/);
+  assert.match(script,/function setDayVisibility/);
+  assert.match(script,/data-toggle-day/);
+  assert.match(script,/sans supprimer ses données/);
+  assert.match(script,/if\(element\.type==='day'&&project\.days\[element\.dayIndex\]\.visible===false\)continue/);
+  assert.match(html,/Masquer les repos/);
 });
 
 test('le planning accepte une image de fond ou un PNG transparent',()=>{
