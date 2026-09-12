@@ -57,19 +57,20 @@
         <div class="templateGrid">
           <button class="templateCard" data-template="cloud" type="button"><span class="templatePreview tp-cloud"></span><strong>Cloud gaming</strong></button>
           <button class="templateCard" data-template="cyber" type="button"><span class="templatePreview tp-cyber"></span><strong>Cyber HUD</strong></button>
-          <button class="templateCard" data-template="rpg" type="button"><span class="templatePreview tp-rpg"></span><strong>Quête fantasy</strong></button>
+          <button class="templateCard" data-template="rpg" type="button"><span class="templatePreview tp-rpg"></span><strong>Twitch Live</strong></button>
           <button class="templateCard" data-template="manga" type="button"><span class="templatePreview tp-manga"></span><strong>Manga pop</strong></button>
           <button class="templateCard" data-template="cozy" type="button"><span class="templatePreview tp-cozy"></span><strong>Cozy desk</strong></button>
           <button class="templateCard" data-template="arcade" type="button"><span class="templatePreview tp-arcade"></span><strong>Arcade night</strong></button>
           <button class="templateCard" data-template="agenda" type="button"><span class="templatePreview tp-agenda"></span><strong>Agenda éditorial</strong></button>
           <button class="templateCard" data-template="polaroid" type="button"><span class="templatePreview tp-polaroid"></span><strong>Mur Polaroid</strong></button>
           <button class="templateCard" data-template="roadmap" type="button"><span class="templatePreview tp-roadmap"></span><strong>Parcours live</strong></button>
-          <button class="templateCard" data-template="constellation" type="button"><span class="templatePreview tp-constellation"></span><strong>Constellation</strong></button>
+          <button class="templateCard" data-template="constellation" type="button"><span class="templatePreview tp-constellation"></span><strong>Résonance WuWa</strong></button>
           <button class="templateCard" data-template="spotlight" type="button"><span class="templatePreview tp-spotlight"></span><strong>Duo et +</strong></button>
           <button class="templateCard" data-template="columns" type="button"><span class="templatePreview tp-columns"></span><strong>Colonnes gaming</strong></button>
           <button class="templateCard" data-template="bubblegrid" type="button"><span class="templatePreview tp-bubblegrid"></span><strong>Grille pop</strong></button>
           <button class="templateCard" data-template="horror" type="button"><span class="templatePreview tp-horror"></span><strong>Horreur VHS</strong></button>
           <button class="templateCard" data-template="violin" type="button"><span class="templatePreview tp-violin"></span><strong>Partition de violon</strong></button>
+          <button class="templateCard" data-template="fantasy7" type="button"><span class="templatePreview tp-fantasy7"></span><strong>Fantasy VII</strong></button>
         </div>
         <details class="modelOptions"><summary>Personnaliser le modèle</summary><div class="modelOptionsBody">
           <label class="field"><span>Modificateur de thème</span><select id="modifierSelect"><option value="none">Original</option><option value="poster">🎬 Affiche événement</option><option value="ticket">🎟 Ticket cinéma</option><option value="restaurant">🍽 Menu restaurant</option><option value="rpg">⚔ Quête RPG</option><option value="logbook">▣ Journal de bord</option><option value="anime">爆 Saison anime</option><option value="marathon">🏁 Marathon</option><option value="release">🚀 Sortie de jeu</option><option value="subathon">🎯 Subathon</option><option value="indie">💎 Découverte indé</option><option value="challenge">☠ Challenge</option></select></label>
@@ -98,7 +99,7 @@
 
     <section class="workspace" aria-label="Zone de création">
       <div class="workspaceBar"><strong id="canvasLabel">Planning 16:9</strong><span class="preflightStatus" id="preflightStatus" aria-live="polite">Prêt à exporter</span><div class="formatSwitch"><button class="toolBtn isActive" data-format="wide" type="button">16:9</button><button class="toolBtn" data-format="square" type="button">Carré</button><button class="toolBtn" id="toggleGridBtn" type="button">Grille</button></div></div>
-      <div class="canvasViewport" id="canvasViewport"><div class="canvasSizer" id="canvasSizer"><div class="artboard" id="artboard" tabindex="0" aria-label="Canvas du planning"></div></div></div>
+      <div class="canvasViewport" id="canvasViewport"><div class="canvasSizer" id="canvasSizer"><div class="artboard" id="artboard" tabindex="0" aria-label="Canvas du planning"></div><canvas class="renderSurface" id="renderSurface" aria-hidden="true"></canvas></div></div>
       <div class="workspaceFooter"><button class="toolBtn" id="zoomOutBtn" type="button" aria-label="Réduire le zoom">−</button><input id="zoomInput" type="range" min="20" max="120" value="60" aria-label="Zoom"><button class="toolBtn" id="zoomInBtn" type="button" aria-label="Augmenter le zoom">＋</button><span id="zoomValue">60%</span></div>
     </section>
 
@@ -115,7 +116,7 @@
           <div class="propertyGroup" id="textProperties"><h3>Contenu et typographie</h3>
             <label class="field" id="textContentField"><span>Contenu</span><textarea id="propText"></textarea></label>
             <div class="grid2"><label class="field"><span>Taille</span><input id="propFontSize" type="number" min="8" max="240"></label><label class="field"><span>Police</span><select id="propFont"><option value="rounded">Arrondie</option><option value="sans">Moderne</option><option value="serif">Élégante</option><option value="typewriter">Machine</option><option value="hand">Manuscrite</option><option value="comic">Bande dessinée</option><option value="condensed">Condensée</option><option value="display">Affiche</option><option value="mono">Mono classique</option></select></label><label class="field"><span>Graisse</span><select id="propWeight"><option value="400">Normale</option><option value="700">Grasse</option><option value="900">Très grasse</option></select></label><label class="field"><span>Style</span><select id="propFontStyle"><option value="normal">Droit</option><option value="italic">Italique</option></select></label><label class="field"><span>Casse</span><select id="propTransform"><option value="none">Normale</option><option value="uppercase">MAJUSCULES</option><option value="lowercase">minuscules</option></select></label><label class="field"><span>Alignement</span><select id="propAlign"><option value="left">Gauche</option><option value="center">Centre</option><option value="right">Droite</option></select></label></div>
-            <label class="field"><span>Espacement des lettres <b id="propLetterSpacingValue">0 px</b></span><input id="propLetterSpacing" type="range" min="-2" max="16" step="1" value="0"></label><label class="field"><span>Effet</span><select id="propTextEffect"><option value="none">Aucun</option><option value="soft">Ombre douce</option><option value="hard">Ombre franche</option><option value="neon">Néon</option><option value="outline">Contour</option></select></label>
+            <label class="field"><span>Effet</span><select id="propTextEffect"><option value="none">Aucun</option><option value="soft">Ombre douce</option><option value="hard">Ombre franche</option><option value="neon">Néon</option><option value="outline">Contour</option></select></label>
           </div>
           <div class="propertyGroup" id="imageProperties" hidden><h3>Image</h3>
             <label class="field"><span>Adaptation au cadre</span><select id="propImageFit"><option value="cover">Remplir le cadre</option><option value="contain">Afficher l’image entière</option><option value="fill">Étirer au cadre</option></select></label>
@@ -124,7 +125,6 @@
           <div class="propertyGroup" id="dayCardProperties" hidden><h3>Carte du jour</h3>
             <label class="field"><span>Composition du contenu</span><select id="propDayLayout"><option value="standard">Classique</option><option value="poster">Affiche illustrée</option><option value="feature">Jour en vedette</option><option value="image">Image seule</option></select></label>
             <div class="dayVisibilityGrid"><label><input id="propShowDayName" type="checkbox"> Jour</label><label><input id="propShowDayTime" type="checkbox"> Horaire</label><label><input id="propShowDayTitle" type="checkbox"> Titre</label><label><input id="propShowDayNote" type="checkbox"> Note</label></div>
-            <label class="field"><span>Assombrir l’image <b id="propDayOverlayValue">55 %</b></span><input id="propDayOverlay" type="range" min="0" max="90" value="55"></label>
             <button class="btn btn--wide" id="applyDayStyleAllBtn" type="button">Appliquer à toutes les cartes</button>
           </div>
           <div class="propertyGroup"><h3>Style</h3><div class="grid2"><label class="field" id="propColorField"><span>Couleur</span><input id="propColor" type="color"></label><label class="field" id="propFillField"><span>Fond</span><input id="propFill" type="color"></label></div><label class="field"><span>Opacité</span><input id="propOpacity" type="range" min="0" max="100" value="100"></label></div>
@@ -151,6 +151,7 @@
   </div>
 </div>
 <div id="toastRegion" aria-live="polite"></div>
+<script src="libs/html2canvas.local.js"></script>
 <script src="libs/qrcode.local.js"></script>
 <script src="storage.js"></script>
 <script src="v2.js"></script>

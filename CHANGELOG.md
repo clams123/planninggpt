@@ -4,6 +4,18 @@
 
 ### Compléments de la refonte
 
+- Unification stricte de l’aperçu final et de l’export PNG : hors sélection, le studio affiche le tampon canvas réellement téléchargé ; le PNG n’est plus généré par une seconde capture invisible susceptible de diverger.
+- Pré-rastérisation de toutes les images de calques et de jours avant capture, avec le même recadrage, zoom, déplacement et étirement que dans l’éditeur, y compris pour les fichiers SVG locaux.
+- Correction de l’échec d’export depuis une ouverture locale `file://` : suppression complète du SVG intermédiaire refusé par Chromium et intégration locale de `html2canvas` 1.4.1 pour capturer directement le DOM sans origine distante.
+- Fidélisation de Fantasy VII et Cyber HUD à l’export : les SVG décoratifs sont pré-rastérisés et les découpes polygonales sont reproduites sur un calque canvas temporaire, évitant les grands aplats parasites et les cartes rectangulaires générés par `html2canvas`.
+- Suppression des réglages « Espacement des lettres » et « Assombrir l’image » de l’inspecteur. Les espacements propres aux modèles restent intégrés à leur direction artistique.
+- Refonte de « Twitch Live » avec logo Twitch vectoriel, identité intégralement violette et suppression du rouge, du compteur de spectateurs et du nombre de chaînes.
+- Remplacement complet de « Constellation » par « Résonance WuWa » : ambiance claire techno-organique, ondes, anneaux, panneaux indépendants et suppression de la toile d’étoiles.
+- Réduction de 5 % de la hauteur des aperçus de modèles dans le menu.
+- Correction de la sortie de « Duo et + » : sélectionner un autre modèle réaffiche automatiquement les sept jours de la semaine.
+- Ajout du modèle « Fantasy VII » avec direction fantasy industrielle originale, énergie verte, panneaux asymétriques, réacteur et épée vectorielle monumentale.
+- Refonte de Constellation autour d’un tracé réel de la Grande Ourse : sept étoiles identifiées et liaisons exportées dans le PNG.
+- Ajout de huit emojis : épées, aile, ciel étoilé, éclair, potion, ville et loup.
 - Transformation d’Affiche duo en « Duo et + » : choix libre de deux à sept jours, réorganisation automatique et migration des anciennes compositions à deux cartes.
 - Simplification de l’affichage des jours : commande visible sous chaque jour, compteur hebdomadaire, « Tout afficher » et « Masquer les repos », sans suppression des données ni de la position des cartes.
 - Placement de « Réinitialiser le planning » directement sous « Jour star », sans icône ni doublon dans la barre supérieure.
@@ -12,7 +24,7 @@
 - Ajout du modèle « Partition de violon » avec papier ivoire, portées, barres de mesure, notes, clé musicale, violon et typographie classique.
 - Enrichissement de Partition de violon : double cadre gravé, mouvements Allegro et Andante, mesures romaines, filigrane vectoriel de violon, archet et cartouches façon feuille de concert.
 - Refonte structurelle de Colonnes gaming et Grille pop, et remplacement de Collage pastel par Horreur VHS avec scanlines, repères REC et composition asymétrique.
-- Ajout de quatre dispositions de contenu par carte, de la visibilité indépendante des textes et du réglage d’assombrissement des images.
+- Ajout de quatre dispositions de contenu par carte et de la visibilité indépendante des textes.
 - Fermeture par défaut des panneaux « Personnaliser le modèle » et « Arrière-plan du planning ».
 - Simplification de l’édition des jours : le choix d’un jour sélectionne désormais immédiatement sa carte sur le planning.
 - Transformation des images de jour en véritables fonds de carte, automatiquement découpés selon la taille et la forme de chaque modèle.
@@ -43,7 +55,7 @@
 - Retour des onze modificateurs de thème de l’ancien PlanningGPT, utilisables sur les dix modèles V2.
 - Retour du jour star avec mise en avant dans l’éditeur et le PNG.
 - Ajout d’un bandeau spécial et de libellés contextuels masquables.
-- Extension de l’outil texte avec neuf familles, graisse, italique, casse, alignement, espacement, effets et six presets.
+- Extension de l’outil texte avec neuf familles, graisse, italique, casse, alignement, effets et six presets.
 - Migration des modificateurs et jours star depuis les anciennes sauvegardes.
 
 ### Socle initial

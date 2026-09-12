@@ -19,9 +19,9 @@ test('les identifiants HTML sont uniques',()=>{
   assert.equal(new Set(ids).size,ids.length);
 });
 
-test('les quinze modèles de l’interface possèdent un style V2',()=>{
+test('les seize modèles de l’interface possèdent un style V2',()=>{
   const templates=[...html.matchAll(/data-template="([^"]+)"/g)].map(match=>match[1]);
-  assert.equal(templates.length,15);
+  assert.equal(templates.length,16);
   templates.forEach(name=>assert.match(script,new RegExp(`${name}:\\{bg:`)));
 });
 
@@ -37,7 +37,8 @@ test('le modèle partition de violon possède ses ornements et son rendu PNG',()
   assert.match(script,/II\.  ANDANTE/);
   assert.match(script,/Op\. 7  •  Moderato/);
   assert.match(script,/const romans=\['I','II','III','IV','V','VI','VII'\]/);
-  assert.match(script,/element\.variant==='violin'/);
+  assert.match(css,/\.variant-violin::before/);
+  assert.match(script,/window\.html2canvas\(els\.artboard/);
 });
 
 test('les modèles inspirés des références ont une composition dédiée',()=>{
@@ -55,6 +56,48 @@ test('Duo et plus accepte de deux à sept jours et se réorganise',()=>{
   assert.match(script,/function ensureSpotlightCards\(\)/);
   assert.match(script,/Duo et \+ conserve au moins deux jours affichés/);
   assert.match(script,/await load\(\);ensureSpotlightCards\(\)/);
+  assert.match(script,/previousTemplate==='spotlight'&&name!=='spotlight'[\s\S]*day\.visible=true/);
+});
+
+test('Fantasy VII possède une composition industrielle dédiée et fidèle au PNG',()=>{
+  assert.match(html,/data-template="fantasy7"/);
+  assert.match(css,/\.variant-fantasy7/);
+  assert.match(script,/fantasy7:\{bg:/);
+  assert.match(script,/style==='fantasy7'/);
+  assert.match(script,/function fantasySwordWatermark/);
+  assert.match(script,/svgImageElement\(fantasySwordWatermark\(\)/);
+  assert.match(script,/SECTOR 07  \/\/  MAKO WEEK/);
+  assert.match(css,/\.variant-fantasy7/);
+  assert.match(script,/window\.html2canvas\(els\.artboard/);
+});
+
+test('Twitch Live remplace Quête fantasy avec une composition de diffusion dédiée',()=>{
+  assert.match(html,/data-template="rpg"[\s\S]*<strong>Twitch Live<\/strong>/);
+  assert.match(script,/rpg:\{bg:\['#120b1d','#6f2dc5'\][\s\S]*card:'twitch'/);
+  assert.match(script,/style==='rpg'[\s\S]*topW=430/);
+  assert.match(script,/function twitchLogoMark/);
+  assert.match(script,/svgImageElement\(twitchLogoMark\(\)/);
+  assert.match(script,/Logo Twitch/);
+  assert.match(script,/ON SE RETROUVE EN LIVE  •  À TRÈS VITE/);
+  assert.match(css,/\.variant-twitch/);
+  assert.doesNotMatch(script,/spectateurs|chaînes programmées|#eb0400/);
+  assert.doesNotMatch(css,/#eb0400/);
+  assert.match(script,/refreshReplacedModel=project\.modelRevision<3&&project\.template==='rpg'/);
+});
+
+test('Résonance WuWa remplace entièrement l’ancienne Constellation',()=>{
+  assert.match(html,/data-template="constellation"[\s\S]*<strong>Résonance WuWa<\/strong>/);
+  assert.match(script,/constellation:\{bg:\['#eef7f5','#7ba6ad'\][\s\S]*card:'wuwa'/);
+  assert.match(script,/function resonanceWatermark/);
+  assert.match(script,/svgImageElement\(resonanceWatermark\(\)/);
+  assert.match(script,/RESONANCE \/\/ WEEK 07/);
+  assert.match(css,/\.variant-wuwa/);
+  assert.doesNotMatch(script,/lineElementBetween|URSA MAJOR|GRANDE OURSE|starNames/);
+});
+
+test('les aperçus de modèles sont réduits de cinq pour cent en hauteur',()=>{
+  assert.match(css,/\.templatePreview\{[^}]*height:60px/);
+  assert.match(css,/\.templateCard\{[^}]*min-height:101px/);
 });
 
 test('colonnes, grille pop et horreur ont des structures visuelles propres',()=>{
@@ -67,10 +110,12 @@ test('colonnes, grille pop et horreur ont des structures visuelles propres',()=>
 });
 
 test('les quatre nouveaux modèles possèdent des compositions dédiées',()=>{
-  for(const name of ['agenda','polaroid','roadmap','constellation']){
+  for(const name of ['agenda','polaroid','roadmap']){
     assert.match(script,new RegExp(`style==='${name}'|name==='${name}'`));
     assert.match(css,new RegExp(`variant-${name}`));
   }
+  assert.match(script,/style==='constellation'/);
+  assert.match(css,/variant-wuwa/);
 });
 
 test('changer de modèle conserve les calques personnels',()=>{
@@ -92,7 +137,9 @@ test('les douze modificateurs historiques sont disponibles',()=>{
 });
 
 test('les effets des modificateurs essentiels existent aussi dans le PNG',()=>{
-  for(const token of ["project.modifier==='anime'","['release','challenge'].includes(project.modifier)","project.modifier==='marathon'||project.modifier==='subathon'","element.variant==='rpg'||project.modifier==='rpg'"])assert.match(script,new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));
+  for(const modifier of ['anime','release','challenge','marathon','subathon','rpg'])assert.match(css,new RegExp(`modifier-${modifier}`));
+  assert.match(script,/els\.artboard\.className=`artboard modifier-\$\{project\.modifier\|\|'none'\}`/);
+  assert.match(script,/window\.html2canvas\(els\.artboard/);
 });
 
 test('anime et subathon évitent le faux texte doublé avec le style du modèle',()=>{
@@ -104,18 +151,20 @@ test('anime et subathon évitent le faux texte doublé avec le style du modèle'
 
 test('le jour star est conservé dans le projet et dans le PNG',()=>{
   assert.match(html,/id="dayStar"/);
-  assert.match(script,/★ JOUR STAR/);
+  assert.match(script,/starBadge">★ Jour star/);
+  assert.match(css,/\.elDay\.isStar/);
   assert.match(script,/star:\s*!!day\?\.star/);
+  assert.match(script,/window\.html2canvas\(els\.artboard/);
 });
 
 test('les styles typographiques avancés sont raccordés',()=>{
-  for(const id of ['propFont','propWeight','propFontStyle','propTransform','propAlign','propLetterSpacing','propTextEffect'])assert.match(html,new RegExp(`id="${id}"`));
+  for(const id of ['propFont','propWeight','propFontStyle','propTransform','propAlign','propTextEffect'])assert.match(html,new RegExp(`id="${id}"`));
   for(const preset of ['modern','elegant','typewriter','hand','comic','condensed'])assert.match(script,new RegExp(`${preset}:\\{font:`));
-  assert.match(script,/configureCanvasText/);
+  assert.match(script,/function typographyStyle/);
   assert.match(script,/applyTypePresetToPlanning/);
   assert.match(html,/id="typePresetSelect"/);
-  assert.match(html,/id="propLetterSpacingValue"/);
-  assert.match(script,/propLetterSpacingValue\.textContent/);
+  assert.doesNotMatch(html,/propLetterSpacing|Espacement des lettres/);
+  assert.doesNotMatch(script,/propLetterSpacing/);
 });
 
 test('les contrôles ergonomiques essentiels restent à portée',()=>{
@@ -136,39 +185,42 @@ test('les options de modèle sont repliées par défaut',()=>{
 });
 
 test('le contenu de chaque carte peut être recomposé ou masqué',()=>{
-  for(const id of ['dayCardProperties','propDayLayout','propShowDayName','propShowDayTime','propShowDayTitle','propShowDayNote','propDayOverlay','applyDayStyleAllBtn'])assert.match(html,new RegExp(`id="${id}"`));
+  for(const id of ['dayCardProperties','propDayLayout','propShowDayName','propShowDayTime','propShowDayTitle','propShowDayNote','applyDayStyleAllBtn'])assert.match(html,new RegExp(`id="${id}"`));
   for(const layout of ['standard','poster','feature','image'])assert.match(html,new RegExp(`option value="${layout}"`));
   assert.match(script,/contentLayout/);
   assert.match(script,/showDayName/);
-  assert.match(script,/imageOverlay/);
+  assert.doesNotMatch(html,/propDayOverlay|Assombrir l.image/);
+  assert.doesNotMatch(script,/propDayOverlay|imageOverlay/);
   assert.match(script,/Composition appliquée à toutes les cartes/);
 });
 
-test('la bibliothèque contient vingt-huit emojis sans illustrations intégrées',()=>{
+test('la bibliothèque contient trente-six emojis sans illustrations intégrées',()=>{
   const emojiBlock=script.match(/const EMOJIS = \[([^\]]+)\]/)?.[1]||'';
-  assert.equal([...emojiBlock.matchAll(/'[^']+'/g)].length,28);
+  assert.equal([...emojiBlock.matchAll(/'[^']+'/g)].length,36);
   for(const emoji of ['☁️','🎧','🕹️','🐉','🏆','🍄','🌈','🦇','🪄','🎲'])assert.match(script,new RegExp(emoji));
   for(const emoji of ['🎤','🎻','🎼','🎵','💀','📼'])assert.match(script,new RegExp(emoji));
+  for(const emoji of ['⚔️','🗡️','🪽','🌌','⚡','🧪','🏙️','🐺'])assert.match(script,new RegExp(emoji));
   assert.doesNotMatch(script,/STICKERS|stickerElement|assets\/stickers/);
   assert.doesNotMatch(html,/stickerGrid|Illustrations originales|LIVE SCHEDULE/);
 });
 
-test('le QR Code est généré localement et raccordé au PNG',async()=>{
+test('le QR Code est généré localement et présent dans le rendu exporté',async()=>{
   await access(new URL('../libs/qrcode.local.js',import.meta.url));
   assert.match(html,/id="showQr"/);
   assert.match(html,/id="qrUrl"/);
   assert.ok(html.indexOf('libs/qrcode.local.js')<html.indexOf('v2.js'));
   assert.match(script,/function makeQr\(\)/);
-  assert.match(script,/function drawQr\(ctx,element\)/);
-  assert.match(script,/if\(element\.type==='qr'\)drawQr/);
+  assert.match(script,/function qrSvg\(element\)/);
+  assert.match(script,/if\(element\.type==='qr'\)content=`<div class="elQr">\$\{qrSvg\(element\)\}<\/div>`/);
+  assert.match(script,/window\.html2canvas\(els\.artboard/);
 });
 
-test('la gestion d’image permet un recadrage non destructif fidèle au PNG',()=>{
+test('la gestion d’image permet un recadrage non destructif repris directement dans le PNG',()=>{
   for(const id of ['imageProperties','propImageFit','cropImageBtn','replaceImageInput','cropModal','cropStage','cropZoom','cropStretchX','cropStretchY','cropApplyBtn'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/function normalizeImageCrop/);
   assert.match(script,/function imageCropStyle/);
-  assert.match(script,/function drawCroppedImage/);
-  assert.match(script,/drawCroppedImage\(ctx,await loadImage/);
+  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.doesNotMatch(script,/function drawCroppedImage/);
   assert.match(css,/\.cropOverlay\.isVisible/);
 });
 
@@ -176,9 +228,9 @@ test('chaque jour peut recevoir une image recadrée et exportée',()=>{
   for(const id of ['dayImageInput','dayImageFit','cropDayImageBtn','removeDayImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/imageAssetId/);
   assert.match(script,/async function importDayImage/);
-  assert.match(script,/drawDay\(ctx,element,dayImage\)/);
   assert.match(css,/\.elDay__image\{position:absolute;inset:0/);
-  assert.match(script,/const area=\{w:element\.w,h:element\.h,fit:day\.imageFit/);
+  assert.match(script,/imageCropStyle\(\{\.\.\.day,fit:day\.imageFit\}\)/);
+  assert.match(script,/window\.html2canvas\(els\.artboard/);
 });
 
 test('choisir un jour sélectionne directement sa carte',()=>{
@@ -194,15 +246,33 @@ test('les jours se masquent depuis la semaine sans supprimer leurs données',()=
   assert.match(script,/function setDayVisibility/);
   assert.match(script,/data-toggle-day/);
   assert.match(script,/sans supprimer ses données/);
-  assert.match(script,/if\(element\.type==='day'&&project\.days\[element\.dayIndex\]\.visible===false\)continue/);
+  assert.match(script,/if\(element\.type==='day'&&project\.days\[element\.dayIndex\]\.visible===false\)return ''/);
   assert.match(html,/Masquer les repos/);
 });
 
 test('le planning accepte une image de fond ou un PNG transparent',()=>{
   for(const id of ['transparentBackground','backgroundImageInput','backgroundImageFit','removeBackgroundImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/async function importBackgroundImage/);
-  assert.match(script,/if\(!project\.background\.transparent\)/);
+  assert.match(script,/if\(project\.background\.transparent\)\{els\.artboard\.style\.backgroundImage='none'/);
   assert.match(script,/project\.background\.imageAssetId/);
+});
+
+test('le PNG et l’aperçu raster partagent le même canvas local',async()=>{
+  await access(new URL('../libs/html2canvas.local.js',import.meta.url));
+  assert.ok(html.indexOf('libs/html2canvas.local.js')<html.indexOf('v2.js'));
+  assert.match(html,/id="renderSurface"/);
+  assert.match(script,/function renderArtboardToCanvas\(\)/);
+  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.match(script,/backgroundColor:null,scale:1,width:project\.width,height:project\.height/);
+  assert.match(script,/async function prepareExportDom\(\)/);
+  assert.match(script,/\.elImage img,\.elDay__image img/);
+  assert.match(script,/\.variant-cyber,\.variant-fantasy7/);
+  assert.match(script,/canvas\.className='exportCardShape'/);
+  assert.match(script,/function updateRenderSurface\(source\)/);
+  assert.match(script,/async function refreshRenderSurface\(\)/);
+  assert.match(script,/const canvas=await refreshRenderSurface\(\)/);
+  assert.doesNotMatch(script,/XMLSerializer|foreignObject|blobToDataUrl/);
+  assert.doesNotMatch(script,/function (drawDay|drawText|drawQr|drawCroppedImage)\(/);
 });
 
 test('le stockage refuse un import non persistant et nettoie les ressources orphelines',()=>{
