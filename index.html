@@ -19,7 +19,6 @@
     <div class="topActions">
       <button class="iconBtn" id="undoBtn" type="button" title="Annuler" aria-label="Annuler">↶</button>
       <button class="iconBtn" id="redoBtn" type="button" title="Rétablir" aria-label="Rétablir">↷</button>
-      <button class="btn" id="resetBtn" type="button">Nouveau</button>
       <button class="btn btn--primary" id="exportBtn" type="button">Exporter PNG</button>
     </div>
   </header>
@@ -49,6 +48,7 @@
         <label class="field"><span>Note</span><textarea id="dayNote" maxlength="180"></textarea></label>
         <div class="dayImageBox"><div><strong>Fond de la carte</strong><small id="dayImageStatus">Aucune image</small></div><select id="dayImageFit" aria-label="Adaptation de l’image du jour"><option value="cover">Remplir automatiquement</option><option value="contain">Afficher l’image entière</option><option value="fill">Étirer à la carte</option></select><label class="btn">Choisir<input class="hidden" id="dayImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><button class="btn" id="cropDayImageBtn" type="button">Ajuster</button><button class="btn btn--danger" id="removeDayImageBtn" type="button">Retirer</button></div>
         <label class="switchBox"><input id="dayStar" type="checkbox"><span><strong>Jour star</strong><small>Met ce jour en avant dans le planning et le PNG.</small></span></label>
+        <button class="btn resetPlanningPanel" id="resetPlanningBtn" type="button">Réinitialiser le planning</button>
       </section>
 
       <section class="sidePanel" data-panel-content="templates">

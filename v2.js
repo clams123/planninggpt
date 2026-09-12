@@ -56,7 +56,7 @@
   const $ = id => document.getElementById(id);
   const els = {
     app:$('appRoot'),
-    projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), reset:$('resetBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'),
+    projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'),
     title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
     artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
     inspector:$('inspector'), closeInspector:$('closeInspectorBtn'), emptyInspector:$('emptyInspector'), propertyPanel:$('propertyPanel'), layerList:$('layerList'), layerSelect:$('layerSelect'),
@@ -490,6 +490,10 @@
     const custom=project.elements.filter(element=>!element.builtIn).map(clone),template=project.template;
     buildTemplate(template);project.elements.push(...custom);selectedId='';renderAll();pushHistory();save();toast('Mise en page du modèle réinitialisée.');
   }
+  function resetPlanning(){
+    if(!window.confirm('Réinitialiser entièrement le planning ? Le contenu, les images, les calques et la mise en page actuels seront remplacés.'))return;
+    project=defaultProject();buildTemplate('cloud');selectedId='';selectedDay=0;renderAll();pushHistory();save();toast('Planning réinitialisé : tu peux repartir de zéro.');
+  }
 
   function bindPointer(){
     els.artboard.addEventListener('pointerdown',event=>{
@@ -716,7 +720,7 @@
     els.layerList.addEventListener('dragend',()=>{draggedLayerId='';els.layerList.querySelectorAll('.isDragging,.isDropTarget').forEach(item=>item.classList.remove('isDragging','isDropTarget'));});
     els.layerSelect.addEventListener('change',()=>selectElement(els.layerSelect.value));
     els.undo.addEventListener('click',()=>{flushHistory();restoreHistory(historyIndex-1);});els.redo.addEventListener('click',()=>restoreHistory(historyIndex+1));
-    els.reset.addEventListener('click',()=>{if(!window.confirm('Créer un nouveau planning et remplacer la composition actuelle ?'))return;project=defaultProject();buildTemplate('cloud');selectedId='';selectedDay=0;renderAll();pushHistory();save();toast('Nouveau planning créé.');});
+    els.resetPlanning.addEventListener('click',resetPlanning);
     els.export.addEventListener('click',exportPng);
     document.querySelectorAll('[data-format]').forEach(button=>button.addEventListener('click',()=>changeFormat(button.dataset.format)));
     els.zoom.addEventListener('input',()=>{zoom=Number(els.zoom.value);updateZoom();});els.zoomOut.addEventListener('click',()=>{zoom-=10;updateZoom();});els.zoomIn.addEventListener('click',()=>{zoom+=10;updateZoom();});
