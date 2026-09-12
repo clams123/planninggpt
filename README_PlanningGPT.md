@@ -30,6 +30,7 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 - Travailler aux formats 16:9 ou carré.
 - Utiliser une grille magnétique et un zoom de 20 à 120 %.
 - Annuler et rétablir les modifications.
+- Réinitialiser entièrement le planning avec le bouton placé directement sous « Jour star », après confirmation explicite.
 - Retrouver automatiquement son projet grâce à la sauvegarde locale.
 - Nettoyer automatiquement les anciennes images devenues inutiles lors du prochain démarrage.
 - Importer automatiquement le contenu textuel d’une ancienne sauvegarde V1.

@@ -4,6 +4,7 @@
 
 ### Compléments de la refonte
 
+- Placement de « Réinitialiser le planning » directement sous « Jour star », sans icône ni doublon dans la barre supérieure.
 - Ajout de six emojis : microphone, violon, partition, note musicale, crâne et cassette VHS.
 - Correction du faux effet de texte doublé avec Saison anime et Subathon lorsque la typographie globale reste sur « Style du modèle », y compris pour les projets déjà sauvegardés.
 - Ajout du modèle « Partition de violon » avec papier ivoire, portées, barres de mesure, notes, clé musicale, violon et typographie classique.

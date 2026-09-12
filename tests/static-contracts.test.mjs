@@ -112,6 +112,10 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   assert.match(html,/id="layerSelect"/);
   assert.ok(html.indexOf('id="layerSelect"')<html.indexOf('id="propertyPanel"'));
   assert.match(html,/id="resetLayoutBtn"/);
+  assert.match(html,/id="dayStar"[\s\S]*id="resetPlanningBtn"[^>]*>Réinitialiser le planning</);
+  assert.doesNotMatch(html,/id="resetBtn"|↺ Réinitialiser/);
+  assert.match(script,/function resetPlanning\(\)/);
+  assert.match(script,/els\.resetPlanning\.addEventListener\('click',resetPlanning\)/);
   assert.doesNotMatch(html,/dayMovePanel|data-move-day|data-arrange/);
 });
 
