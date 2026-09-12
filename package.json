@@ -1,0 +1,10 @@
+{
+  "name": "planninggpt",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Éditeur de planning Twitch statique, local et hors ligne.",
+  "scripts": {
+    "check": "node --check v2.js && node --check storage.js && node --check libs/qrcode.local.js",
+    "test": "npm run check && node --test tests/*.test.mjs"
+  }
+}
