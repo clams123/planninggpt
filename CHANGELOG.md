@@ -1,8 +1,8 @@
 # Historique des versions
 
-## 2.0.0 — Refonte complète de PlanningGPT
+## 2.0.2 — Refonte complète de PlanningGPT
 
-PlanningGPT 2.0 transforme l’ancien générateur de planning en un studio créatif local à calques. Cette entrée regroupe la refonte et toutes les améliorations intégrées depuis son lancement. L’historique des versions antérieures à la V2 a été retiré.
+PlanningGPT 2.0.2 transforme l’ancien générateur de planning en un studio créatif local à calques. Cette entrée regroupe la refonte et toutes les améliorations intégrées depuis son lancement. L’historique des versions antérieures à la V2 a été retiré.
 
 ### Nouveau studio créatif
 
@@ -50,6 +50,8 @@ PlanningGPT 2.0 transforme l’ancien générateur de planning en un studio cré
 ### Images de jour et arrière-plan
 
 - Chaque jour peut recevoir sa propre image, utilisée comme véritable fond et automatiquement adaptée à la taille et à la forme de la carte.
+- L’opacité de chaque image de jour est réglable de 0 à 100 % sans modifier les textes, la bordure ou le fond de la carte.
+- À 0 %, l’image et son voile de lisibilité disparaissent entièrement ; la carte retrouve exactement l’apparence et les couleurs prévues par le modèle.
 - Les nouvelles images de jour sont affichées entièrement, sans découpe, par défaut.
 - Trois adaptations disponibles : remplir le cadre, afficher toute l’image ou l’étirer sans zone vide.
 - Éditeur de cadrage non destructif commun aux images de jour, aux images personnelles et au fond du planning.
@@ -57,6 +59,7 @@ PlanningGPT 2.0 transforme l’ancien générateur de planning en un studio cré
 - Remplacement d’une image en conservant le calque, ses dimensions et son cadrage.
 - Possibilité de retirer une image ou de réinitialiser son cadrage.
 - Image de fond globale réglable avec les mêmes outils que les cartes.
+- Opacité de l’image de fond globale réglable de 0 à 100 % sans atténuer les autres éléments du planning.
 - Mode fond transparent, conservé dans le PNG final.
 - Explication des zones quadrillées visibles lorsque les proportions de l’image et du cadre diffèrent.
 - Stockage des images dans IndexedDB afin d’éviter la limite de `localStorage`.

@@ -191,6 +191,8 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   assert.ok(html.indexOf('id="layerSelect"')<html.indexOf('id="propertyPanel"'));
   assert.match(html,/id="resetLayoutBtn"/);
   assert.match(html,/id="dayStar"[\s\S]*id="resetPlanningBtn"[^>]*>Réinitialiser le planning</);
+  assert.match(html,/class="quickToggleRow"[\s\S]*id="showQr"[\s\S]*id="dayStar"[\s\S]*id="qrUrlField"[\s\S]*id="resetPlanningBtn"/);
+  assert.match(css,/\.quickToggleRow\{display:grid;grid-template-columns:1fr 1fr/);
   assert.doesNotMatch(html,/id="resetBtn"|↺ Réinitialiser/);
   assert.match(script,/function resetPlanning\(\)/);
   assert.match(script,/els\.resetPlanning\.addEventListener\('click',resetPlanning\)/);
@@ -248,12 +250,17 @@ test('la gestion d’image permet un recadrage non destructif repris directement
   assert.match(css,/\.cropOverlay\.isVisible/);
 });
 
-test('chaque jour peut recevoir une image recadrée et exportée',()=>{
-  for(const id of ['dayImageInput','dayImageFit','cropDayImageBtn','removeDayImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
+test('chaque jour peut recevoir une image recadrée, transparente et exportée',()=>{
+  for(const id of ['dayImageInput','dayImageFit','dayImageOpacity','dayImageOpacityValue','cropDayImageBtn','removeDayImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/imageAssetId/);
   assert.match(script,/async function importDayImage/);
   assert.match(css,/\.elDay__image\{position:absolute;inset:0/);
   assert.match(script,/imageCropStyle\(\{\.\.\.day,fit:day\.imageFit\}\)/);
+  assert.match(script,/imageOpacity:normalizeImageOpacity\(day\?\.imageOpacity\)/);
+  assert.match(script,/dayImageOpacity=normalizeImageOpacity\(day\.imageOpacity\),hasVisibleDayImage=!!day\.imageSrc&&dayImageOpacity>0/);
+  assert.match(script,/class="elDay__image" style="opacity:\$\{dayImageOpacity\}"/);
+  assert.match(script,/\$\{hasVisibleDayImage\?' hasImage':''\}/);
+  assert.match(script,/els\.dayImageOpacity\.addEventListener\('input'/);
   assert.match(script,/function exportClone\(\)/);
 });
 
@@ -302,13 +309,16 @@ test('une nouvelle image de jour est affichée entièrement par défaut',()=>{
   assert.match(script,/Les zones quadrillées viennent seulement de la différence de proportions/);
 });
 
-test('le planning accepte une image de fond ajustable ou un PNG transparent',()=>{
-  for(const id of ['transparentBackground','backgroundImageInput','backgroundImageFit','cropBackgroundImageBtn','removeBackgroundImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
+test('le planning accepte une image de fond ajustable, transparente ou un PNG transparent',()=>{
+  for(const id of ['transparentBackground','backgroundImageInput','backgroundImageFit','backgroundImageOpacity','backgroundImageOpacityValue','cropBackgroundImageBtn','removeBackgroundImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/async function importBackgroundImage/);
   assert.match(script,/openCropEditor\('background'\)/);
   assert.match(script,/cropDraft\.kind==='background'\?project\.background/);
   assert.match(script,/class="artboardBackground"/);
   assert.match(script,/imageCropStyle\(\{\.\.\.bg,fit:bg\.imageFit\}\)/);
+  assert.match(script,/raw\.background\.imageOpacity=normalizeImageOpacity\(raw\.background\.imageOpacity\)/);
+  assert.match(script,/opacity:\$\{normalizeImageOpacity\(bg\.imageOpacity\)\}/);
+  assert.match(script,/els\.backgroundImageOpacity\.addEventListener\('input'/);
   assert.match(css,/\.artboardBackground img/);
   assert.match(script,/if\(project\.background\.transparent\)\{els\.artboard\.style\.backgroundImage='none'/);
   assert.match(script,/project\.background\.imageAssetId/);
@@ -358,9 +368,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.0\.0'/);
-  assert.equal(packageJson.version,'2.0.0');
-  assert.match(readme,/PlanningGPT V2\.0\.0/);
+  assert.match(script,/const VERSION = '2\.0\.2'/);
+  assert.equal(packageJson.version,'2.0.2');
+  assert.match(readme,/PlanningGPT V2\.0\.2/);
 });
 
 test('le stockage est chargé avant le studio',()=>{
