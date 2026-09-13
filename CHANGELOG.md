@@ -4,6 +4,13 @@
 
 ### Compléments de la refonte
 
+- L’image de fond dispose désormais du même éditeur non destructif que les cartes : déplacement libre, zoom, étirement horizontal et vertical, avec un rendu DOM identique dans l’aperçu et le PNG.
+- L’éditeur de cadrage permet désormais de choisir directement entre remplir le cadre, afficher toute l’image ou l’étirer sans zone vide. Les bandes quadrillées du mode image entière sont expliquées et ce choix est conservé dans le planning comme dans le PNG.
+- Chaque jour possède maintenant une couleur de carte indépendante dans le panneau Planning. Un raccourci de composition libre sépare ou regroupe en une fois les textes de tous les jours visibles afin de déplacer séparément cartes, noms, horaires, titres et notes.
+- Ajout de deux modèles conçus pour les plannings illustrés à deux jours : « Duel néon », technologique bleu/rouge avec cadres lumineux et séparation VS, et « Duo astral », magique bleu/rose avec anneaux, astres, papillons et ornement central. Ils reprennent les deux jours déjà choisis ou proposent mardi et samedi par défaut.
+- Ajout des textes de jour détachables : nom, horaire, titre et note deviennent des calques indépendants, librement déplaçables tout en restant synchronisés avec les données du jour. Un second clic les regroupe dans la carte.
+- Les nouvelles images de jour utilisent désormais « Afficher l’image entière sans découpe » par défaut afin d’éviter les cadrages incomplets ; les autres adaptations restent disponibles.
+- Tous les calques des modèles sont désormais déverrouillés par défaut. Les anciennes sauvegardes V2 sont migrées automatiquement, sans modifier le verrouillage des calques personnels.
 - Retrait du canvas raster qui recouvrait l’éditeur et défigurait les modèles avec de grands aplats rectangulaires : l’aperçu redevient le véritable rendu HTML/CSS interactif.
 - Nouveau moteur PNG auto-contenu : clonage du DOM, intégration des styles calculés et des pseudo-éléments, puis rasterisation d’un SVG encodé en `data:` pour rester compatible avec une ouverture locale.
 - Correction des attributs typographiques contenant des familles entre guillemets, qui produisaient un HTML invalide et empêchaient la sérialisation fidèle de certaines polices.

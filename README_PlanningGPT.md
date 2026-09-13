@@ -7,8 +7,8 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 - Modifier le contenu des sept jours indépendamment de la composition graphique.
 - Afficher ou masquer chaque jour directement depuis la rangée hebdomadaire, sans supprimer son contenu, avec des raccourcis pour tout afficher ou masquer les jours de repos.
 - Associer une image à chaque jour : elle remplit automatiquement toute la carte et suit directement sa taille et sa forme, tout en restant ajustable sans modifier le fichier original.
-- Utiliser le dégradé du modèle, importer une image comme fond global ou exporter le planning sur un fond entièrement transparent.
-- Choisir parmi seize modèles structurellement différents, dont Twitch Live, Résonance WuWa, Duo et +, Horreur VHS, Partition de violon et Fantasy VII.
+- Utiliser le dégradé du modèle, importer une image comme fond global, la déplacer, la zoomer et l’étirer dans le même éditeur non destructif que les images de jour, ou exporter le planning sur un fond entièrement transparent.
+- Choisir parmi dix-huit modèles structurellement différents, dont Twitch Live, Résonance WuWa, Duo et +, Duel néon, Duo astral, Horreur VHS, Partition de violon et Fantasy VII.
 - Composer librement Duo et + avec deux à sept jours choisis dans la semaine ; les cartes sont automatiquement recentrées et redimensionnées quand leur nombre change.
 - Le modèle Partition de violon compose les sept jours comme des mesures réparties en deux mouvements, avec portées, clés de sol, cadre gravé, ornements et filigrane vectoriel original.
 - Le modèle Fantasy VII propose une direction fantasy industrielle originale : énergie verte, acier sombre, cartes asymétriques, réacteur et épée monumentale vectorielle, sans image distante.
@@ -27,9 +27,12 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 - Composer une typographie complète : neuf familles locales, graisse, italique, casse, alignement et cinq effets de texte.
 - Appliquer globalement six familles réellement distinctes : Moderne, Élégante, Machine, Manuscrite, Bande dessinée et Condensée. Les réglages fins restent disponibles élément par élément.
 - Choisir un jour et sélectionner immédiatement sa carte, puis la déplacer directement sur le planning ou au clavier.
+- Séparer en un clic le nom du jour, l’horaire, le titre et la note en calques indépendants : chaque texte reste lié aux données du jour mais peut être placé librement, y compris hors de sa carte, puis regroupé à tout moment.
+- Afficher les nouvelles images de jour entièrement et sans découpe par défaut, avec les modes remplissage et étirement toujours disponibles.
 - Réinitialiser la disposition du modèle sans supprimer les éléments ajoutés par l’utilisateur.
 - Choisir le calque actif en haut de l’inspecteur, puis modifier immédiatement son contenu et sa typographie.
 - Réordonner les calques par glisser-déposer, puis les verrouiller, dupliquer ou supprimer.
+- Commencer avec tous les calques déverrouillés, y compris les décors intégrés aux modèles, puis verrouiller manuellement uniquement ceux qui doivent rester fixes.
 - Changer de modèle sans perdre les calques ajoutés personnellement.
 - Repérer avant l’export les éléments hors cadre, images manquantes, QR invalides et textes potentiellement coupés.
 - Travailler aux formats 16:9 ou carré.

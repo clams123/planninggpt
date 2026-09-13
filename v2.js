@@ -2,6 +2,7 @@
   'use strict';
 
   const VERSION = '2.0.0';
+  const MODEL_REVISION = 4;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const DAY_SHORT = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
   const DEFAULT_DAYS = [
@@ -41,8 +42,11 @@
     bubblegrid:{bg:['#73e6f2','#ffc8df'],angle:145,card:'bubblegrid',text:'#087f8c',accent:'#f05bce'},
     horror:{bg:['#050506','#4b0710'],angle:135,card:'horror',text:'#f8fafc',accent:'#ff334d'},
     violin:{bg:['#fffaf0','#dcc8a7'],angle:135,card:'violin',text:'#3e291c',accent:'#70482d'},
-    fantasy7:{bg:['#020707','#183b32'],angle:138,card:'fantasy7',text:'#effff7',accent:'#5df2ae'}
+    fantasy7:{bg:['#020707','#183b32'],angle:138,card:'fantasy7',text:'#effff7',accent:'#5df2ae'},
+    neonduel:{bg:['#020b1d','#25030c'],angle:90,card:'neonblue',text:'#ffffff',accent:'#6dc8ff'},
+    astralduo:{bg:['#071633','#310922'],angle:90,card:'astralblue',text:'#ffffff',accent:'#a9dcff'}
   };
+  const DUO_TEMPLATES = new Set(['spotlight','neonduel','astralduo']);
   const MODIFIERS = ['none','poster','ticket','restaurant','rpg','logbook','anime','marathon','release','subathon','indie','challenge'];
   const TYPE_PRESETS = {
     modern:{font:'sans',weight:700,fontStyle:'normal',transform:'none',letterSpacing:0,effect:'none'},
@@ -58,12 +62,12 @@
   const els = {
     app:$('appRoot'),
     projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'),
-    title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
+    title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayCardColor:$('dayCardColor'), dayTextLayers:$('dayTextLayersBtn'), allDayTextLayers:$('allDayTextLayersBtn'), dayTextLayersStatus:$('dayTextLayersStatus'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
     artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
     inspector:$('inspector'), closeInspector:$('closeInspectorBtn'), emptyInspector:$('emptyInspector'), propertyPanel:$('propertyPanel'), layerList:$('layerList'), layerSelect:$('layerSelect'),
     propX:$('propX'), propY:$('propY'), propW:$('propW'), propH:$('propH'), propRotation:$('propRotation'), propText:$('propText'), propFontSize:$('propFontSize'), propFont:$('propFont'), propWeight:$('propWeight'), propFontStyle:$('propFontStyle'), propTransform:$('propTransform'), propAlign:$('propAlign'), propTextEffect:$('propTextEffect'), propColor:$('propColor'), propFill:$('propFill'), propColorField:$('propColorField'), propFillField:$('propFillField'), propOpacity:$('propOpacity'), textProperties:$('textProperties'), textContentField:$('textContentField'), imageProperties:$('imageProperties'), propImageFit:$('propImageFit'), cropImage:$('cropImageBtn'), replaceImage:$('replaceImageInput'), dayCardProperties:$('dayCardProperties'), propDayLayout:$('propDayLayout'), propShowDayName:$('propShowDayName'), propShowDayTime:$('propShowDayTime'), propShowDayTitle:$('propShowDayTitle'), propShowDayNote:$('propShowDayNote'), applyDayStyleAll:$('applyDayStyleAllBtn'), duplicate:$('duplicateElementBtn'), remove:$('deleteElementBtn'),
-    modifierSelect:$('modifierSelect'), typePresetSelect:$('typePresetSelect'), eventBanner:$('eventBanner'), hideModifierLabels:$('hideModifierLabels'), resetLayout:$('resetLayoutBtn'), transparentBackground:$('transparentBackground'), backgroundImageInput:$('backgroundImageInput'), backgroundImageStatus:$('backgroundImageStatus'), backgroundImageFit:$('backgroundImageFit'), removeBackgroundImage:$('removeBackgroundImageBtn'),
-    emojiGrid:$('emojiGrid'), imageInput:$('imageInput'), toast:$('toastRegion'), cropModal:$('cropModal'), cropClose:$('cropCloseBtn'), cropStage:$('cropStage'), cropPreview:$('cropPreview'), cropZoom:$('cropZoom'), cropZoomValue:$('cropZoomValue'), cropStretchX:$('cropStretchX'), cropStretchXValue:$('cropStretchXValue'), cropStretchY:$('cropStretchY'), cropStretchYValue:$('cropStretchYValue'), cropPosition:$('cropPosition'), cropReset:$('cropResetBtn'), cropCancel:$('cropCancelBtn'), cropApply:$('cropApplyBtn')
+    modifierSelect:$('modifierSelect'), typePresetSelect:$('typePresetSelect'), eventBanner:$('eventBanner'), hideModifierLabels:$('hideModifierLabels'), resetLayout:$('resetLayoutBtn'), transparentBackground:$('transparentBackground'), backgroundImageInput:$('backgroundImageInput'), backgroundImageStatus:$('backgroundImageStatus'), backgroundImageFit:$('backgroundImageFit'), cropBackgroundImage:$('cropBackgroundImageBtn'), removeBackgroundImage:$('removeBackgroundImageBtn'),
+    emojiGrid:$('emojiGrid'), imageInput:$('imageInput'), toast:$('toastRegion'), cropModal:$('cropModal'), cropTitle:$('cropTitle'), cropClose:$('cropCloseBtn'), cropStage:$('cropStage'), cropPreview:$('cropPreview'), cropFit:$('cropFit'), cropFitHint:$('cropFitHint'), cropZoom:$('cropZoom'), cropZoomValue:$('cropZoomValue'), cropStretchX:$('cropStretchX'), cropStretchXValue:$('cropStretchXValue'), cropStretchY:$('cropStretchY'), cropStretchYValue:$('cropStretchYValue'), cropPosition:$('cropPosition'), cropReset:$('cropResetBtn'), cropCancel:$('cropCancelBtn'), cropApply:$('cropApplyBtn')
   };
 
   let selectedDay = 0;
@@ -89,11 +93,21 @@
   function snap(value){ return gridEnabled ? Math.round(value/10)*10 : Math.round(value); }
   function escapeHtml(value){ return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
   function color(value,fallback='#ffffff'){ return /^#[0-9a-f]{6}$/i.test(String(value||'')) ? value : fallback; }
+  function computedColor(value,fallback='#ffffff'){
+    const match=String(value||'').match(/^rgba?\(\s*(\d+(?:\.\d+)?)\D+(\d+(?:\.\d+)?)\D+(\d+(?:\.\d+)?)/i);
+    if(!match)return color(value,fallback);
+    return `#${match.slice(1,4).map(part=>clamp(Math.round(Number(part)),0,255).toString(16).padStart(2,'0')).join('')}`;
+  }
+  function computedFontKey(value,fallback='sans'){
+    const family=String(value||'').toLowerCase();
+    const hints=[['comic sans','comic'],['segoe print','hand'],['bradley hand','hand'],['bahnschrift condensed','condensed'],['arial narrow','condensed'],['arial black','display'],['impact','display'],['consolas','typewriter'],['lucida console','typewriter'],['courier new','mono'],['georgia','serif'],['trebuchet','rounded'],['segoe ui','sans'],['arial','sans']];
+    return hints.find(([hint])=>family.includes(hint))?.[1]||fallback;
+  }
   function elementBase(type,x,y,w,h){ return {id:uid(type),type,x,y,w,h,rotation:0,opacity:1,locked:false}; }
   function minimumElementSize(element){return element?.type==='shape'?1:20;}
 
   function defaultProject(){
-    return {version:VERSION,modelRevision:3,name:'Mon planning Twitch',format:'wide',width:1600,height:900,template:'cloud',spotlightInitialized:false,modifier:'none',typePreset:'',hideModifierLabels:false,eventBanner:'',showQr:false,qrUrl:'https://twitch.tv/ton_lien',title:'Planning de la semaine',subtitle:'twitch.tv/ton_lien',background:{colors:['#f7b7df','#8399f5'],angle:135,transparent:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()},days:clone(DEFAULT_DAYS).map(day=>({...day,visible:true,star:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()})),elements:[]};
+    return {version:VERSION,modelRevision:MODEL_REVISION,name:'Mon planning Twitch',format:'wide',width:1600,height:900,template:'cloud',spotlightInitialized:false,modifier:'none',typePreset:'',hideModifierLabels:false,eventBanner:'',showQr:false,qrUrl:'https://twitch.tv/ton_lien',title:'Planning de la semaine',subtitle:'twitch.tv/ton_lien',background:{colors:['#f7b7df','#8399f5'],angle:135,transparent:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()},days:clone(DEFAULT_DAYS).map(day=>({...day,visible:true,star:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()})),elements:[]};
   }
   let project = defaultProject();
 
@@ -108,7 +122,7 @@
     raw.background.colors=[color(raw.background.colors[0],TEMPLATE_STYLE[raw.template].bg[0]),color(raw.background.colors[1],TEMPLATE_STYLE[raw.template].bg[1])];raw.background.angle=Number(raw.background.angle)||135;raw.background.transparent=!!raw.background.transparent;raw.background.imageSrc=String(raw.background.imageSrc||'');raw.background.imageAssetId=String(raw.background.imageAssetId||'');raw.background.imageName=String(raw.background.imageName||'');raw.background.imageFit=['cover','contain','fill'].includes(raw.background.imageFit)?raw.background.imageFit:'cover';Object.assign(raw.background,normalizeImageCrop(raw.background));
     raw.days=raw.days.map((day,index)=>({name:String(day?.name||DEFAULT_DAYS[index].name),time:String(day?.time||''),title:String(day?.title||''),note:String(day?.note||''),status:day?.status==='off'?'off':'live',visible:day?.visible!==false,star:!!day?.star,imageSrc:String(day?.imageSrc||''),imageAssetId:String(day?.imageAssetId||''),imageName:String(day?.imageName||''),imageFit:['cover','contain','fill'].includes(day?.imageFit)?day.imageFit:'cover',...normalizeImageCrop(day)}));
     raw.elements=raw.elements.filter(element=>element&&typeof element==='object'&&['text','emoji','shape','image','day','qr'].includes(element.type)&&typeof element.id==='string').map(element=>{
-      const minimum=minimumElementSize(element),normalized={...element,x:Number(element.x)||0,y:Number(element.y)||0,w:Math.max(minimum,Number(element.w)||100),h:Math.max(minimum,Number(element.h)||100),rotation:Number(element.rotation)||0,opacity:clamp(element.opacity??1,0,1),dayIndex:element.type==='day'?clamp(element.dayIndex,0,6):element.dayIndex};if(normalized.variant==='candy')normalized.variant='horror';
+      const dayField=['name','time','title','note'].includes(element.dayField)?element.dayField:'',minimum=minimumElementSize(element),normalized={...element,x:Number(element.x)||0,y:Number(element.y)||0,w:Math.max(minimum,Number(element.w)||100),h:Math.max(minimum,Number(element.h)||100),rotation:Number(element.rotation)||0,opacity:clamp(element.opacity??1,0,1),dayIndex:element.type==='day'||dayField?clamp(element.dayIndex,0,6):element.dayIndex};if(dayField)normalized.dayField=dayField;else delete normalized.dayField;if(normalized.variant==='candy')normalized.variant='horror';
       if(element.type==='image')Object.assign(normalized,normalizeImageCrop(element),{fit:['cover','contain','fill'].includes(element.fit)?element.fit:'cover'});
       if(element.type==='day')Object.assign(normalized,{contentLayout:['standard','poster','feature','image'].includes(element.contentLayout)?element.contentLayout:'standard',showDayName:element.showDayName!==false,showDayTime:element.showDayTime!==false,showDayTitle:element.showDayTitle!==false,showDayNote:element.showDayNote!==false});
       if(!raw.typePreset&&normalized.builtIn&&['text','day'].includes(normalized.type)&&['anime','subathon'].includes(raw.modifier)){normalized.effect='none';normalized.fontStyle=raw.modifier==='anime'?'italic':'normal';}
@@ -122,6 +136,15 @@
   function textElement(text,x,y,w,h,size,fill,font='rounded',weight=800,align='left'){
     return {...elementBase('text',x,y,w,h),text,fontSize:size,color:fill,fill:'#ffffff',font,weight,align,fontStyle:'normal',transform:'none',letterSpacing:0,effect:'none'};
   }
+  const DAY_TEXT_FIELDS = {
+    name:{selector:'.elDay__name',property:'name',label:'Jour'},
+    time:{selector:'.elDay__time',property:'time',label:'Horaire'},
+    title:{selector:'.elDay__title',property:'title',label:'Titre'},
+    note:{selector:'.elDay__note',property:'note',label:'Note'}
+  };
+  function dayTextValue(element,raw=false){const field=DAY_TEXT_FIELDS[element.dayField],day=project.days[element.dayIndex];if(!field||!day)return element.text||'';return !raw&&element.dayField==='time'&&day.status==='off'?'REPOS':String(day[field.property]||'');}
+  function linkedDayTexts(dayIndex){return project.elements.filter(element=>element.type==='text'&&element.dayField&&element.dayIndex===dayIndex);}
+  function isHiddenWithDay(element){return (element.type==='day'||element.dayField)&&project.days[element.dayIndex]?.visible===false;}
   function shapeElement(shape,x,y,w,h,fill,radius=20){
     return {...elementBase('shape',x,y,w,h),shape,fill,color:'#ffffff',radius,borderColor:'',borderWidth:0};
   }
@@ -139,7 +162,7 @@
   function imageCropStyle(element){const crop=normalizeImageCrop(element);return `object-fit:${element.fit||'cover'};left:calc(50% + ${crop.cropX}%);top:calc(50% + ${crop.cropY}%);transform:translate(-50%,-50%) scale(${crop.cropZoom}) scaleX(${crop.stretchX}) scaleY(${crop.stretchY})`;}
   function defaultCardColors(variant){
     return {
-      cloud:{fill:'#f7f1ff',color:'#292b63'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff7e7',color:'#4b3a31'},arcade:{fill:'#160f35',color:'#ffffff'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#172033',color:'#ffffff'},bubblegrid:{fill:'#68d6e1',color:'#087f8c'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'}
+      cloud:{fill:'#f7f1ff',color:'#292b63'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff7e7',color:'#4b3a31'},arcade:{fill:'#160f35',color:'#ffffff'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#172033',color:'#ffffff'},bubblegrid:{fill:'#68d6e1',color:'#087f8c'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
     }[variant] || {fill:'#ffffff',color:'#111827'};
   }
 
@@ -151,12 +174,15 @@
     return positions;
   }
   function spotlightCardLayout(width,height){const visibleIndexes=project.days.map((day,index)=>day.visible!==false?index:-1).filter(index=>index>=0),positions=spotlightPositions(width,height,visibleIndexes.length),byDay=new Map(visibleIndexes.map((dayIndex,index)=>[dayIndex,positions[index]])),fallback={x:width/2-150,y:height/2-120,w:300,h:240};return project.days.map((day,dayIndex)=>({dayIndex,...(byDay.get(dayIndex)||fallback)}));}
+  function featureDuoCardLayout(width,height){const square=width===height,visibleIndexes=project.days.map((day,index)=>day.visible!==false?index:-1).filter(index=>index>=0),gap=square?32:54,margin=square?54:74,cardW=(width-margin*2-gap)/2,cardH=square?610:570,top=square?285:220,featured=visibleIndexes.length===2?[{x:margin,y:top,w:cardW,h:cardH},{x:margin+cardW+gap,y:top,w:cardW,h:cardH}]:spotlightPositions(width,height,visibleIndexes.length),byDay=new Map(visibleIndexes.map((dayIndex,index)=>[dayIndex,featured[index]])),fallback={x:width/2-150,y:height/2-120,w:300,h:240};return project.days.map((day,dayIndex)=>({dayIndex,...(byDay.get(dayIndex)||fallback)}));}
   function reflowSpotlightCards(){if(project.template!=='spotlight')return;const layouts=spotlightCardLayout(project.width,project.height);layouts.forEach(layout=>{const card=project.elements.find(element=>element.type==='day'&&element.dayIndex===layout.dayIndex);if(card)Object.assign(card,{x:layout.x,y:layout.y,w:layout.w,h:layout.h});});}
+  function reflowDuoFeatureCards(){if(!['neonduel','astralduo'].includes(project.template))return;featureDuoCardLayout(project.width,project.height).forEach(layout=>{const card=project.elements.find(element=>element.type==='day'&&element.dayIndex===layout.dayIndex);if(card)Object.assign(card,{x:layout.x,y:layout.y,w:layout.w,h:layout.h});});}
   function ensureSpotlightCards(){if(project.template!=='spotlight')return;const existing=project.elements.filter(element=>element.type==='day');if(!project.spotlightInitialized){const used=new Set(existing.map(element=>element.dayIndex));project.days.forEach((day,index)=>{day.visible=used.size?used.has(index):index===1||index===4;});project.spotlightInitialized=true;}if(project.days.filter(day=>day.visible!==false).length<2)project.days.filter(day=>day.visible===false).slice(0,2-project.days.filter(day=>day.visible!==false).length).forEach(day=>{day.visible=true;});spotlightCardLayout(project.width,project.height).forEach(layout=>{if(existing.some(card=>card.dayIndex===layout.dayIndex))return;const card=dayElement(layout.dayIndex,layout.x,layout.y,layout.w,layout.h,'spotlight');Object.assign(card,{contentLayout:'feature',align:'center',font:'condensed',fontSize:30,builtIn:true});project.elements.push(card);});reflowSpotlightCards();}
 
   function cardLayout(style,width,height){
     const square = width===height;
     if(style==='spotlight')return spotlightCardLayout(width,height);
+    if(['neonduel','astralduo'].includes(style))return featureDuoCardLayout(width,height);
     if(style==='columns'&&!square){const gap=18,margin=45,cardW=(width-margin*2-gap*6)/7;return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:285,w:cardW,h:490}));}
     if(style==='bubblegrid'&&!square){const gap=10,margin=34,cardW=(width-margin*2-gap*6)/7;return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:220,w:cardW,h:610}));}
     if(style==='horror'&&!square){const spots=[[70,250],[440,225],[810,260],[1180,230],[255,555],[650,530],[1045,565]];return spots.map(([x,y])=>({x,y,w:300,h:245}));}
@@ -183,10 +209,11 @@
 
   function buildTemplate(name){
     const previousTemplate=project.template;
-    if(previousTemplate==='spotlight'&&name!=='spotlight')project.days.forEach(day=>{day.visible=true;});
+    if(DUO_TEMPLATES.has(previousTemplate)&&!DUO_TEMPLATES.has(name))project.days.forEach(day=>{day.visible=true;});
     const style=TEMPLATE_STYLE[name]||TEMPLATE_STYLE.cloud;
     const {width,height}=project;
     if(name==='spotlight'&&!project.spotlightInitialized){project.days.forEach((day,index)=>{day.visible=index===1||index===4;});project.spotlightInitialized=true;}
+    if(['neonduel','astralduo'].includes(name)&&project.days.filter(day=>day.visible!==false).length!==2)project.days.forEach((day,index)=>{day.visible=index===1||index===5;});
     const elements=[];
     const dark=name==='manga' ? '#17121f' : style.text;
     const heading=textElement(project.title,70,45,width-140,105,width===height?64:76,dark,'rounded',900,'center');heading.role='title';elements.push(heading);
@@ -199,6 +226,8 @@
     if(name==='violin'){Object.assign(heading,{font:'serif',fontStyle:'italic',fontSize:70,color:style.text,letterSpacing:2});Object.assign(subtitle,{font:'serif',fontStyle:'italic',fontSize:25,color:style.accent});}
     if(name==='constellation'){Object.assign(heading,{align:'left',x:58,w:940,font:'sans',fontSize:68,transform:'none',letterSpacing:0,color:'#10363c'});Object.assign(subtitle,{align:'left',x:62,w:620,y:148,font:'mono',fontSize:20,color:style.accent,letterSpacing:4});}
     if(name==='fantasy7'){Object.assign(heading,{align:'left',x:55,w:1030,font:'condensed',fontSize:86,color:style.text,transform:'uppercase',letterSpacing:6,effect:'hard'});Object.assign(subtitle,{align:'right',x:930,w:600,y:155,font:'mono',fontSize:23,color:style.accent,transform:'uppercase',letterSpacing:3});}
+    if(name==='neonduel'){Object.assign(heading,{x:project.width/2-240,y:22,w:480,h:90,font:'condensed',fontSize:38,color:'#ffffff',transform:'uppercase',letterSpacing:7,effect:'neon'});Object.assign(subtitle,{x:project.width/2-300,y:91,w:600,h:32,font:'mono',fontSize:16,color:'#bddfff',transform:'uppercase',letterSpacing:4});}
+    if(name==='astralduo'){Object.assign(heading,{x:project.width/2-360,y:34,w:720,h:70,font:'serif',fontStyle:'italic',fontSize:52,color:'#ffffff',letterSpacing:3,effect:'soft'});Object.assign(subtitle,{x:project.width/2-280,y:108,w:560,h:30,font:'sans',fontSize:16,color:'#f7d7f0',transform:'uppercase',letterSpacing:5});}
     if(name==='agenda'){Object.assign(heading,{align:'left',font:'serif',x:70,w:720,color:style.text});Object.assign(subtitle,{align:'left',x:72,w:650,color:style.accent});elements.unshift(shapeElement('rect',42,42,10,height-84,style.accent,5));}
     if(name==='roadmap'){elements.unshift(shapeElement('rect',65,438,width-130,10,style.accent,5));elements.push(emojiElement('🚀',width-125,390,82));}
     if(name==='rpg'){
@@ -215,6 +244,7 @@
     const layouts=cardLayout(name,width,height);
     layouts.forEach((layout,index)=>{
       const card=dayElement(layout.dayIndex??index,layout.x,layout.y,layout.w,layout.h,style.card);
+      const visibleSide=project.days.map((day,dayIndex)=>day.visible!==false?dayIndex:-1).filter(dayIndex=>dayIndex>=0).indexOf(layout.dayIndex??index);
       if(name==='manga') card.rotation=[-2,1,-1,2,-1,1,-2][index];
       if(name==='polaroid') card.rotation=[-3,2,-1,3,-2,1,-3][index];
       if(name==='rpg')Object.assign(card,{contentLayout:'poster',align:'center',font:'sans',fontSize:index<3?24:21});
@@ -225,6 +255,8 @@
       if(name==='horror'){Object.assign(card,{contentLayout:'poster',align:'center',font:'condensed',fontSize:23,fill:index%2?'#17090c':'#0d0d0f'});card.rotation=[-2,2,-1,2,1,-2,2][index];}
       if(name==='violin')Object.assign(card,{contentLayout:'standard',font:'serif',fontStyle:'italic',fontSize:24});
       if(name==='fantasy7')Object.assign(card,{contentLayout:'poster',align:'center',font:'condensed',fontSize:22});
+      if(name==='neonduel'){Object.assign(card,{variant:visibleSide===1?'neonred':'neonblue',fill:visibleSide===1?'#130409':'#040a15',contentLayout:'feature',align:'center',font:'condensed',fontSize:34,showDayNote:false});}
+      if(name==='astralduo'){Object.assign(card,{variant:visibleSide===1?'astralrose':'astralblue',fill:visibleSide===1?'#2a071d':'#07152e',contentLayout:'feature',align:'center',font:'serif',fontSize:32,showDayNote:false});}
       elements.push(card);
     });
     if(name==='cloud'){
@@ -302,10 +334,22 @@
       const sector=textElement('SECTOR 07  //  MAKO WEEK',52,213,560,34,19,'#76ffc0','mono',900,'left');sector.letterSpacing=4;sector.locked=true;elements.push(sector);
       elements.push(emojiElement('⚔️',width-145,height-140,92));elements.push(emojiElement('⚡',42,48,76));
     }
+    if(name==='neonduel'){
+      const middle=shapeElement('rect',width/2-2,135,4,height-170,'#dbeafe',0);middle.opacity=.7;elements.unshift(middle);
+      [[28,145,width/2-52,4,'#38bdf8'],[width/2+24,145,width/2-52,4,'#fb4b69'],[28,height-34,width/2-52,4,'#38bdf8'],[width/2+24,height-34,width/2-52,4,'#fb4b69']].forEach(([x,y,w,h,fill])=>{const rail=shapeElement('rect',x,y,w,h,fill,0);rail.opacity=.7;elements.unshift(rail);});
+      const versus=textElement('VS',width/2-55,height/2-45,110,90,70,'#ffffff','display',900,'center');versus.effect='neon';elements.push(versus);
+      [['BLUE SIDE',42,160,'#7dd3fc'],['RED SIDE',width-282,160,'#fda4af']].forEach(([label,x,y,fill])=>{const side=textElement(label,x,y,240,28,17,fill,'mono',900,x<width/2?'left':'right');side.letterSpacing=4;elements.push(side);});
+    }
+    if(name==='astralduo'){
+      [[65,height/2-245,490,'#2494ff'],[width-555,height/2-245,490,'#f43f8f']].forEach(([x,y,size,fill])=>{[0,34,68].forEach((inset,index)=>{const ring=shapeElement('circle',x+inset,y+inset,size-inset*2,size-inset*2,'transparent',(size-inset*2)/2);ring.fill='#071125';ring.borderColor=fill;ring.borderWidth=index===0?4:2;ring.opacity=.22+index*.12;elements.unshift(ring);});});
+      [180,260,340,420,500,580,660].forEach((y,index)=>{const diamond=shapeElement('rect',width/2-10,y,20,20,index%2?'#ff8dcc':'#91d7ff',3);diamond.rotation=45;diamond.opacity=.75;elements.push(diamond);});
+      const sigil=textElement('✦',width/2-52,height/2-58,104,104,82,'#ffffff','serif',400,'center');sigil.effect='neon';elements.push(sigil);
+      [['✦',70,155,42],['✧',width-118,172,50],['🦋',30,height-115,74],['🦋',width-105,height-120,78],['🌙',width/2-44,132,70]].forEach(([symbol,x,y,size])=>elements.push(emojiElement(symbol,x,y,size)));
+    }
     if(project.showQr)elements.push(qrElement(width,height));
-    elements.forEach(element=>{element.builtIn=true;});
+    elements.forEach(element=>{element.builtIn=true;element.locked=false;});
     project.template=name;
-    project.modelRevision=3;
+    project.modelRevision=MODEL_REVISION;
     project.background={...project.background,colors:style.bg,angle:style.angle};
     project.elements=elements;
     if(project.typePreset&&TYPE_PRESETS[project.typePreset])project.elements.filter(element=>['text','day'].includes(element.type)).forEach(element=>Object.assign(element,TYPE_PRESETS[project.typePreset]));
@@ -385,7 +429,7 @@
   async function load(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
-      if(raw){project=validateProject(JSON.parse(raw));missingImageCount=await hydrateImages(project)||0;const refreshReplacedModel=project.modelRevision<3&&project.template==='rpg';project.modelRevision=3;if(refreshReplacedModel){const custom=project.elements.filter(element=>!element.builtIn).map(clone),template=project.template;buildTemplate(template);project.elements.push(...custom);}return;}
+      if(raw){project=validateProject(JSON.parse(raw));missingImageCount=await hydrateImages(project)||0;const refreshReplacedModel=project.modelRevision<3&&project.template==='rpg',unlockDefaultLayers=project.modelRevision<MODEL_REVISION;project.modelRevision=MODEL_REVISION;if(refreshReplacedModel){const custom=project.elements.filter(element=>!element.builtIn).map(clone),template=project.template;buildTemplate(template);project.elements.push(...custom);}else if(unlockDefaultLayers)project.elements.filter(element=>element.builtIn).forEach(element=>{element.locked=false;});return;}
     }catch{}
     if(!migrateV1()){project=defaultProject();buildTemplate('cloud');}
   }
@@ -398,16 +442,16 @@
   function renderDays(){
     els.dayStrip.innerHTML=DAY_SHORT.map((name,index)=>{const day=project.days[index],visible=day.visible!==false,action=visible?'Masquer':'Afficher';return `<div class="dayPickWrap${index===selectedDay?' isActive':''}${visible?'':' isHidden'}"><button class="dayPick" data-day="${index}" type="button">${day.star?'★ ':''}${name}</button><button class="dayToggle" data-toggle-day="${index}" type="button" aria-pressed="${visible}" title="${action} ${escapeHtml(day.name)}" aria-label="${action} ${escapeHtml(day.name)}">${visible?'●':'○'}</button></div>`;}).join('');
     const visibleCount=project.days.filter(day=>day.visible!==false).length;els.visibleDaysStatus.textContent=`${visibleCount} jour${visibleCount>1?'s':''} affiché${visibleCount>1?'s':''} sur 7`;
-    const day=project.days[selectedDay];els.dayName.value=day.name;els.dayTime.value=day.time;els.dayTitle.value=day.title;els.dayNote.value=day.note;els.dayStatus.value=day.status;els.dayStar.checked=!!day.star;els.dayImageStatus.textContent=day.imageSrc?(day.imageName||'Image ajoutée'):'Aucune image';els.dayImageFit.value=day.imageFit||'cover';els.dayImageFit.disabled=!day.imageSrc;els.cropDayImage.disabled=!day.imageSrc;els.removeDayImage.disabled=!day.imageSrc;
+    const day=project.days[selectedDay],card=project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay),separated=linkedDayTexts(selectedDay).length>0,visibleCards=project.elements.filter(element=>element.type==='day'&&project.days[element.dayIndex]?.visible!==false),allSeparated=visibleCards.length>0&&visibleCards.every(element=>linkedDayTexts(element.dayIndex).length>0);els.dayName.value=day.name;els.dayTime.value=day.time;els.dayTitle.value=day.title;els.dayNote.value=day.note;els.dayStatus.value=day.status;els.dayStar.checked=!!day.star;els.dayCardColor.value=color(card?.fill,'#111827');els.dayCardColor.disabled=!card;els.dayTextLayers.textContent=separated?'Regrouper les textes de ce jour':'Séparer les textes de ce jour';els.allDayTextLayers.textContent=allSeparated?'Regrouper les textes de tous les jours':'Libérer les textes de tous les jours';els.dayTextLayersStatus.textContent=separated?'Les textes restent liés à ce jour mais se déplacent maintenant séparément.':'La carte et chacun de ses textes pourront être déplacés séparément.';els.dayImageStatus.textContent=day.imageSrc?(day.imageName||'Image ajoutée'):'Aucune image';els.dayImageFit.value=day.imageFit||'contain';els.dayImageFit.disabled=!day.imageSrc;els.cropDayImage.disabled=!day.imageSrc;els.removeDayImage.disabled=!day.imageSrc;
   }
   function selectDayForEditing(index){selectedDay=clamp(index,0,6);const card=project.days[selectedDay].visible===false?null:project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay);selectedId=card?.id||'';renderDays();renderCanvas();renderInspector();renderLayers();}
-  function setDayVisibility(index,visible){const day=project.days[clamp(index,0,6)];if(project.template==='spotlight'&&!visible&&project.days.filter(item=>item.visible!==false).length<=2)return toast('Duo et + conserve au moins deux jours affichés.');day.visible=visible;if(!visible&&selectedElement()?.type==='day'&&selectedElement().dayIndex===index)selectedId='';reflowSpotlightCards();renderAll();pushHistory();save();toast(`${day.name} ${visible?'affiché':'masqué'} sans supprimer ses données.`);}
+  function setDayVisibility(index,visible){const day=project.days[clamp(index,0,6)];if(DUO_TEMPLATES.has(project.template)&&!visible&&project.days.filter(item=>item.visible!==false).length<=2)return toast(project.template==='spotlight'?'Duo et + conserve au moins deux jours affichés.':'Ce modèle conserve au moins deux jours affichés.');day.visible=visible;if(!visible&&isHiddenWithDay(selectedElement()))selectedId='';reflowSpotlightCards();reflowDuoFeatureCards();renderAll();pushHistory();save();toast(`${day.name} ${visible?'affiché':'masqué'} sans supprimer ses données.`);}
   function renderModifierControls(){
     els.modifierSelect.value=project.modifier;els.eventBanner.value=project.eventBanner||'';els.hideModifierLabels.checked=!!project.hideModifierLabels;
   }
   function renderTypePresetControls(){els.typePresetSelect.value=project.typePreset||'';}
   function renderBackgroundControls(){
-    const bg=project.background;els.transparentBackground.checked=!!bg.transparent;els.backgroundImageStatus.textContent=bg.transparent?(bg.imageSrc?'Image masquée':'PNG transparent'):bg.imageSrc?(bg.imageName||'Image ajoutée'):'Dégradé du modèle';els.backgroundImageFit.value=bg.imageFit||'cover';els.backgroundImageFit.disabled=!bg.imageSrc||bg.transparent;els.removeBackgroundImage.disabled=!bg.imageSrc;
+    const bg=project.background;els.transparentBackground.checked=!!bg.transparent;els.backgroundImageStatus.textContent=bg.transparent?(bg.imageSrc?'Image masquée':'PNG transparent'):bg.imageSrc?(bg.imageName||'Image ajoutée'):'Dégradé du modèle';els.backgroundImageFit.value=bg.imageFit||'cover';els.backgroundImageFit.disabled=!bg.imageSrc||bg.transparent;els.cropBackgroundImage.disabled=!bg.imageSrc||bg.transparent;els.removeBackgroundImage.disabled=!bg.imageSrc;
   }
   function elementStyle(element){
     return `left:${element.x}px;top:${element.y}px;width:${element.w}px;height:${element.h}px;transform:rotate(${element.rotation||0}deg);opacity:${element.opacity??1};z-index:${project.elements.indexOf(element)+1}`;
@@ -444,10 +488,10 @@
   }
   function qrSvg(element){try{return (makeQr()?.createSvgTag(5,2)||'<span>QR indisponible</span>').replace('#fff',color(element?.fill,'#ffffff')).replace('#111827',color(element?.color,'#111827'));}catch{return '<span>QR indisponible</span>';}}
   function renderElement(element){
-    if(element.type==='day'&&project.days[element.dayIndex].visible===false)return '';
+    if(isHiddenWithDay(element))return '';
     const selected=element.id===selectedId?' isSelected':'';const locked=element.locked?' isLocked':'';
     let content='';
-    if(element.type==='text')content=`<div class="elText textEffect-${element.effect||'none'}" style='width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};${typographyStyle(element)}'>${escapeHtml(element.text)}</div>`;
+    if(element.type==='text')content=`<div class="elText textEffect-${element.effect||'none'}" style='width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};${typographyStyle(element)}'>${escapeHtml(element.dayField?dayTextValue(element):element.text)}</div>`;
     if(element.type==='emoji')content=`<div class="elEmoji" style="width:100%;height:100%;font-size:${element.fontSize||80}px">${escapeHtml(element.text)}</div>`;
     if(element.type==='shape')content=`<div class="elShape" style="background:${color(element.fill)};border-radius:${element.shape==='circle'?'50%':`${element.radius||0}px`};border:${element.borderWidth||0}px solid ${color(element.borderColor,'#000000')}"></div>`;
     if(element.type==='image')content=element.src?`<div class="elImage"><img src="${escapeHtml(element.src)}" alt="" style="${imageCropStyle(element)}"></div>`:'<div class="elImageMissing">Image introuvable<br>Utilise « Remplacer »</div>';
@@ -457,8 +501,8 @@
       const label=specialLabel(day,element.dayIndex);
       const size=Number(element.fontSize)||22;
       const dayImage=day.imageSrc?`<div class="elDay__image"><img src="${escapeHtml(day.imageSrc)}" alt="" style="${imageCropStyle({...day,fit:day.imageFit})}"></div>`:'';
-      const layout=element.contentLayout||'standard',visible=layout!=='image',timeSize=layout==='feature'?size*2:size*1.2;
-      content=`<div class="elDay variant-${element.variant} dayLayout-${layout}${day.star?' isStar':''}${day.imageSrc?' hasImage':''} textEffect-${element.effect||'none'}" style='background:${color(element.fill)};color:${color(element.color)};font-size:${size}px;--day-overlay:.55;${typographyStyle(element)}'>${dayImage}${visible&&element.showDayName!==false?`<div class="elDay__name" style="font-size:${size}px">${escapeHtml(day.name)}</div>`:''}${visible&&label?`<div class="specialLabel">${escapeHtml(label)}</div>`:''}${day.star?'<div class="starBadge">★ Jour star</div>':''}${visible&&element.showDayTime!==false?`<div class="elDay__time" style="font-size:${timeSize}px">${escapeHtml(off?'REPOS':day.time)}</div>`:''}${visible&&element.showDayTitle!==false?`<div class="elDay__title" style="font-size:${size*.84}px">${escapeHtml(day.title)}</div>`:''}${visible&&element.showDayNote!==false&&day.note?`<div class="elDay__note" style="font-size:${Math.max(10,size*.56)}px">${escapeHtml(day.note)}</div>`:''}</div>`;
+      const layout=element.contentLayout||'standard',visible=layout!=='image',timeSize=layout==='feature'?size*2:size*1.2,detached=new Set(linkedDayTexts(element.dayIndex).map(item=>item.dayField));
+      content=`<div class="elDay variant-${element.variant} dayLayout-${layout}${day.star?' isStar':''}${day.imageSrc?' hasImage':''} textEffect-${element.effect||'none'}" style='background:${color(element.fill)};color:${color(element.color)};font-size:${size}px;--day-overlay:.55;${typographyStyle(element)}'>${dayImage}${visible&&element.showDayName!==false&&!detached.has('name')?`<div class="elDay__name" style="font-size:${size}px">${escapeHtml(day.name)}</div>`:''}${visible&&label?`<div class="specialLabel">${escapeHtml(label)}</div>`:''}${day.star?'<div class="starBadge">★ Jour star</div>':''}${visible&&element.showDayTime!==false&&!detached.has('time')?`<div class="elDay__time" style="font-size:${timeSize}px">${escapeHtml(off?'REPOS':day.time)}</div>`:''}${visible&&element.showDayTitle!==false&&!detached.has('title')?`<div class="elDay__title" style="font-size:${size*.84}px">${escapeHtml(day.title)}</div>`:''}${visible&&element.showDayNote!==false&&!detached.has('note')&&day.note?`<div class="elDay__note" style="font-size:${Math.max(10,size*.56)}px">${escapeHtml(day.note)}</div>`:''}</div>`;
     }
     return `<div class="canvasElement${selected}${locked}${element.role?` role-${element.role}`:''}" data-id="${element.id}" data-type="${element.type}" style="${elementStyle(element)}">${content}<span class="resizeHandle" data-resize="true"></span></div>`;
   }
@@ -466,20 +510,20 @@
     els.artboard.style.width=`${project.width}px`;els.artboard.style.height=`${project.height}px`;
     els.artboard.className=`artboard modifier-${project.modifier||'none'}`;
     const bg=project.background,layers=[],sizes=[],positions=[],repeats=[];
-    if(gridEnabled){layers.push('linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px)','linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px)');sizes.push('10px 10px','10px 10px');positions.push('0 0','0 0');repeats.push('repeat','repeat');}
     if(bg.transparent){layers.push('linear-gradient(45deg,#d8dde7 25%,transparent 25%,transparent 75%,#d8dde7 75%)','linear-gradient(45deg,#d8dde7 25%,#f5f7fb 25%,#f5f7fb 75%,#d8dde7 75%)');sizes.push('24px 24px','24px 24px');positions.push('0 0','12px 12px');repeats.push('repeat','repeat');}
-    else{if(bg.imageSrc){layers.push(`url("${bg.imageSrc}")`);sizes.push(bg.imageFit==='fill'?'100% 100%':bg.imageFit||'cover');positions.push('center');repeats.push('no-repeat');}layers.push(gradientCss());sizes.push('100% 100%');positions.push('center');repeats.push('no-repeat');}
+    else{layers.push(gradientCss());sizes.push('100% 100%');positions.push('center');repeats.push('no-repeat');}
     els.artboard.style.backgroundImage=layers.join(',');els.artboard.style.backgroundSize=sizes.join(',');els.artboard.style.backgroundPosition=positions.join(',');els.artboard.style.backgroundRepeat=repeats.join(',');
     els.artboard.classList.toggle('showGrid',gridEnabled);
     const banner=String(project.eventBanner||'').trim();
-    els.artboard.innerHTML=`${banner?`<div class="eventBannerCanvas">${escapeHtml(banner)}</div>`:''}${project.elements.map(renderElement).join('')}`;
+    const backgroundImage=!bg.transparent&&bg.imageSrc?`<div class="artboardBackground"><img src="${escapeHtml(bg.imageSrc)}" alt="" style="${imageCropStyle({...bg,fit:bg.imageFit})}"></div>`:'';
+    els.artboard.innerHTML=`${backgroundImage}${gridEnabled?'<div class="artboardGrid"></div>':''}${banner?`<div class="eventBannerCanvas">${escapeHtml(banner)}</div>`:''}${project.elements.map(renderElement).join('')}`;
     els.canvasLabel.textContent=`Planning ${project.format==='square'?'carré':'16:9'}`;
     document.querySelectorAll('[data-format]').forEach(button=>button.classList.toggle('isActive',button.dataset.format===project.format));
     renderPreflightStatus();
   }
   function renderPreflightStatus(){
     const warnings=[];
-    if(project.elements.some(element=>element.opacity>0&&!(element.type==='day'&&project.days[element.dayIndex].visible===false)&&(element.x<0||element.y<0||element.x+element.w>project.width||element.y+element.h>project.height)))warnings.push('élément hors du planning');
+    if(project.elements.some(element=>element.opacity>0&&!isHiddenWithDay(element)&&(element.x<0||element.y<0||element.x+element.w>project.width||element.y+element.h>project.height)))warnings.push('élément hors du planning');
     if(project.elements.some(element=>element.type==='image'&&!element.src)||project.days.some(day=>day.visible!==false&&day.imageAssetId&&!day.imageSrc)||(project.background.imageAssetId&&!project.background.imageSrc))warnings.push('image introuvable');
     if(project.showQr&&!makeQr())warnings.push('QR invalide');
     const overflow=[...els.artboard.querySelectorAll('.elText,.elDay')].some(node=>node.scrollHeight>node.clientHeight+2||node.scrollWidth>node.clientWidth+2);if(overflow)warnings.push('texte potentiellement coupé');
@@ -498,29 +542,31 @@
     els.imageProperties.hidden=element.type!=='image';els.propImageFit.value=element.fit||'cover';
     els.dayCardProperties.hidden=element.type!=='day';if(element.type==='day'){els.propDayLayout.value=element.contentLayout||'standard';els.propShowDayName.checked=element.showDayName!==false;els.propShowDayTime.checked=element.showDayTime!==false;els.propShowDayTitle.checked=element.showDayTitle!==false;els.propShowDayNote.checked=element.showDayNote!==false;}
     els.propColorField.hidden=!['text','day','qr'].includes(element.type);els.propFillField.hidden=!['shape','day','qr'].includes(element.type);
-    els.propText.value=element.text||'';els.propFontSize.value=Math.round(element.fontSize||32);els.propFont.value=element.font||'sans';els.propWeight.value=String([400,700,900].includes(Number(element.weight))?element.weight:900);els.propFontStyle.value=element.fontStyle||'normal';els.propTransform.value=element.transform||'none';els.propAlign.value=element.align||'left';els.propTextEffect.value=element.effect||'none';els.propColor.value=color(element.color);els.propFill.value=color(element.fill);
+    els.propText.value=element.dayField?dayTextValue(element,true):element.text||'';els.propFontSize.value=Math.round(element.fontSize||32);els.propFont.value=element.font||'sans';els.propWeight.value=String([400,700,900].includes(Number(element.weight))?element.weight:900);els.propFontStyle.value=element.fontStyle||'normal';els.propTransform.value=element.transform||'none';els.propAlign.value=element.align||'left';els.propTextEffect.value=element.effect||'none';els.propColor.value=color(element.color);els.propFill.value=color(element.fill);
   }
   function layerName(element){
     if(element.type==='day')return project.days[element.dayIndex].name;
+    if(element.type==='text'&&element.dayField)return `${project.days[element.dayIndex]?.name||'Jour'} · ${DAY_TEXT_FIELDS[element.dayField]?.label||'Texte'}`;
     if(element.type==='text')return element.text.slice(0,28)||'Texte';
     if(element.type==='emoji')return `Emoji ${element.text}`;
     return element.name||({shape:'Forme',image:'Image',qr:'QR Code'}[element.type]||'Élément');
   }
   function renderLayers(){
-    const ordered=project.elements.filter(element=>element.type!=='day'||project.days[element.dayIndex].visible!==false).reverse();
+    const ordered=project.elements.filter(element=>!isHiddenWithDay(element)).reverse();
     els.layerSelect.innerHTML=`<option value="">Choisir un calque…</option>${ordered.map(element=>`<option value="${element.id}">${escapeHtml(layerName(element))}${element.locked?' · verrouillé':''}</option>`).join('')}`;els.layerSelect.value=selectedId;
     els.layerList.innerHTML=ordered.map(element=>`<div class="layerItem${element.id===selectedId?' isActive':''}" data-layer="${element.id}" tabindex="0" role="button" draggable="${!element.locked}"><b>${element.type==='text'?'T':element.type==='day'?'▦':element.type==='shape'?'◆':element.type==='emoji'?'☺':'▧'}</b><span>${escapeHtml(layerName(element))}</span><button data-lock="${element.id}" title="${element.locked?'Déverrouiller':'Verrouiller'}" aria-label="${element.locked?'Déverrouiller':'Verrouiller'} ${escapeHtml(layerName(element))}">${element.locked?'🔒':'○'}</button></div>`).join('');
   }
-  function selectElement(id){selectedId=id||'';const element=selectedElement();if(element?.type==='day'){selectedDay=element.dayIndex;renderDays();}renderCanvas();renderInspector();renderLayers();if(selectedId)els.artboard.focus({preventScroll:true});}
+  function selectElement(id){selectedId=id||'';const element=selectedElement();if(element?.type==='day'||element?.dayField){selectedDay=element.dayIndex;renderDays();}renderCanvas();renderInspector();renderLayers();if(selectedId)els.artboard.focus({preventScroll:true});}
   function updateSelectedFromProperties(){
     const element=selectedElement();if(!element)return;
     const minimum=minimumElementSize(element);element.x=snap(els.propX.value);element.y=snap(els.propY.value);element.w=Math.max(minimum,snap(els.propW.value));element.h=Math.max(minimum,snap(els.propH.value));element.rotation=Number(els.propRotation.value)||0;element.opacity=clamp(els.propOpacity.value,0,100)/100;
-    if(['text','emoji','day'].includes(element.type)){if(element.type!=='day')element.text=els.propText.value;element.fontSize=clamp(els.propFontSize.value,8,240);element.font=els.propFont.value;element.weight=Number(els.propWeight.value)||800;element.fontStyle=els.propFontStyle.value;element.transform=els.propTransform.value;element.align=els.propAlign.value;element.effect=els.propTextEffect.value;element.color=els.propColor.value;}
+    if(['text','emoji','day'].includes(element.type)){if(element.type!=='day'){if(element.dayField){const field=DAY_TEXT_FIELDS[element.dayField],day=project.days[element.dayIndex];if(field&&day)day[field.property]=els.propText.value;}else element.text=els.propText.value;}element.fontSize=clamp(els.propFontSize.value,8,240);element.font=els.propFont.value;element.weight=Number(els.propWeight.value)||800;element.fontStyle=els.propFontStyle.value;element.transform=els.propTransform.value;element.align=els.propAlign.value;element.effect=els.propTextEffect.value;element.color=els.propColor.value;}
     if(element.type==='qr')element.color=els.propColor.value;
     if(element.type==='image')element.fit=els.propImageFit.value;
     if(element.type==='day'){element.contentLayout=els.propDayLayout.value;element.showDayName=els.propShowDayName.checked;element.showDayTime=els.propShowDayTime.checked;element.showDayTitle=els.propShowDayTitle.checked;element.showDayNote=els.propShowDayNote.checked;}
     if(['shape','day','qr'].includes(element.type))element.fill=els.propFill.value;
-    renderCanvas();renderLayers();commit();
+    if(element.dayField)renderDays();
+    renderCanvas();renderInspector();renderLayers();commit();
   }
   function addElement(kind,value){
     let element;
@@ -592,7 +638,31 @@
   function updateDay(){
     const day=project.days[selectedDay];day.name=els.dayName.value;day.time=els.dayTime.value;day.title=els.dayTitle.value;day.note=els.dayNote.value;day.status=els.dayStatus.value;
     if(els.dayStar.checked)project.days.forEach((item,index)=>{item.star=index===selectedDay;});else day.star=false;
-    renderCanvas();renderLayers();commit();
+    renderCanvas();renderInspector();renderLayers();commit();
+  }
+  function dayTextPlacement(card,field){
+    const fallback={name:{x:card.x+18,y:card.y+18,w:card.w-36,h:34,size:card.fontSize||22},time:{x:card.x+18,y:card.y+card.h-118,w:card.w-36,h:42,size:(card.fontSize||22)*1.2},title:{x:card.x+18,y:card.y+card.h-72,w:card.w-36,h:34,size:(card.fontSize||22)*.84},note:{x:card.x+18,y:card.y+card.h-38,w:card.w-36,h:28,size:Math.max(10,(card.fontSize||22)*.56)}}[field];
+    const cardNode=[...els.artboard.querySelectorAll('.canvasElement')].find(node=>node.dataset.id===card.id),node=cardNode?.querySelector(DAY_TEXT_FIELDS[field].selector);if(!node)return fallback;
+    const boardRect=els.artboard.getBoundingClientRect(),rect=node.getBoundingClientRect(),scale=boardRect.width/project.width||zoom/100,computed=getComputedStyle(node);
+    return {x:(rect.left-boardRect.left)/scale,y:(rect.top-boardRect.top)/scale,w:Math.max(60,rect.width/scale+8),h:Math.max(24,rect.height/scale+8),size:parseFloat(computed.fontSize)||fallback.size,align:computed.textAlign||card.align,font:computedFontKey(computed.fontFamily,card.font),weight:Number(computed.fontWeight)||card.weight,fontStyle:computed.fontStyle||card.fontStyle,transform:computed.textTransform||card.transform,letterSpacing:parseFloat(computed.letterSpacing)||0,color:computedColor(computed.color,project.days[card.dayIndex]?.imageSrc?'#ffffff':card.color)};
+  }
+  function separateDayTextLayers(dayIndex){
+    if(linkedDayTexts(dayIndex).length)return [];
+    const card=project.elements.find(element=>element.type==='day'&&element.dayIndex===dayIndex);if(!card)return [];
+    const visibility={name:'showDayName',time:'showDayTime',title:'showDayTitle',note:'showDayNote'},created=[];
+    Object.keys(DAY_TEXT_FIELDS).forEach(field=>{if(card[visibility[field]]===false)return;const placement=dayTextPlacement(card,field),element=textElement(dayTextValue({dayIndex,dayField:field},true),placement.x,placement.y,placement.w,placement.h,placement.size,placement.color,placement.font,placement.weight,placement.align||card.align);Object.assign(element,{dayIndex,dayField:field,fontStyle:placement.fontStyle,transform:placement.transform,letterSpacing:placement.letterSpacing,effect:card.effect,builtIn:false});created.push(element);});
+    project.elements.push(...created);return created;
+  }
+  function toggleDayTextLayers(){
+    const existing=linkedDayTexts(selectedDay);
+    if(existing.length){project.elements=project.elements.filter(element=>!(element.type==='text'&&element.dayField&&element.dayIndex===selectedDay));const card=project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay);selectedId=card?.id||'';renderAll();pushHistory();save();toast('Textes regroupés dans la carte.');return;}
+    const created=separateDayTextLayers(selectedDay);if(!created.length)return toast('Affiche d’abord une carte contenant du texte.');selectedId=created[0].id;renderAll();pushHistory();save();toast('Textes séparés : déplace chaque calque librement.');
+  }
+  function toggleAllDayTextLayers(){
+    const indices=project.elements.filter(element=>element.type==='day'&&project.days[element.dayIndex]?.visible!==false).map(element=>element.dayIndex),allSeparated=indices.length>0&&indices.every(index=>linkedDayTexts(index).length>0);
+    if(!indices.length)return toast('Affiche au moins une carte de jour.');
+    if(allSeparated){const indexSet=new Set(indices);project.elements=project.elements.filter(element=>!(element.type==='text'&&element.dayField&&indexSet.has(element.dayIndex)));selectedId=project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay)?.id||'';renderAll();pushHistory();save();toast('Tous les textes sont regroupés dans leurs cartes.');return;}
+    const created=indices.flatMap(separateDayTextLayers);if(!created.length)return toast('Les textes visibles sont déjà séparés.');selectedId=created[0].id;renderAll();pushHistory();save();toast('Composition libre activée : tous les textes visibles sont indépendants.');
   }
   function loadImage(src){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=src;});}
   async function waitForRenderedAssets(){
@@ -636,26 +706,27 @@
     }
     pushHistory();save();
   }
-  async function importDayImage(file){const stored=await storeImageFile(file);if(!stored)return;Object.assign(project.days[selectedDay],{imageSrc:stored.src,imageAssetId:stored.assetId,imageName:stored.name,imageFit:'cover',...normalizeImageCrop()});renderAll();pushHistory();save();toast('Image ajoutée au jour.');}
+  async function importDayImage(file){const stored=await storeImageFile(file);if(!stored)return;Object.assign(project.days[selectedDay],{imageSrc:stored.src,imageAssetId:stored.assetId,imageName:stored.name,imageFit:'contain',...normalizeImageCrop()});renderAll();pushHistory();save();toast('Image entière ajoutée au jour.');}
   async function importBackgroundImage(file){const stored=await storeImageFile(file);if(!stored)return;Object.assign(project.background,{imageSrc:stored.src,imageAssetId:stored.assetId,imageName:stored.name,imageFit:'cover',transparent:false,...normalizeImageCrop()});renderAll();pushHistory();save();toast('Image de fond ajoutée.');}
 
   function renderCropEditor(){
     if(!cropDraft)return;
     els.cropPreview.src=cropDraft.src;els.cropPreview.style.cssText=imageCropStyle(cropDraft);
+    els.cropFit.value=cropDraft.fit;els.cropFitHint.textContent=cropDraft.fit==='contain'?'Toute l’image est visible. Les zones quadrillées viennent seulement de la différence de proportions avec le cadre.':cropDraft.fit==='fill'?'L’image occupe tout le cadre sans découpe ni zone vide, mais ses proportions peuvent être modifiées.':'Le cadre entier est rempli. Une partie des bords de l’image peut être coupée.';
     els.cropZoom.value=String(cropDraft.cropZoom);els.cropStretchX.value=String(cropDraft.stretchX);els.cropStretchY.value=String(cropDraft.stretchY);
     els.cropZoomValue.textContent=`${Math.round(cropDraft.cropZoom*100)} %`;els.cropStretchXValue.textContent=`${Math.round(cropDraft.stretchX*100)} %`;els.cropStretchYValue.textContent=`${Math.round(cropDraft.stretchY*100)} %`;
     els.cropPosition.textContent=`Position : ${Math.round(cropDraft.cropX)} / ${Math.round(cropDraft.cropY)}`;
   }
-  function openCropEditor(dayIndex=null){
-    const isDay=Number.isInteger(dayIndex),element=isDay?project.days[dayIndex]:selectedElement();if(isDay&&!element?.imageSrc)return toast('Ajoute d’abord une image à ce jour.');if(!isDay&&element?.type!=='image')return toast('Sélectionne une image à recadrer.');
-    const card=isDay?project.elements.find(item=>item.type==='day'&&item.dayIndex===dayIndex):element;cropDraft={kind:isDay?'day':'element',id:isDay?dayIndex:element.id,src:isDay?element.imageSrc:element.src,fit:isDay?element.imageFit||'cover':element.fit||'cover',...normalizeImageCrop(element)};cropDrag=null;
-    els.cropStage.style.aspectRatio=isDay?`${Math.max(1,card?.w||300)} / ${Math.max(1,card?.h||400)}`:`${Math.max(1,element.w)} / ${Math.max(1,element.h)}`;els.app.inert=true;els.cropModal.classList.add('isVisible');els.cropModal.setAttribute('aria-hidden','false');renderCropEditor();els.cropApply.focus();
+  function openCropEditor(target=null){
+    const isBackground=target==='background',isDay=Number.isInteger(target),element=isBackground?project.background:isDay?project.days[target]:selectedElement();if((isBackground||isDay)&&!element?.imageSrc)return toast(`Ajoute d’abord une image ${isBackground?'de fond':'à ce jour'}.`);if(!isBackground&&!isDay&&element?.type!=='image')return toast('Sélectionne une image à recadrer.');
+    const card=isDay?project.elements.find(item=>item.type==='day'&&item.dayIndex===target):element,kind=isBackground?'background':isDay?'day':'element';cropDraft={kind,id:isDay?target:element.id,src:isBackground?element.imageSrc:isDay?element.imageSrc:element.src,fit:isBackground?element.imageFit||'cover':isDay?element.imageFit||'cover':element.fit||'cover',...normalizeImageCrop(element)};cropDrag=null;
+    els.cropTitle.textContent=isBackground?'Ajuster l’image de fond':'Recadrer l’image';els.cropStage.style.aspectRatio=isBackground?`${project.width} / ${project.height}`:isDay?`${Math.max(1,card?.w||300)} / ${Math.max(1,card?.h||400)}`:`${Math.max(1,element.w)} / ${Math.max(1,element.h)}`;els.app.inert=true;els.cropModal.classList.add('isVisible');els.cropModal.setAttribute('aria-hidden','false');renderCropEditor();els.cropApply.focus();
   }
-  function closeCropEditor(){const wasDay=cropDraft?.kind==='day';cropDraft=null;cropDrag=null;els.app.inert=false;els.cropModal.classList.remove('isVisible');els.cropModal.setAttribute('aria-hidden','true');(wasDay?els.cropDayImage:els.cropImage).focus();}
+  function closeCropEditor(){const kind=cropDraft?.kind;cropDraft=null;cropDrag=null;els.app.inert=false;els.cropModal.classList.remove('isVisible');els.cropModal.setAttribute('aria-hidden','true');(kind==='background'?els.cropBackgroundImage:kind==='day'?els.cropDayImage:els.cropImage).focus();}
   function resetCropEditor(){if(!cropDraft)return;Object.assign(cropDraft,normalizeImageCrop());renderCropEditor();}
   function applyCropEditor(){
-    if(!cropDraft)return;const element=cropDraft.kind==='day'?project.days[cropDraft.id]:project.elements.find(item=>item.id===cropDraft.id);if(!element)return closeCropEditor();
-    Object.assign(element,normalizeImageCrop(cropDraft));closeCropEditor();renderAll();pushHistory();save();toast('Recadrage appliqué.');
+    if(!cropDraft)return;const element=cropDraft.kind==='background'?project.background:cropDraft.kind==='day'?project.days[cropDraft.id]:project.elements.find(item=>item.id===cropDraft.id);if(!element)return closeCropEditor();
+    Object.assign(element,normalizeImageCrop(cropDraft));if(cropDraft.kind==='background'||cropDraft.kind==='day')element.imageFit=cropDraft.fit;else element.fit=cropDraft.fit;closeCropEditor();renderAll();pushHistory();save();toast('Cadrage et adaptation appliqués.');
   }
   function updateCropRange(){if(!cropDraft)return;cropDraft.cropZoom=Number(els.cropZoom.value);cropDraft.stretchX=Number(els.cropStretchX.value);cropDraft.stretchY=Number(els.cropStretchY.value);renderCropEditor();}
 
@@ -667,14 +738,19 @@
     els.emojiGrid.addEventListener('click',event=>{const button=event.target.closest('[data-emoji]');if(button)addElement('emoji',button.dataset.emoji);});
     els.imageInput.addEventListener('change',()=>{importImage(els.imageInput.files?.[0]).catch(()=>toast('Image illisible.'));els.imageInput.value='';});
     els.dayImageInput.addEventListener('change',()=>{importDayImage(els.dayImageInput.files?.[0]).catch(()=>toast('Image illisible.'));els.dayImageInput.value='';});
+    els.dayTextLayers.addEventListener('click',toggleDayTextLayers);
+    els.allDayTextLayers.addEventListener('click',toggleAllDayTextLayers);
+    els.dayCardColor.addEventListener('input',()=>{const card=project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay);if(!card)return;card.fill=els.dayCardColor.value;renderCanvas();renderInspector();commit();});
     els.dayImageFit.addEventListener('change',()=>{project.days[selectedDay].imageFit=els.dayImageFit.value;renderCanvas();commit();});
     els.cropDayImage.addEventListener('click',()=>openCropEditor(selectedDay));els.removeDayImage.addEventListener('click',()=>{const day=project.days[selectedDay];Object.assign(day,{imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()});renderAll();pushHistory();save();toast('Image du jour retirée.');});
     els.backgroundImageInput.addEventListener('change',()=>{importBackgroundImage(els.backgroundImageInput.files?.[0]).catch(()=>toast('Image illisible.'));els.backgroundImageInput.value='';});
     els.backgroundImageFit.addEventListener('change',()=>{project.background.imageFit=els.backgroundImageFit.value;renderCanvas();commit();});
+    els.cropBackgroundImage.addEventListener('click',()=>openCropEditor('background'));
     els.transparentBackground.addEventListener('change',()=>{project.background.transparent=els.transparentBackground.checked;renderBackgroundControls();renderCanvas();commit();toast(project.background.transparent?'Fond transparent activé.':'Fond du planning réactivé.');});
     els.removeBackgroundImage.addEventListener('click',()=>{Object.assign(project.background,{imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',...normalizeImageCrop()});renderAll();pushHistory();save();toast('Image de fond retirée.');});
     els.replaceImage.addEventListener('change',()=>{const target=selectedElement();importImage(els.replaceImage.files?.[0],target).catch(()=>toast('Image illisible.'));els.replaceImage.value='';});
     els.cropImage.addEventListener('click',openCropEditor);els.cropClose.addEventListener('click',closeCropEditor);els.cropCancel.addEventListener('click',closeCropEditor);els.cropApply.addEventListener('click',applyCropEditor);els.cropReset.addEventListener('click',resetCropEditor);
+    els.cropFit.addEventListener('change',()=>{if(!cropDraft)return;cropDraft.fit=els.cropFit.value;renderCropEditor();});
     [els.cropZoom,els.cropStretchX,els.cropStretchY].forEach(input=>input.addEventListener('input',updateCropRange));
     els.cropStage.addEventListener('pointerdown',event=>{if(!cropDraft)return;event.preventDefault();cropDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,x:cropDraft.cropX,y:cropDraft.cropY,width:els.cropStage.clientWidth,height:els.cropStage.clientHeight};els.cropStage.setPointerCapture(event.pointerId);});
     els.cropStage.addEventListener('pointermove',event=>{if(!cropDrag||event.pointerId!==cropDrag.pointerId||!cropDraft)return;cropDraft.cropX=clamp(cropDrag.x+(event.clientX-cropDrag.startX)/cropDrag.width*100,-200,200);cropDraft.cropY=clamp(cropDrag.y+(event.clientY-cropDrag.startY)/cropDrag.height*100,-200,200);renderCropEditor();});

@@ -28,6 +28,7 @@
       <nav class="sideTabs" aria-label="Panneaux">
         <button class="tabBtn isActive" data-panel="planning" type="button">Planning</button>
         <button class="tabBtn" data-panel="templates" type="button">Modèles</button>
+        <button class="tabBtn" data-panel="design" type="button">Design</button>
         <button class="tabBtn" data-panel="elements" type="button">Éléments</button>
       </nav>
 
@@ -35,7 +36,7 @@
         <div class="panelTitle"><h2>Contenu</h2><small id="saveStatus">Sauvegardé</small></div>
         <label class="field"><span>Titre principal</span><input id="planningTitle" maxlength="90"></label>
         <label class="field"><span>Sous-titre</span><input id="planningSubtitle" maxlength="100"></label>
-        <label class="switchBox"><input id="showQr" type="checkbox"><span><strong>QR Code</strong><small>Ajoute un QR déplaçable dans le planning et le PNG.</small></span></label>
+        <label class="switchBox"><input id="showQr" type="checkbox"><span><strong>QR Code</strong></span></label>
         <label class="field" id="qrUrlField"><span>Lien du QR Code</span><input id="qrUrl" maxlength="100" placeholder="https://twitch.tv/ton_lien"><small class="fieldStatus" id="qrStatus"></small></label>
         <div class="sectionDivider"><strong>Jours de la semaine</strong><small>Choisis le jour puis affiche ou masque sa carte.</small></div>
         <div class="dayStrip" id="dayStrip" aria-label="Jour à modifier"></div>
@@ -47,8 +48,10 @@
         </div>
         <label class="field"><span>Jeu ou catégorie</span><input id="dayTitle" maxlength="70"></label>
         <label class="field"><span>Note</span><textarea id="dayNote" maxlength="180"></textarea></label>
-        <div class="dayImageBox"><div><strong>Fond de la carte</strong><small id="dayImageStatus">Aucune image</small></div><select id="dayImageFit" aria-label="Adaptation de l’image du jour"><option value="cover">Remplir automatiquement</option><option value="contain">Afficher l’image entière</option><option value="fill">Étirer à la carte</option></select><label class="btn">Choisir<input class="hidden" id="dayImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><button class="btn" id="cropDayImageBtn" type="button">Ajuster</button><button class="btn btn--danger" id="removeDayImageBtn" type="button">Retirer</button></div>
-        <label class="switchBox"><input id="dayStar" type="checkbox"><span><strong>Jour star</strong><small>Met ce jour en avant dans le planning et le PNG.</small></span></label>
+        <label class="field dayCardColorField"><span>Couleur de cette carte</span><input id="dayCardColor" type="color" value="#111827"></label>
+        <div class="dayTextLayersBox"><button class="btn btn--wide" id="dayTextLayersBtn" type="button">Séparer les textes de ce jour</button><button class="btn btn--wide" id="allDayTextLayersBtn" type="button">Libérer les textes de tous les jours</button><small id="dayTextLayersStatus">La carte et chacun de ses textes pourront être déplacés séparément.</small></div>
+        <div class="dayImageBox"><div><strong>Fond de la carte</strong><small id="dayImageStatus">Aucune image</small></div><select id="dayImageFit" aria-label="Adaptation de l’image du jour"><option value="cover">Remplir automatiquement</option><option value="contain">Afficher l’image entière sans découpe</option><option value="fill">Étirer à la carte</option></select><label class="btn">Choisir<input class="hidden" id="dayImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><button class="btn" id="cropDayImageBtn" type="button">Ajuster</button><button class="btn btn--danger" id="removeDayImageBtn" type="button">Retirer</button></div>
+        <label class="switchBox"><input id="dayStar" type="checkbox"><span><strong>Jour star</strong></span></label>
         <button class="btn resetPlanningPanel" id="resetPlanningBtn" type="button">Réinitialiser le planning</button>
       </section>
 
@@ -71,7 +74,13 @@
           <button class="templateCard" data-template="horror" type="button"><span class="templatePreview tp-horror"></span><strong>Horreur VHS</strong></button>
           <button class="templateCard" data-template="violin" type="button"><span class="templatePreview tp-violin"></span><strong>Partition de violon</strong></button>
           <button class="templateCard" data-template="fantasy7" type="button"><span class="templatePreview tp-fantasy7"></span><strong>Fantasy VII</strong></button>
+          <button class="templateCard" data-template="neonduel" type="button"><span class="templatePreview tp-neonduel"></span><strong>Duel néon</strong></button>
+          <button class="templateCard" data-template="astralduo" type="button"><span class="templatePreview tp-astralduo"></span><strong>Duo astral</strong></button>
         </div>
+      </section>
+
+      <section class="sidePanel" data-panel-content="design">
+        <div class="panelTitle"><h2>Design</h2><small>Style et arrière-plan</small></div>
         <details class="modelOptions"><summary>Personnaliser le modèle</summary><div class="modelOptionsBody">
           <label class="field"><span>Modificateur de thème</span><select id="modifierSelect"><option value="none">Original</option><option value="poster">🎬 Affiche événement</option><option value="ticket">🎟 Ticket cinéma</option><option value="restaurant">🍽 Menu restaurant</option><option value="rpg">⚔ Quête RPG</option><option value="logbook">▣ Journal de bord</option><option value="anime">爆 Saison anime</option><option value="marathon">🏁 Marathon</option><option value="release">🚀 Sortie de jeu</option><option value="subathon">🎯 Subathon</option><option value="indie">💎 Découverte indé</option><option value="challenge">☠ Challenge</option></select></label>
           <label class="field"><span>Typographie globale</span><select id="typePresetSelect"><option value="">Style du modèle</option><option value="modern">Moderne — Segoe UI</option><option value="elegant">Élégante — Georgia</option><option value="typewriter">Machine — Consolas</option><option value="hand">Manuscrite — Segoe Print</option><option value="comic">BD — Comic Sans</option><option value="condensed">Condensée — Bahnschrift</option></select></label>
@@ -81,7 +90,7 @@
         </div></details>
         <details class="modelOptions backgroundOptions"><summary>Arrière-plan du planning</summary><div class="modelOptionsBody">
           <label class="switchBox"><input id="transparentBackground" type="checkbox"><span><strong>Fond transparent</strong><small>Le PNG conservera sa transparence derrière les éléments.</small></span></label>
-          <div class="dayImageBox"><div><strong>Image de fond</strong><small id="backgroundImageStatus">Dégradé du modèle</small></div><select id="backgroundImageFit" aria-label="Adaptation de l’image de fond"><option value="cover">Remplir le planning</option><option value="contain">Afficher l’image entière</option><option value="fill">Étirer au planning</option></select><label class="btn">Choisir<input class="hidden" id="backgroundImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><button class="btn btn--danger backgroundRemove" id="removeBackgroundImageBtn" type="button">Retirer l’image</button></div>
+          <div class="dayImageBox"><div><strong>Image de fond</strong><small id="backgroundImageStatus">Dégradé du modèle</small></div><select id="backgroundImageFit" aria-label="Adaptation de l’image de fond"><option value="cover">Remplir le planning</option><option value="contain">Afficher l’image entière</option><option value="fill">Étirer au planning</option></select><label class="btn">Choisir<input class="hidden" id="backgroundImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><button class="btn" id="cropBackgroundImageBtn" type="button">Ajuster</button><button class="btn btn--danger" id="removeBackgroundImageBtn" type="button">Retirer</button></div>
         </div></details>
       </section>
 
@@ -141,6 +150,8 @@
     <div class="cropBody">
       <div class="cropStage" id="cropStage"><img id="cropPreview" alt="Aperçu du recadrage" draggable="false"></div>
       <div class="cropControls">
+        <label class="field"><span>Adaptation au cadre</span><select id="cropFit"><option value="cover">Remplir le cadre</option><option value="contain">Afficher toute l’image</option><option value="fill">Étirer sans zone vide</option></select></label>
+        <p class="cropFitHint" id="cropFitHint">Le cadre entier sera rempli ; les bords de l’image peuvent être coupés.</p>
         <label class="field"><span>Zoom <b id="cropZoomValue">100 %</b></span><input id="cropZoom" type="range" min="0.1" max="3" step="0.01" value="1"></label>
         <div class="grid2"><label class="field"><span>Largeur <b id="cropStretchXValue">100 %</b></span><input id="cropStretchX" type="range" min="0.5" max="3" step="0.01" value="1"></label><label class="field"><span>Hauteur <b id="cropStretchYValue">100 %</b></span><input id="cropStretchY" type="range" min="0.5" max="3" step="0.01" value="1"></label></div>
         <p class="cropPosition" id="cropPosition">Position : 0 / 0</p>

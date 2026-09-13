@@ -19,10 +19,21 @@ test('les identifiants HTML sont uniques',()=>{
   assert.equal(new Set(ids).size,ids.length);
 });
 
-test('les seize modèles de l’interface possèdent un style V2',()=>{
+test('les dix-huit modèles de l’interface possèdent un style V2',()=>{
   const templates=[...html.matchAll(/data-template="([^"]+)"/g)].map(match=>match[1]);
-  assert.equal(templates.length,16);
+  assert.equal(templates.length,18);
   templates.forEach(name=>assert.match(script,new RegExp(`${name}:\\{bg:`)));
+});
+
+test('Duel néon et Duo astral proposent deux compositions illustrées distinctes',()=>{
+  assert.match(html,/data-template="neonduel"[\s\S]*<strong>Duel néon<\/strong>/);
+  assert.match(html,/data-template="astralduo"[\s\S]*<strong>Duo astral<\/strong>/);
+  for(const token of ['tp-neonduel','tp-astralduo','variant-neonblue','variant-neonred','variant-astralblue','variant-astralrose'])assert.match(css,new RegExp(`\\.${token}`));
+  assert.match(script,/function featureDuoCardLayout\(width,height\)/);
+  assert.match(script,/DUO_TEMPLATES = new Set\(\['spotlight','neonduel','astralduo'\]\)/);
+  assert.match(script,/day\.visible=index===1\|\|index===5/);
+  assert.match(script,/const versus=textElement\('VS'/);
+  assert.match(script,/const sigil=textElement\('✦'/);
 });
 
 test('le modèle partition de violon possède ses ornements et son rendu PNG',()=>{
@@ -56,7 +67,7 @@ test('Duo et plus accepte de deux à sept jours et se réorganise',()=>{
   assert.match(script,/function ensureSpotlightCards\(\)/);
   assert.match(script,/Duo et \+ conserve au moins deux jours affichés/);
   assert.match(script,/await load\(\);ensureSpotlightCards\(\)/);
-  assert.match(script,/previousTemplate==='spotlight'&&name!=='spotlight'[\s\S]*day\.visible=true/);
+  assert.match(script,/DUO_TEMPLATES\.has\(previousTemplate\)&&!DUO_TEMPLATES\.has\(name\)[\s\S]*day\.visible=true/);
 });
 
 test('Fantasy VII possède une composition industrielle dédiée et fidèle au PNG',()=>{
@@ -83,6 +94,14 @@ test('Twitch Live remplace Quête fantasy avec une composition de diffusion déd
   assert.doesNotMatch(script,/spectateurs|chaînes programmées|#eb0400/);
   assert.doesNotMatch(css,/#eb0400/);
   assert.match(script,/refreshReplacedModel=project\.modelRevision<3&&project\.template==='rpg'/);
+});
+
+test('aucun calque de modèle n’est verrouillé par défaut',()=>{
+  assert.match(script,/const MODEL_REVISION = 4;/);
+  assert.match(script,/modelRevision:MODEL_REVISION/);
+  assert.match(script,/elements\.forEach\(element=>\{element\.builtIn=true;element\.locked=false;\}\)/);
+  assert.match(script,/unlockDefaultLayers=project\.modelRevision<MODEL_REVISION/);
+  assert.match(script,/project\.elements\.filter\(element=>element\.builtIn\)\.forEach\(element=>\{element\.locked=false;\}\)/);
 });
 
 test('Résonance WuWa remplace entièrement l’ancienne Constellation',()=>{
@@ -126,7 +145,7 @@ test('changer de modèle conserve les calques personnels',()=>{
 test('les formes décoratives fines conservent leur taille dans l’inspecteur',()=>{
   assert.match(script,/function minimumElementSize\(element\)\{return element\?\.type==='shape'\?1:20;\}/);
   assert.match(script,/const minimum=minimumElementSize\(element\);element\.x=/);
-  assert.match(script,/const minimum=minimumElementSize\(element\),normalized=/);
+  assert.match(script,/minimum=minimumElementSize\(element\),normalized=/);
 });
 
 test('les douze modificateurs historiques sont disponibles',()=>{
@@ -176,6 +195,11 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   assert.match(script,/function resetPlanning\(\)/);
   assert.match(script,/els\.resetPlanning\.addEventListener\('click',resetPlanning\)/);
   assert.doesNotMatch(html,/dayMovePanel|data-move-day|data-arrange/);
+  assert.match(html,/data-panel="design"[^>]*>Design</);
+  assert.match(html,/data-panel-content="design"[\s\S]*Personnaliser le modèle[\s\S]*Arrière-plan du planning/);
+  const templatesPanel=html.match(/data-panel-content="templates"[\s\S]*?<\/section>/)?.[0]||'';
+  assert.doesNotMatch(templatesPanel,/Personnaliser le modèle|Arrière-plan du planning/);
+  assert.doesNotMatch(html,/QR Code<\/strong><small>|Jour star<\/strong><small>/);
 });
 
 test('les options de modèle sont repliées par défaut',()=>{
@@ -236,7 +260,7 @@ test('chaque jour peut recevoir une image recadrée et exportée',()=>{
 test('choisir un jour sélectionne directement sa carte',()=>{
   assert.match(script,/function selectDayForEditing/);
   assert.match(script,/selectedId=card\?\.id\|\|''/);
-  assert.match(script,/if\(element\?\.type==='day'\)\{selectedDay=element\.dayIndex;renderDays\(\);\}/);
+  assert.match(script,/if\(element\?\.type==='day'\|\|element\?\.dayField\)\{selectedDay=element\.dayIndex;renderDays\(\);\}/);
   assert.doesNotMatch(html,/selectDayCardBtn/);
 });
 
@@ -246,13 +270,46 @@ test('les jours se masquent depuis la semaine sans supprimer leurs données',()=
   assert.match(script,/function setDayVisibility/);
   assert.match(script,/data-toggle-day/);
   assert.match(script,/sans supprimer ses données/);
-  assert.match(script,/if\(element\.type==='day'&&project\.days\[element\.dayIndex\]\.visible===false\)return ''/);
+  assert.match(script,/if\(isHiddenWithDay\(element\)\)return ''/);
   assert.match(html,/Masquer les repos/);
 });
 
-test('le planning accepte une image de fond ou un PNG transparent',()=>{
-  for(const id of ['transparentBackground','backgroundImageInput','backgroundImageFit','removeBackgroundImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
+test('les textes d’un jour peuvent devenir des calques liés et indépendants',()=>{
+  for(const id of ['dayTextLayersBtn','allDayTextLayersBtn','dayTextLayersStatus','dayCardColor'])assert.match(html,new RegExp(`id="${id}"`));
+  assert.match(script,/const DAY_TEXT_FIELDS =/);
+  assert.match(script,/function separateDayTextLayers\(dayIndex\)/);
+  assert.match(script,/function toggleDayTextLayers\(\)/);
+  assert.match(script,/function toggleAllDayTextLayers\(\)/);
+  assert.match(script,/dayField:field/);
+  assert.match(script,/element\.dayField\?dayTextValue\(element\):element\.text/);
+  assert.match(script,/Regrouper les textes de ce jour/);
+  assert.match(script,/Composition libre activée/);
+  assert.match(script,/card\.fill=els\.dayCardColor\.value/);
+  assert.match(script,/Textes séparés : déplace chaque calque librement/);
+  assert.match(script,/font:computedFontKey\(computed\.fontFamily,card\.font\)/);
+  assert.match(script,/weight:Number\(computed\.fontWeight\)\|\|card\.weight/);
+  assert.match(script,/color:computedColor\(computed\.color/);
+  assert.match(script,/fontStyle:placement\.fontStyle,transform:placement\.transform,letterSpacing:placement\.letterSpacing/);
+});
+
+test('une nouvelle image de jour est affichée entièrement par défaut',()=>{
+  assert.match(html,/Afficher l’image entière sans découpe/);
+  assert.match(script,/async function importDayImage[\s\S]*imageFit:'contain'/);
+  for(const id of ['cropFit','cropFitHint'])assert.match(html,new RegExp(`id="${id}"`));
+  assert.match(html,/Étirer sans zone vide/);
+  assert.match(script,/element\.imageFit=cropDraft\.fit/);
+  assert.match(script,/element\.fit=cropDraft\.fit/);
+  assert.match(script,/Les zones quadrillées viennent seulement de la différence de proportions/);
+});
+
+test('le planning accepte une image de fond ajustable ou un PNG transparent',()=>{
+  for(const id of ['transparentBackground','backgroundImageInput','backgroundImageFit','cropBackgroundImageBtn','removeBackgroundImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/async function importBackgroundImage/);
+  assert.match(script,/openCropEditor\('background'\)/);
+  assert.match(script,/cropDraft\.kind==='background'\?project\.background/);
+  assert.match(script,/class="artboardBackground"/);
+  assert.match(script,/imageCropStyle\(\{\.\.\.bg,fit:bg\.imageFit\}\)/);
+  assert.match(css,/\.artboardBackground img/);
   assert.match(script,/if\(project\.background\.transparent\)\{els\.artboard\.style\.backgroundImage='none'/);
   assert.match(script,/project\.background\.imageAssetId/);
 });
