@@ -99,7 +99,7 @@
 
     <section class="workspace" aria-label="Zone de création">
       <div class="workspaceBar"><strong id="canvasLabel">Planning 16:9</strong><span class="preflightStatus" id="preflightStatus" aria-live="polite">Prêt à exporter</span><div class="formatSwitch"><button class="toolBtn isActive" data-format="wide" type="button">16:9</button><button class="toolBtn" data-format="square" type="button">Carré</button><button class="toolBtn" id="toggleGridBtn" type="button">Grille</button></div></div>
-      <div class="canvasViewport" id="canvasViewport"><div class="canvasSizer" id="canvasSizer"><div class="artboard" id="artboard" tabindex="0" aria-label="Canvas du planning"></div><canvas class="renderSurface" id="renderSurface" aria-hidden="true"></canvas></div></div>
+      <div class="canvasViewport" id="canvasViewport"><div class="canvasSizer" id="canvasSizer"><div class="artboard" id="artboard" tabindex="0" aria-label="Canvas du planning"></div></div></div>
       <div class="workspaceFooter"><button class="toolBtn" id="zoomOutBtn" type="button" aria-label="Réduire le zoom">−</button><input id="zoomInput" type="range" min="20" max="120" value="60" aria-label="Zoom"><button class="toolBtn" id="zoomInBtn" type="button" aria-label="Augmenter le zoom">＋</button><span id="zoomValue">60%</span></div>
     </section>
 
@@ -151,7 +151,6 @@
   </div>
 </div>
 <div id="toastRegion" aria-live="polite"></div>
-<script src="libs/html2canvas.local.js"></script>
 <script src="libs/qrcode.local.js"></script>
 <script src="storage.js"></script>
 <script src="v2.js"></script>

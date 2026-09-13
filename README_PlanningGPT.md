@@ -39,7 +39,7 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 - Retrouver automatiquement son projet grâce à la sauvegarde locale.
 - Nettoyer automatiquement les anciennes images devenues inutiles lors du prochain démarrage.
 - Importer automatiquement le contenu textuel d’une ancienne sauvegarde V1.
-- Afficher hors édition un aperçu raster synchronisé et exporter exactement ce même tampon canvas en PNG : le fichier téléchargé correspond ainsi à l’aperçu final visible, sans second moteur de dessin divergent.
+- Conserver en permanence le véritable aperçu HTML/CSS éditable, puis exporter ce même DOM en PNG avec ses styles calculés, formes, images, transformations et pseudo-éléments matérialisés.
 
 ## Fonctionnement local
 
@@ -61,7 +61,6 @@ Les contrôles vérifient la syntaxe, la cohérence HTML/JavaScript, les modèle
 - `v2.css` : disposition, canvas, éléments et responsive.
 - `v2.js` : modèles, calques, manipulation, sauvegarde et export PNG.
 - `storage.js` : stockage IndexedDB des images personnelles.
-- `libs/html2canvas.local.js` : capture locale du rendu HTML/CSS vers le canvas commun à l’aperçu final et à l’export PNG, compatible avec l’ouverture directe en `file://`.
 - `libs/qrcode.local.js` : génération locale du QR Code, sans service distant.
 - `tests/` : contrats automatiques sans dépendance externe.
 - `CHANGELOG.md` : historique synthétique.

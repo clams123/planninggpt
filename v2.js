@@ -59,7 +59,7 @@
     app:$('appRoot'),
     projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'),
     title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
-    artboard:$('artboard'), renderSurface:$('renderSurface'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
+    artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
     inspector:$('inspector'), closeInspector:$('closeInspectorBtn'), emptyInspector:$('emptyInspector'), propertyPanel:$('propertyPanel'), layerList:$('layerList'), layerSelect:$('layerSelect'),
     propX:$('propX'), propY:$('propY'), propW:$('propW'), propH:$('propH'), propRotation:$('propRotation'), propText:$('propText'), propFontSize:$('propFontSize'), propFont:$('propFont'), propWeight:$('propWeight'), propFontStyle:$('propFontStyle'), propTransform:$('propTransform'), propAlign:$('propAlign'), propTextEffect:$('propTextEffect'), propColor:$('propColor'), propFill:$('propFill'), propColorField:$('propColorField'), propFillField:$('propFillField'), propOpacity:$('propOpacity'), textProperties:$('textProperties'), textContentField:$('textContentField'), imageProperties:$('imageProperties'), propImageFit:$('propImageFit'), cropImage:$('cropImageBtn'), replaceImage:$('replaceImageInput'), dayCardProperties:$('dayCardProperties'), propDayLayout:$('propDayLayout'), propShowDayName:$('propShowDayName'), propShowDayTime:$('propShowDayTime'), propShowDayTitle:$('propShowDayTitle'), propShowDayNote:$('propShowDayNote'), applyDayStyleAll:$('applyDayStyleAllBtn'), duplicate:$('duplicateElementBtn'), remove:$('deleteElementBtn'),
     modifierSelect:$('modifierSelect'), typePresetSelect:$('typePresetSelect'), eventBanner:$('eventBanner'), hideModifierLabels:$('hideModifierLabels'), resetLayout:$('resetLayoutBtn'), transparentBackground:$('transparentBackground'), backgroundImageInput:$('backgroundImageInput'), backgroundImageStatus:$('backgroundImageStatus'), backgroundImageFit:$('backgroundImageFit'), removeBackgroundImage:$('removeBackgroundImageBtn'),
@@ -80,9 +80,6 @@
   let cropDraft = null;
   let cropDrag = null;
   let draggedLayerId = '';
-  let previewTimer = null;
-  let previewRevision = 0;
-  let previewPromise = Promise.resolve();
 
   function uid(prefix='el'){
     return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
@@ -200,7 +197,7 @@
     if(name==='bubblegrid'){Object.assign(heading,{font:'hand',color:'#087f8c',fontSize:70});Object.assign(subtitle,{font:'comic',color:'#087f8c'});}
     if(name==='horror'){Object.assign(heading,{align:'left',x:70,w:1050,font:'display',fontSize:86,color:'#f8fafc',transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:850,w:670,y:155,font:'typewriter',fontSize:24,color:'#ff334d',transform:'uppercase',letterSpacing:3});}
     if(name==='violin'){Object.assign(heading,{font:'serif',fontStyle:'italic',fontSize:70,color:style.text,letterSpacing:2});Object.assign(subtitle,{font:'serif',fontStyle:'italic',fontSize:25,color:style.accent});}
-    if(name==='constellation'){Object.assign(heading,{align:'left',x:58,w:880,font:'sans',fontSize:68,transform:'uppercase',letterSpacing:7,color:'#10363c'});Object.assign(subtitle,{align:'left',x:62,w:620,y:148,font:'mono',fontSize:20,color:style.accent,letterSpacing:4});}
+    if(name==='constellation'){Object.assign(heading,{align:'left',x:58,w:940,font:'sans',fontSize:68,transform:'none',letterSpacing:0,color:'#10363c'});Object.assign(subtitle,{align:'left',x:62,w:620,y:148,font:'mono',fontSize:20,color:style.accent,letterSpacing:4});}
     if(name==='fantasy7'){Object.assign(heading,{align:'left',x:55,w:1030,font:'condensed',fontSize:86,color:style.text,transform:'uppercase',letterSpacing:6,effect:'hard'});Object.assign(subtitle,{align:'right',x:930,w:600,y:155,font:'mono',fontSize:23,color:style.accent,transform:'uppercase',letterSpacing:3});}
     if(name==='agenda'){Object.assign(heading,{align:'left',font:'serif',x:70,w:720,color:style.text});Object.assign(subtitle,{align:'left',x:72,w:650,color:style.accent});elements.unshift(shapeElement('rect',42,42,10,height-84,style.accent,5));}
     if(name==='roadmap'){elements.unshift(shapeElement('rect',65,438,width-130,10,style.accent,5));elements.push(emojiElement('🚀',width-125,390,82));}
@@ -450,7 +447,7 @@
     if(element.type==='day'&&project.days[element.dayIndex].visible===false)return '';
     const selected=element.id===selectedId?' isSelected':'';const locked=element.locked?' isLocked':'';
     let content='';
-    if(element.type==='text')content=`<div class="elText textEffect-${element.effect||'none'}" style="width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};${typographyStyle(element)}">${escapeHtml(element.text)}</div>`;
+    if(element.type==='text')content=`<div class="elText textEffect-${element.effect||'none'}" style='width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};${typographyStyle(element)}'>${escapeHtml(element.text)}</div>`;
     if(element.type==='emoji')content=`<div class="elEmoji" style="width:100%;height:100%;font-size:${element.fontSize||80}px">${escapeHtml(element.text)}</div>`;
     if(element.type==='shape')content=`<div class="elShape" style="background:${color(element.fill)};border-radius:${element.shape==='circle'?'50%':`${element.radius||0}px`};border:${element.borderWidth||0}px solid ${color(element.borderColor,'#000000')}"></div>`;
     if(element.type==='image')content=element.src?`<div class="elImage"><img src="${escapeHtml(element.src)}" alt="" style="${imageCropStyle(element)}"></div>`:'<div class="elImageMissing">Image introuvable<br>Utilise « Remplacer »</div>';
@@ -461,7 +458,7 @@
       const size=Number(element.fontSize)||22;
       const dayImage=day.imageSrc?`<div class="elDay__image"><img src="${escapeHtml(day.imageSrc)}" alt="" style="${imageCropStyle({...day,fit:day.imageFit})}"></div>`:'';
       const layout=element.contentLayout||'standard',visible=layout!=='image',timeSize=layout==='feature'?size*2:size*1.2;
-      content=`<div class="elDay variant-${element.variant} dayLayout-${layout}${day.star?' isStar':''}${day.imageSrc?' hasImage':''} textEffect-${element.effect||'none'}" style="background:${color(element.fill)};color:${color(element.color)};font-size:${size}px;--day-overlay:.55;${typographyStyle(element)}">${dayImage}${visible&&element.showDayName!==false?`<div class="elDay__name" style="font-size:${size}px">${escapeHtml(day.name)}</div>`:''}${visible&&label?`<div class="specialLabel">${escapeHtml(label)}</div>`:''}${day.star?'<div class="starBadge">★ Jour star</div>':''}${visible&&element.showDayTime!==false?`<div class="elDay__time" style="font-size:${timeSize}px">${escapeHtml(off?'REPOS':day.time)}</div>`:''}${visible&&element.showDayTitle!==false?`<div class="elDay__title" style="font-size:${size*.84}px">${escapeHtml(day.title)}</div>`:''}${visible&&element.showDayNote!==false&&day.note?`<div class="elDay__note" style="font-size:${Math.max(10,size*.56)}px">${escapeHtml(day.note)}</div>`:''}</div>`;
+      content=`<div class="elDay variant-${element.variant} dayLayout-${layout}${day.star?' isStar':''}${day.imageSrc?' hasImage':''} textEffect-${element.effect||'none'}" style='background:${color(element.fill)};color:${color(element.color)};font-size:${size}px;--day-overlay:.55;${typographyStyle(element)}'>${dayImage}${visible&&element.showDayName!==false?`<div class="elDay__name" style="font-size:${size}px">${escapeHtml(day.name)}</div>`:''}${visible&&label?`<div class="specialLabel">${escapeHtml(label)}</div>`:''}${day.star?'<div class="starBadge">★ Jour star</div>':''}${visible&&element.showDayTime!==false?`<div class="elDay__time" style="font-size:${timeSize}px">${escapeHtml(off?'REPOS':day.time)}</div>`:''}${visible&&element.showDayTitle!==false?`<div class="elDay__title" style="font-size:${size*.84}px">${escapeHtml(day.title)}</div>`:''}${visible&&element.showDayNote!==false&&day.note?`<div class="elDay__note" style="font-size:${Math.max(10,size*.56)}px">${escapeHtml(day.note)}</div>`:''}</div>`;
     }
     return `<div class="canvasElement${selected}${locked}${element.role?` role-${element.role}`:''}" data-id="${element.id}" data-type="${element.type}" style="${elementStyle(element)}">${content}<span class="resizeHandle" data-resize="true"></span></div>`;
   }
@@ -477,7 +474,6 @@
     const banner=String(project.eventBanner||'').trim();
     els.artboard.innerHTML=`${banner?`<div class="eventBannerCanvas">${escapeHtml(banner)}</div>`:''}${project.elements.map(renderElement).join('')}`;
     els.canvasLabel.textContent=`Planning ${project.format==='square'?'carré':'16:9'}`;
-    els.sizer.classList.toggle('isEditing',!!selectedId||!!interaction);schedulePreviewRender();
     document.querySelectorAll('[data-format]').forEach(button=>button.classList.toggle('isActive',button.dataset.format===project.format));
     renderPreflightStatus();
   }
@@ -491,7 +487,7 @@
   }
   function updateZoom(){
     zoom=clamp(zoom,20,120);els.zoom.value=String(zoom);els.zoomValue.textContent=`${zoom}%`;
-    const scale=zoom/100;els.artboard.style.transform=`scale(${scale})`;els.renderSurface.style.transform=`scale(${scale})`;els.sizer.style.width=`${project.width*scale}px`;els.sizer.style.height=`${project.height*scale}px`;
+    const scale=zoom/100;els.artboard.style.transform=`scale(${scale})`;els.sizer.style.width=`${project.width*scale}px`;els.sizer.style.height=`${project.height*scale}px`;
   }
   function selectedElement(){return project.elements.find(element=>element.id===selectedId);}
   function renderInspector(){
@@ -602,45 +598,25 @@
   async function waitForRenderedAssets(){
     if(document.fonts?.ready)await document.fonts.ready;await Promise.all([...els.artboard.querySelectorAll('img')].map(image=>image.complete?(image.decode?.().catch(()=>{})||Promise.resolve()):new Promise(resolve=>{image.addEventListener('load',resolve,{once:true});image.addEventListener('error',resolve,{once:true});})));
   }
-  function drawImageCrop(ctx,image,width,height,fit='contain',source={}){
-    const crop=normalizeImageCrop(source),iw=image.naturalWidth||image.width,ih=image.naturalHeight||image.height,ratio=fit==='fill'?null:(fit==='contain'?Math.min:Math.max)(width/iw,height/ih);let drawW=ratio===null?width:iw*ratio,drawH=ratio===null?height:ih*ratio;drawW*=crop.cropZoom*crop.stretchX;drawH*=crop.cropZoom*crop.stretchY;ctx.drawImage(image,(width-drawW)/2+width*crop.cropX/100,(height-drawH)/2+height*crop.cropY/100,drawW,drawH);
+  function inlineStyle(source,target,pseudo=''){
+    const computed=getComputedStyle(source,pseudo);for(const property of computed)target.style.setProperty(property,computed.getPropertyValue(property),computed.getPropertyPriority(property));target.style.setProperty('animation','none');target.style.setProperty('transition','none');return computed;
   }
-  async function prepareExportDom(){
-    const restores=[];
-    for(const card of els.artboard.querySelectorAll('.variant-cyber,.variant-fantasy7')){
-      const host=card.closest('.canvasElement'),element=project.elements.find(item=>item.id===host?.dataset.id),day=element?.type==='day'?project.days[element.dayIndex]:null,width=Math.max(1,Math.round(card.clientWidth)),height=Math.max(1,Math.round(card.clientHeight)),styles=getComputedStyle(card),lineWidth=Math.max(1,parseFloat(styles.borderTopWidth)||2),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d'),fantasy=card.classList.contains('variant-fantasy7'),right=width-lineWidth/2,bottom=height-lineWidth/2,left=lineWidth/2,top=lineWidth/2,cutX=width*(fantasy?.12:.10),cutY=height*(fantasy?.10:.12);canvas.width=width;canvas.height=height;canvas.className='exportCardShape';canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0';ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(width-cutX,top);ctx.lineTo(right,cutY);ctx.lineTo(right,bottom);ctx.lineTo(cutX,bottom);ctx.lineTo(left,height-cutY);ctx.closePath();ctx.fillStyle=styles.backgroundColor;ctx.fill();
-      const imageNode=card.querySelector('.elDay__image img');if(imageNode&&day){ctx.save();ctx.clip();drawImageCrop(ctx,imageNode,width,height,day.imageFit||'cover',day);const fade=ctx.createLinearGradient(0,0,0,height);fade.addColorStop(0,'rgba(0,0,0,.12)');fade.addColorStop(.38,'rgba(0,0,0,.06)');fade.addColorStop(1,'rgba(0,0,0,.55)');ctx.fillStyle=fade;ctx.fillRect(0,0,width,height);ctx.restore();}
-      ctx.strokeStyle=styles.borderTopColor;ctx.lineWidth=lineWidth;ctx.stroke();const previous=card.getAttribute('style')||'',dayImage=card.querySelector('.elDay__image');if(dayImage)dayImage.style.visibility='hidden';card.prepend(canvas);card.style.background='transparent';card.style.border='0';card.style.clipPath='none';card.style.boxShadow='none';restores.push(()=>{canvas.remove();card.setAttribute('style',previous);if(dayImage)dayImage.style.visibility='';});
-    }
-    for(const image of els.artboard.querySelectorAll('.elImage img,.elDay__image img')){
-      if(image.closest('.variant-cyber,.variant-fantasy7'))continue;
-      const host=image.closest('.canvasElement'),element=project.elements.find(item=>item.id===host?.dataset.id),day=element?.type==='day'?project.days[element.dayIndex]:null,source=day||element||{},fit=day?.imageFit||element?.fit||getComputedStyle(image).objectFit||'cover',width=Math.max(1,Math.round(image.parentElement.clientWidth)),height=Math.max(1,Math.round(image.parentElement.clientHeight)),canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;canvas.className='exportRaster';canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';drawImageCrop(canvas.getContext('2d'),image,width,height,fit,source);image.replaceWith(canvas);restores.push(()=>canvas.replaceWith(image));
-    }
-    return ()=>{for(let index=restores.length-1;index>=0;index--)restores[index]();};
+  function pseudoText(content){if(!content||content==='none'||content==='normal')return null;if(content==='""'||content==="''")return '';return content.replace(/^(["'])(.*)\1$/,'$2').replace(/\\(["'\\])/g,'$1');}
+  function exportClone(){
+    const copy=els.artboard.cloneNode(true),sources=[els.artboard,...els.artboard.querySelectorAll('*')],targets=[copy,...copy.querySelectorAll('*')],pairs=sources.map((source,index)=>[source,targets[index]]);copy.removeAttribute('tabindex');copy.setAttribute('xmlns','http://www.w3.org/1999/xhtml');copy.querySelectorAll('.resizeHandle').forEach(handle=>handle.remove());
+    for(const [source,target] of pairs){inlineStyle(source,target);if(source instanceof HTMLImageElement)target.setAttribute('src',source.currentSrc||source.src);for(const pseudo of ['::before','::after']){const styles=getComputedStyle(source,pseudo),text=pseudoText(styles.content);if(text===null||styles.display==='none')continue;const materialized=document.createElement('span');materialized.setAttribute('aria-hidden','true');materialized.textContent=text;inlineStyle(source,materialized,pseudo);materialized.style.removeProperty('content');if(pseudo==='::before')target.prepend(materialized);else target.append(materialized);}}
+    return copy;
   }
   async function renderArtboardToCanvas(){
-    if(typeof window.html2canvas!=='function')throw new Error('Moteur de capture indisponible');await waitForRenderedAssets();
-    const previous={transform:els.artboard.style.transform,boxShadow:els.artboard.style.boxShadow,backgroundImage:els.artboard.style.backgroundImage,backgroundColor:els.artboard.style.backgroundColor};els.artboard.style.transform='none';els.artboard.style.boxShadow='none';if(project.background.transparent){els.artboard.style.backgroundImage='none';els.artboard.style.backgroundColor='transparent';}const restoreExportDom=await prepareExportDom();
-    try{return await window.html2canvas(els.artboard,{backgroundColor:null,scale:1,width:project.width,height:project.height,logging:false,useCORS:false,allowTaint:false,imageTimeout:0});}finally{restoreExportDom();Object.assign(els.artboard.style,previous);}
-  }
-  function updateRenderSurface(source){
-    const canvas=els.renderSurface,context=canvas.getContext('2d');canvas.width=project.width;canvas.height=project.height;canvas.style.width=`${project.width}px`;canvas.style.height=`${project.height}px`;context.clearRect(0,0,canvas.width,canvas.height);context.drawImage(source,0,0,project.width,project.height);canvas.classList.remove('isStale');return canvas;
-  }
-  function schedulePreviewRender(delay=90){
-    const revision=++previewRevision;if(previewTimer)clearTimeout(previewTimer);
-    previewTimer=setTimeout(()=>{previewTimer=null;previewPromise=previewPromise.catch(()=>{}).then(async()=>{if(revision!==previewRevision||selectedId||interaction)return null;try{const canvas=await renderArtboardToCanvas();if(revision!==previewRevision||selectedId||interaction)return null;return updateRenderSurface(canvas);}catch(error){console.error('Aperçu PNG impossible',error);els.renderSurface.classList.add('isStale');return null;}});},delay);
-  }
-  async function refreshRenderSurface(){
-    const revision=++previewRevision;if(previewTimer){clearTimeout(previewTimer);previewTimer=null;}
-    previewPromise=previewPromise.catch(()=>{}).then(async()=>{const canvas=await renderArtboardToCanvas();if(revision!==previewRevision)return null;return updateRenderSurface(canvas);});
-    return previewPromise;
+    await waitForRenderedAssets();const previous={transform:els.artboard.style.transform,boxShadow:els.artboard.style.boxShadow,backgroundImage:els.artboard.style.backgroundImage,backgroundColor:els.artboard.style.backgroundColor};els.artboard.style.transform='none';els.artboard.style.boxShadow='none';if(project.background.transparent){els.artboard.style.backgroundImage='none';els.artboard.style.backgroundColor='transparent';}
+    let copy;try{copy=exportClone();}finally{Object.assign(els.artboard.style,previous);}const markup=new XMLSerializer().serializeToString(copy),svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${project.width}" height="${project.height}" viewBox="0 0 ${project.width} ${project.height}"><foreignObject x="0" y="0" width="100%" height="100%">${markup}</foreignObject></svg>`,parseError=new DOMParser().parseFromString(svg,'image/svg+xml').querySelector('parsererror');if(parseError)throw new Error('Le rendu du planning contient un style invalide.');const image=await loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`),canvas=document.createElement('canvas');canvas.width=project.width;canvas.height=project.height;canvas.getContext('2d').drawImage(image,0,0);return canvas;
   }
   async function exportPng(){
     if(project.showQr&&!makeQr())return toast('Corrige le lien du QR Code avant l’export.');
     if(project.elements.some(element=>element.type==='image'&&!element.src)||project.days.some(day=>day.visible!==false&&day.imageAssetId&&!day.imageSrc)||(project.background.imageAssetId&&!project.background.imageSrc))return toast('Remplace les images introuvables avant l’export.');
     const old=els.export.textContent,previousSelected=selectedId,previousGrid=gridEnabled;els.export.disabled=true;els.export.textContent='Création…';selectedId='';gridEnabled=false;renderCanvas();
     try{
-      const canvas=await refreshRenderSurface();if(!canvas)throw new Error('Aperçu PNG indisponible');
+      const canvas=await renderArtboardToCanvas();
       const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('PNG indisponible');const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`${project.name.trim().replace(/[^a-z0-9_-]+/gi,'_').toLowerCase()||'planning'}.png`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1200);toast('PNG exporté.');
     }catch(error){console.error('Export PNG impossible',error);toast(`Export PNG impossible${error?.name?` (${error.name})`:''}.`);}finally{selectedId=previousSelected;gridEnabled=previousGrid;renderCanvas();els.export.disabled=false;els.export.textContent=old;}
   }

@@ -4,10 +4,9 @@
 
 ### Compléments de la refonte
 
-- Unification stricte de l’aperçu final et de l’export PNG : hors sélection, le studio affiche le tampon canvas réellement téléchargé ; le PNG n’est plus généré par une seconde capture invisible susceptible de diverger.
-- Pré-rastérisation de toutes les images de calques et de jours avant capture, avec le même recadrage, zoom, déplacement et étirement que dans l’éditeur, y compris pour les fichiers SVG locaux.
-- Correction de l’échec d’export depuis une ouverture locale `file://` : suppression complète du SVG intermédiaire refusé par Chromium et intégration locale de `html2canvas` 1.4.1 pour capturer directement le DOM sans origine distante.
-- Fidélisation de Fantasy VII et Cyber HUD à l’export : les SVG décoratifs sont pré-rastérisés et les découpes polygonales sont reproduites sur un calque canvas temporaire, évitant les grands aplats parasites et les cartes rectangulaires générés par `html2canvas`.
+- Retrait du canvas raster qui recouvrait l’éditeur et défigurait les modèles avec de grands aplats rectangulaires : l’aperçu redevient le véritable rendu HTML/CSS interactif.
+- Nouveau moteur PNG auto-contenu : clonage du DOM, intégration des styles calculés et des pseudo-éléments, puis rasterisation d’un SVG encodé en `data:` pour rester compatible avec une ouverture locale.
+- Correction des attributs typographiques contenant des familles entre guillemets, qui produisaient un HTML invalide et empêchaient la sérialisation fidèle de certaines polices.
 - Suppression des réglages « Espacement des lettres » et « Assombrir l’image » de l’inspecteur. Les espacements propres aux modèles restent intégrés à leur direction artistique.
 - Refonte de « Twitch Live » avec logo Twitch vectoriel, identité intégralement violette et suppression du rouge, du compteur de spectateurs et du nombre de chaînes.
 - Remplacement complet de « Constellation » par « Résonance WuWa » : ambiance claire techno-organique, ondes, anneaux, panneaux indépendants et suppression de la toile d’étoiles.

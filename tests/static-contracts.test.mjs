@@ -38,7 +38,7 @@ test('le modèle partition de violon possède ses ornements et son rendu PNG',()
   assert.match(script,/Op\. 7  •  Moderato/);
   assert.match(script,/const romans=\['I','II','III','IV','V','VI','VII'\]/);
   assert.match(css,/\.variant-violin::before/);
-  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.match(script,/function exportClone\(\)/);
 });
 
 test('les modèles inspirés des références ont une composition dédiée',()=>{
@@ -68,7 +68,7 @@ test('Fantasy VII possède une composition industrielle dédiée et fidèle au P
   assert.match(script,/svgImageElement\(fantasySwordWatermark\(\)/);
   assert.match(script,/SECTOR 07  \/\/  MAKO WEEK/);
   assert.match(css,/\.variant-fantasy7/);
-  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.match(script,/function exportClone\(\)/);
 });
 
 test('Twitch Live remplace Quête fantasy avec une composition de diffusion dédiée',()=>{
@@ -139,7 +139,7 @@ test('les douze modificateurs historiques sont disponibles',()=>{
 test('les effets des modificateurs essentiels existent aussi dans le PNG',()=>{
   for(const modifier of ['anime','release','challenge','marathon','subathon','rpg'])assert.match(css,new RegExp(`modifier-${modifier}`));
   assert.match(script,/els\.artboard\.className=`artboard modifier-\$\{project\.modifier\|\|'none'\}`/);
-  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.match(script,/function exportClone\(\)/);
 });
 
 test('anime et subathon évitent le faux texte doublé avec le style du modèle',()=>{
@@ -154,7 +154,7 @@ test('le jour star est conservé dans le projet et dans le PNG',()=>{
   assert.match(script,/starBadge">★ Jour star/);
   assert.match(css,/\.elDay\.isStar/);
   assert.match(script,/star:\s*!!day\?\.star/);
-  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.match(script,/function exportClone\(\)/);
 });
 
 test('les styles typographiques avancés sont raccordés',()=>{
@@ -212,14 +212,14 @@ test('le QR Code est généré localement et présent dans le rendu exporté',as
   assert.match(script,/function makeQr\(\)/);
   assert.match(script,/function qrSvg\(element\)/);
   assert.match(script,/if\(element\.type==='qr'\)content=`<div class="elQr">\$\{qrSvg\(element\)\}<\/div>`/);
-  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.match(script,/function exportClone\(\)/);
 });
 
 test('la gestion d’image permet un recadrage non destructif repris directement dans le PNG',()=>{
   for(const id of ['imageProperties','propImageFit','cropImageBtn','replaceImageInput','cropModal','cropStage','cropZoom','cropStretchX','cropStretchY','cropApplyBtn'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/function normalizeImageCrop/);
   assert.match(script,/function imageCropStyle/);
-  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.match(script,/function exportClone\(\)/);
   assert.doesNotMatch(script,/function drawCroppedImage/);
   assert.match(css,/\.cropOverlay\.isVisible/);
 });
@@ -230,7 +230,7 @@ test('chaque jour peut recevoir une image recadrée et exportée',()=>{
   assert.match(script,/async function importDayImage/);
   assert.match(css,/\.elDay__image\{position:absolute;inset:0/);
   assert.match(script,/imageCropStyle\(\{\.\.\.day,fit:day\.imageFit\}\)/);
-  assert.match(script,/window\.html2canvas\(els\.artboard/);
+  assert.match(script,/function exportClone\(\)/);
 });
 
 test('choisir un jour sélectionne directement sa carte',()=>{
@@ -257,21 +257,17 @@ test('le planning accepte une image de fond ou un PNG transparent',()=>{
   assert.match(script,/project\.background\.imageAssetId/);
 });
 
-test('le PNG et l’aperçu raster partagent le même canvas local',async()=>{
-  await access(new URL('../libs/html2canvas.local.js',import.meta.url));
-  assert.ok(html.indexOf('libs/html2canvas.local.js')<html.indexOf('v2.js'));
-  assert.match(html,/id="renderSurface"/);
+test('le PNG sérialise le vrai DOM sans remplacer l’aperçu par un raster',()=>{
+  assert.doesNotMatch(html,/html2canvas|renderSurface/);
   assert.match(script,/function renderArtboardToCanvas\(\)/);
-  assert.match(script,/window\.html2canvas\(els\.artboard/);
-  assert.match(script,/backgroundColor:null,scale:1,width:project\.width,height:project\.height/);
-  assert.match(script,/async function prepareExportDom\(\)/);
-  assert.match(script,/\.elImage img,\.elDay__image img/);
-  assert.match(script,/\.variant-cyber,\.variant-fantasy7/);
-  assert.match(script,/canvas\.className='exportCardShape'/);
-  assert.match(script,/function updateRenderSurface\(source\)/);
-  assert.match(script,/async function refreshRenderSurface\(\)/);
-  assert.match(script,/const canvas=await refreshRenderSurface\(\)/);
-  assert.doesNotMatch(script,/XMLSerializer|foreignObject|blobToDataUrl/);
+  assert.match(script,/function inlineStyle\(source,target,pseudo=''\)/);
+  assert.match(script,/function exportClone\(\)/);
+  assert.match(script,/new XMLSerializer\(\)\.serializeToString\(copy\)/);
+  assert.match(script,/<foreignObject x=/);
+  assert.match(script,/encodeURIComponent\(svg\)/);
+  assert.match(script,/const canvas=await renderArtboardToCanvas\(\)/);
+  assert.doesNotMatch(script,/window\.html2canvas|prepareExportDom|renderSurface/);
+  assert.equal([...script.matchAll(/style='[^']*\$\{typographyStyle\(element\)\}'/g)].length,2);
   assert.doesNotMatch(script,/function (drawDay|drawText|drawQr|drawCroppedImage)\(/);
 });
 
