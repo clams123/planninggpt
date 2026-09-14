@@ -120,11 +120,16 @@ test('les aperçus de modèles sont réduits de cinq pour cent en hauteur',()=>{
 });
 
 test('colonnes, grille pop et horreur ont des structures visuelles propres',()=>{
-  assert.match(script,/if\(name==='columns'\)[\s\S]*STREAM/);
-  assert.match(script,/if\(name==='bubblegrid'\)[\s\S]*const header=/);
+  assert.match(script,/if\(name==='columns'\)[\s\S]*PLAYER SELECT/);
+  assert.match(script,/7 JOURS  •  7 UNIVERS  •  1 AVENTURE/);
+  assert.match(script,/const fills=\['#2a1258','#083e68','#551738'/);
+  assert.match(script,/if\(name==='bubblegrid'\)[\s\S]*POP!  PLAY!  REPEAT!/);
+  assert.match(script,/const fills=\['#14e6ff','#ff3bbb','#fff23d','#8d5cff','#58f77b','#ff8a2a','#4c7dff'\]/);
+  assert.match(script,/if\(style==='bubblegrid'\)[\s\S]*topCount=4,bottomCount=3/);
   assert.match(script,/if\(name==='horror'\)[\s\S]*REC  00:13:37/);
   assert.match(script,/normalized\.variant==='candy'/);
-  assert.match(css,/\.variant-bubblegrid::before/);
+  assert.match(css,/\.variant-bubblegrid::before[\s\S]*radial-gradient/);
+  assert.match(css,/\.variant-bubblegrid \.elDay__name[\s\S]*box-shadow:4px 4px 0/);
   assert.match(css,/\.variant-horror::before/);
 });
 
@@ -220,12 +225,13 @@ test('le contenu de chaque carte peut être recomposé ou masqué',()=>{
   assert.match(script,/Composition appliquée à toutes les cartes/);
 });
 
-test('la bibliothèque contient trente-six emojis sans illustrations intégrées',()=>{
+test('la bibliothèque contient trente-sept emojis sans illustrations intégrées',()=>{
   const emojiBlock=script.match(/const EMOJIS = \[([^\]]+)\]/)?.[1]||'';
-  assert.equal([...emojiBlock.matchAll(/'[^']+'/g)].length,36);
+  assert.equal([...emojiBlock.matchAll(/'[^']+'/g)].length,37);
   for(const emoji of ['☁️','🎧','🕹️','🐉','🏆','🍄','🌈','🦇','🪄','🎲'])assert.match(script,new RegExp(emoji));
   for(const emoji of ['🎤','🎻','🎼','🎵','💀','📼'])assert.match(script,new RegExp(emoji));
   for(const emoji of ['⚔️','🗡️','🪽','🌌','⚡','🧪','🏙️','🐺'])assert.match(script,new RegExp(emoji));
+  assert.match(emojiBlock,/👾/);
   assert.doesNotMatch(script,/STICKERS|stickerElement|assets\/stickers/);
   assert.doesNotMatch(html,/stickerGrid|Illustrations originales|LIVE SCHEDULE/);
 });
@@ -368,9 +374,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.0\.2'/);
-  assert.equal(packageJson.version,'2.0.2');
-  assert.match(readme,/PlanningGPT V2\.0\.2/);
+  assert.match(script,/const VERSION = '2\.0\.3'/);
+  assert.equal(packageJson.version,'2.0.3');
+  assert.match(readme,/PlanningGPT V2\.0\.3/);
 });
 
 test('le stockage est chargé avant le studio',()=>{

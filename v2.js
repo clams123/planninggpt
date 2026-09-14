@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION = '2.0.2';
+  const VERSION = '2.0.3';
   const MODEL_REVISION = 4;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const DAY_SHORT = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
@@ -14,7 +14,7 @@
     {name:'Samedi',time:'20h',title:'Avec la commu',note:'Viewers games',status:'live'},
     {name:'Dimanche',time:'14h30',title:'Stream chill',note:'Dimanche détente',status:'live'}
   ];
-  const EMOJIS = ['✨','🎮','🌙','⭐','💜','🔥','👻','🌸','🧙','☕','💎','🚀','☁️','🎧','🕹️','🐉','🏆','🍄','🌈','🦇','🪄','🎲','🎤','🎻','🎼','🎵','💀','📼','⚔️','🗡️','🪽','🌌','⚡','🧪','🏙️','🐺'];
+  const EMOJIS = ['✨','🎮','🌙','⭐','💜','🔥','👻','🌸','🧙','☕','💎','🚀','☁️','🎧','🕹️','🐉','🏆','🍄','🌈','🦇','🪄','🎲','🎤','🎻','🎼','🎵','💀','📼','⚔️','🗡️','🪽','🌌','⚡','🧪','🏙️','🐺','👾'];
   const FONT_MAP = {
     rounded:'"Trebuchet MS",ui-rounded,sans-serif',
     sans:'"Segoe UI",Arial,sans-serif',
@@ -38,8 +38,8 @@
     roadmap:{bg:['#071b20','#1a6359'],angle:120,card:'roadmap',text:'#f0fffb',accent:'#54f2c2'},
     constellation:{bg:['#eef7f5','#7ba6ad'],angle:145,card:'wuwa',text:'#10363c',accent:'#167a82'},
     spotlight:{bg:['#111111','#3f3f46'],angle:120,card:'spotlight',text:'#ffffff',accent:'#ffffff'},
-    columns:{bg:['#91a7d8','#38566a'],angle:135,card:'columns',text:'#ffffff',accent:'#9ecb91'},
-    bubblegrid:{bg:['#73e6f2','#ffc8df'],angle:145,card:'bubblegrid',text:'#087f8c',accent:'#f05bce'},
+    columns:{bg:['#170738','#075c99'],angle:135,card:'columns',text:'#ffffff',accent:'#ffe45e'},
+    bubblegrid:{bg:['#16002f','#0759db'],angle:135,card:'bubblegrid',text:'#ffffff',accent:'#ff2bd6'},
     horror:{bg:['#050506','#4b0710'],angle:135,card:'horror',text:'#f8fafc',accent:'#ff334d'},
     violin:{bg:['#fffaf0','#dcc8a7'],angle:135,card:'violin',text:'#3e291c',accent:'#70482d'},
     fantasy7:{bg:['#020707','#183b32'],angle:138,card:'fantasy7',text:'#effff7',accent:'#5df2ae'},
@@ -163,7 +163,7 @@
   function imageCropStyle(element){const crop=normalizeImageCrop(element);return `object-fit:${element.fit||'cover'};left:calc(50% + ${crop.cropX}%);top:calc(50% + ${crop.cropY}%);transform:translate(-50%,-50%) scale(${crop.cropZoom}) scaleX(${crop.stretchX}) scaleY(${crop.stretchY})`;}
   function defaultCardColors(variant){
     return {
-      cloud:{fill:'#f7f1ff',color:'#292b63'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff7e7',color:'#4b3a31'},arcade:{fill:'#160f35',color:'#ffffff'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#172033',color:'#ffffff'},bubblegrid:{fill:'#68d6e1',color:'#087f8c'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
+      cloud:{fill:'#f7f1ff',color:'#292b63'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff7e7',color:'#4b3a31'},arcade:{fill:'#160f35',color:'#ffffff'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#25124f',color:'#ffffff'},bubblegrid:{fill:'#15e7ff',color:'#17052e'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
     }[variant] || {fill:'#ffffff',color:'#111827'};
   }
 
@@ -184,8 +184,17 @@
     const square = width===height;
     if(style==='spotlight')return spotlightCardLayout(width,height);
     if(['neonduel','astralduo'].includes(style))return featureDuoCardLayout(width,height);
-    if(style==='columns'&&!square){const gap=18,margin=45,cardW=(width-margin*2-gap*6)/7;return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:285,w:cardW,h:490}));}
-    if(style==='bubblegrid'&&!square){const gap=10,margin=34,cardW=(width-margin*2-gap*6)/7;return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:220,w:cardW,h:610}));}
+    if(style==='columns'){
+      if(!square){const gap=18,margin=45,cardW=(width-margin*2-gap*6)/7;return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:270,w:cardW,h:515}));}
+      const gap=18,margin=42,topW=(width-margin*2-gap*3)/4,bottomW=(width-margin*2-gap*2)/3;
+      return Array.from({length:7},(_,i)=>i<4?{x:margin+i*(topW+gap),y:275,w:topW,h:300}:{x:margin+(i-4)*(bottomW+gap),y:620,w:bottomW,h:320});
+    }
+    if(style==='bubblegrid'){
+      const gap=square?18:24,margin=square?42:62,topCount=4,bottomCount=3;
+      const topW=(width-margin*2-gap*(topCount-1))/topCount,bottomW=(width-margin*2-gap*(bottomCount-1))/bottomCount;
+      const topY=square?265:250,topH=square?315:255,bottomY=square?615:550,bottomH=square?330:255;
+      return Array.from({length:7},(_,i)=>i<topCount?{x:margin+i*(topW+gap),y:topY,w:topW,h:topH}:{x:margin+(i-topCount)*(bottomW+gap),y:bottomY,w:bottomW,h:bottomH});
+    }
     if(style==='horror'&&!square){const spots=[[70,250],[440,225],[810,260],[1180,230],[255,555],[650,530],[1045,565]];return spots.map(([x,y])=>({x,y,w:300,h:245}));}
     if(style==='rpg'&&!square){const topGap=24,topW=430,topStart=(width-topW*3-topGap*2)/2,bottomGap=22,bottomW=322,bottomStart=(width-bottomW*4-bottomGap*3)/2;return Array.from({length:7},(_,index)=>index<3?{x:topStart+index*(topW+topGap),y:250,w:topW,h:260}:{x:bottomStart+(index-3)*(bottomW+bottomGap),y:548,w:bottomW,h:225});}
     if(style==='violin'){const gap=square?18:22,margin=square?140:150,cardW=(width-margin*2-gap*3)/4,cardH=square?235:225;return Array.from({length:7},(_,i)=>{const row=i<4?0:1,index=row?i-4:i,count=row?3:4,rowWidth=count*cardW+(count-1)*gap;return {x:(width-rowWidth)/2+index*(cardW+gap),y:row?(square?625:565):(square?300:285),w:cardW,h:cardH};});}
@@ -221,8 +230,8 @@
     const subtitle=textElement(project.subtitle,250,150,width-500,42,27,name==='manga'?'#6b21a8':style.text,'sans',800,'center');subtitle.role='subtitle';elements.push(subtitle);
     if(name==='spotlight'){Object.assign(heading,{font:'display',fontSize:68,transform:'uppercase',letterSpacing:3});Object.assign(subtitle,{font:'sans',fontStyle:'italic'});}
     if(name==='rpg'){Object.assign(heading,{align:'left',x:55,w:1030,font:'sans',fontSize:76,color:'#ffffff',weight:900,letterSpacing:-2});Object.assign(subtitle,{align:'left',x:58,w:720,y:150,font:'sans',fontSize:25,color:'#d9c2ff',weight:700});}
-    if(name==='columns'){Object.assign(heading,{align:'left',x:45,w:720,font:'condensed',fontSize:82,transform:'uppercase'});Object.assign(subtitle,{align:'right',x:800,w:750,y:160});}
-    if(name==='bubblegrid'){Object.assign(heading,{font:'hand',color:'#087f8c',fontSize:70});Object.assign(subtitle,{font:'comic',color:'#087f8c'});}
+    if(name==='columns'){Object.assign(heading,{align:'left',x:width===height?45:55,y:38,w:width===height?width-90:1040,font:'display',fontSize:width===height?62:80,color:'#ffe45e',transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:width===height?45:820,w:width===height?width-90:720,y:158,font:'typewriter',fontSize:23,color:'#55f3ff',transform:'uppercase',letterSpacing:3,effect:'neon'});}
+    if(name==='bubblegrid'){Object.assign(heading,{align:'left',x:width===height?45:70,y:38,w:width===height?width-90:1110,font:'display',color:'#fff23d',fontSize:width===height?62:82,transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:width===height?45:820,y:157,w:width===height?width-90:690,font:'comic',color:'#63f5ff',fontSize:25,transform:'uppercase',letterSpacing:2,effect:'hard'});}
     if(name==='horror'){Object.assign(heading,{align:'left',x:70,w:1050,font:'display',fontSize:86,color:'#f8fafc',transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:850,w:670,y:155,font:'typewriter',fontSize:24,color:'#ff334d',transform:'uppercase',letterSpacing:3});}
     if(name==='violin'){Object.assign(heading,{font:'serif',fontStyle:'italic',fontSize:70,color:style.text,letterSpacing:2});Object.assign(subtitle,{font:'serif',fontStyle:'italic',fontSize:25,color:style.accent});}
     if(name==='constellation'){Object.assign(heading,{align:'left',x:58,w:940,font:'sans',fontSize:68,transform:'none',letterSpacing:0,color:'#10363c'});Object.assign(subtitle,{align:'left',x:62,w:620,y:148,font:'mono',fontSize:20,color:style.accent,letterSpacing:4});}
@@ -251,8 +260,16 @@
       if(name==='rpg')Object.assign(card,{contentLayout:'poster',align:'center',font:'sans',fontSize:index<3?24:21});
       if(name==='constellation')Object.assign(card,{contentLayout:'standard',align:'left',font:'condensed',fontSize:22});
       if(name==='spotlight')Object.assign(card,{contentLayout:'feature',align:'center',font:'condensed',fontSize:30});
-      if(name==='columns'){Object.assign(card,{contentLayout:'poster',align:'center',font:'typewriter',fontSize:22});card.y+=[0,26,-8,18,-12,24,2][index];card.h-=[0,26,-8,18,-12,24,2][index];}
-      if(name==='bubblegrid'){Object.assign(card,{contentLayout:'standard',align:'center',font:'hand',fontSize:22,fill:index%2?'#5cd2df':'#acdfe7'});}
+      if(name==='columns'){
+        const fills=['#2a1258','#083e68','#551738','#12443d','#4a2c12','#1b2e64','#501650'],accents=['#ff4fd8','#49e9ff','#ff6577','#5effa1','#ffe45e','#7ca3ff','#d96cff'];
+        Object.assign(card,{contentLayout:'poster',align:'center',font:'typewriter',fontSize:22,fill:fills[index],color:'#ffffff',accent:accents[index]});
+        if(width!==height){card.y+=[18,0,28,8,34,4,22][index];card.h-=[18,0,28,8,34,4,22][index];}
+      }
+      if(name==='bubblegrid'){
+        const fills=['#14e6ff','#ff3bbb','#fff23d','#8d5cff','#58f77b','#ff8a2a','#4c7dff'];
+        Object.assign(card,{contentLayout:'standard',align:'left',font:'comic',fontSize:23,fill:fills[index],color:index===3||index===6?'#ffffff':'#17052e',effect:'hard'});
+        card.rotation=[-2,2,-1,2,1,-2,1][index];
+      }
       if(name==='horror'){Object.assign(card,{contentLayout:'poster',align:'center',font:'condensed',fontSize:23,fill:index%2?'#17090c':'#0d0d0f'});card.rotation=[-2,2,-1,2,1,-2,2][index];}
       if(name==='violin')Object.assign(card,{contentLayout:'standard',font:'serif',fontStyle:'italic',fontSize:24});
       if(name==='fantasy7')Object.assign(card,{contentLayout:'poster',align:'center',font:'condensed',fontSize:22});
@@ -293,16 +310,28 @@
     }
     if(name==='agenda'){elements.push(textElement('SEMAINE 01',width-340,65,270,48,28,style.accent,'condensed',900,'right'));}
     if(name==='polaroid'){elements.push(emojiElement('🌈',width-185,height-155,125));elements.push(emojiElement('🎧',width-275,height-105,78));elements.push(emojiElement('📌',35,45,76));}
-    if(name==='bubblegrid'){elements.push(emojiElement('🫧',10,20,115));elements.push(emojiElement('🎮',width-130,45,96));elements.push(emojiElement('⭐',width/2-45,height-105,90));}
+    if(name==='bubblegrid'){
+      const slogan=textElement('POP!  PLAY!  REPEAT!',68,174,650,42,23,'#ffffff','comic',950,'left');slogan.letterSpacing=3;slogan.effect='hard';elements.push(slogan);
+      const start=textElement('PRESS START  ▶',width-390,height-64,320,38,24,'#fff23d','typewriter',900,'right');start.letterSpacing=3;start.effect='neon';elements.push(start);
+      elements.push(emojiElement('🎮',width-145,35,102));elements.push(emojiElement('👾',22,height-128,96));elements.push(emojiElement('⚡',width-112,height-145,78));
+    }
     if(name==='columns'){
-      const base=shapeElement('rect',45,805,width-90,7,'#9ecb91',3);elements.unshift(base);
-      [45,width*.2,width*.4,width*.6,width*.8,width-55].forEach((x,index)=>{const point=shapeElement('circle',x,794,index%2?18:24,index%2?18:24,index%2?'#dbeafe':'#9ecb91',20);elements.push(point);});
-      const stream=textElement('STREAM',48,128,520,88,78,'#9ecb91','condensed',900,'left');stream.letterSpacing=7;elements.push(stream);
-      elements.push(emojiElement('🎮',width-130,height-120,86));
+      const accents=['#ff4fd8','#49e9ff','#ff6577','#5effa1','#ffe45e','#7ca3ff','#d96cff'];
+      const base=shapeElement('rect',45,810,width-90,9,'#55f3ff',4);elements.unshift(base);
+      accents.forEach((accent,index)=>{const x=width===height?(index<4?42+index*((width-84-54)/4):42+(index-4)*((width-84-36)/3)):45+index*((width-90-108)/7);const glow=shapeElement('circle',x+18,width===height?(index<4?250:595):238,58,58,accent,29);glow.opacity=.62;elements.unshift(glow);});
+      const stream=textElement('PLAYER SELECT',56,132,650,76,66,'#ffffff','condensed',900,'left');stream.letterSpacing=7;stream.effect='hard';elements.push(stream);
+      const quest=textElement('7 JOURS  •  7 UNIVERS  •  1 AVENTURE',55,height-62,720,34,20,'#55f3ff','typewriter',900,'left');quest.letterSpacing=2;quest.effect='neon';elements.push(quest);
+      elements.push(emojiElement('🎮',width-138,48,94));elements.push(emojiElement('🏆',width-230,height-122,82));elements.push(emojiElement('👾',width-105,height-105,70));
+      [[25,225,180,12,'#ff4fd8',-7],[width-230,220,195,12,'#ffe45e',8],[width-285,116,160,10,'#5effa1',-5]].forEach(([x,y,w,h,fill,rotation])=>{const streak=shapeElement('rect',x,y,w,h,fill,6);streak.rotation=rotation;elements.unshift(streak);});
     }
     if(name==='bubblegrid'){
-      const header=shapeElement('rect',28,195,width-56,32,'#f05bce',14);header.opacity=.55;elements.unshift(header);
-      [[55,90,70,'#ffffff'],[245,40,42,'#ffffff'],[width-210,105,58,'#f05bce'],[width-85,180,44,'#ffffff'],[100,height-105,74,'#f05bce']].forEach(([x,y,size,fill])=>{const bubble=shapeElement('circle',x,y,size,size,fill,size/2);bubble.opacity=.28;elements.unshift(bubble);});
+      const header=shapeElement('rect',42,204,width-84,18,'#ff2bd6',9);header.rotation=-1;elements.unshift(header);
+      const cyanRail=shapeElement('rect',42,220,width-84,7,'#54f5ff',4);cyanRail.rotation=-1;elements.unshift(cyanRail);
+      [[0,70,250,'#ff2bd6'],[width-235,110,235,'#fff23d'],[width*.44,0,210,'#54f5ff'],[0,height-205,205,'#58f77b'],[width-230,height-230,230,'#8d5cff']].forEach(([x,y,size,fill],index)=>{const burst=shapeElement('circle',x,y,size,size,fill,size/2);burst.opacity=index===1?.82:.58;elements.unshift(burst);});
+      for(let i=0;i<8;i++){
+        const pixel=shapeElement('rect',width-315+i*34,18+(i%2)*25,25,25,i%2?'#ff2bd6':'#54f5ff',3);pixel.rotation=i%2?8:-8;elements.unshift(pixel);
+      }
+      [[35,238,150,14,'#fff23d',-8],[width-220,225,175,14,'#58f77b',7],[25,height-178,185,16,'#ff2bd6',12],[width-255,height-105,190,14,'#54f5ff',-10]].forEach(([x,y,w,h,fill,rotation])=>{const slash=shapeElement('rect',x,y,w,h,fill,7);slash.rotation=rotation;elements.unshift(slash);});
     }
     if(name==='horror'){
       for(let y=215;y<height-35;y+=34){const scan=shapeElement('rect',35,y,width-70,2,y%68?'#5f101a':'#a7192d',0);scan.opacity=.34;elements.unshift(scan);}
@@ -504,7 +533,7 @@
       const dayImageOpacity=normalizeImageOpacity(day.imageOpacity),hasVisibleDayImage=!!day.imageSrc&&dayImageOpacity>0;
       const dayImage=day.imageSrc?`<div class="elDay__image" style="opacity:${dayImageOpacity}"><img src="${escapeHtml(day.imageSrc)}" alt="" style="${imageCropStyle({...day,fit:day.imageFit})}"></div>`:'';
       const layout=element.contentLayout||'standard',visible=layout!=='image',timeSize=layout==='feature'?size*2:size*1.2,detached=new Set(linkedDayTexts(element.dayIndex).map(item=>item.dayField));
-      content=`<div class="elDay variant-${element.variant} dayLayout-${layout}${day.star?' isStar':''}${hasVisibleDayImage?' hasImage':''} textEffect-${element.effect||'none'}" style='background:${color(element.fill)};color:${color(element.color)};font-size:${size}px;--day-overlay:.55;${typographyStyle(element)}'>${dayImage}${visible&&element.showDayName!==false&&!detached.has('name')?`<div class="elDay__name" style="font-size:${size}px">${escapeHtml(day.name)}</div>`:''}${visible&&label?`<div class="specialLabel">${escapeHtml(label)}</div>`:''}${day.star?'<div class="starBadge">★ Jour star</div>':''}${visible&&element.showDayTime!==false&&!detached.has('time')?`<div class="elDay__time" style="font-size:${timeSize}px">${escapeHtml(off?'REPOS':day.time)}</div>`:''}${visible&&element.showDayTitle!==false&&!detached.has('title')?`<div class="elDay__title" style="font-size:${size*.84}px">${escapeHtml(day.title)}</div>`:''}${visible&&element.showDayNote!==false&&!detached.has('note')&&day.note?`<div class="elDay__note" style="font-size:${Math.max(10,size*.56)}px">${escapeHtml(day.note)}</div>`:''}</div>`;
+      content=`<div class="elDay variant-${element.variant} dayLayout-${layout}${day.star?' isStar':''}${hasVisibleDayImage?' hasImage':''} textEffect-${element.effect||'none'}" style='background:${color(element.fill)};color:${color(element.color)};font-size:${size}px;--day-overlay:.55;--card-accent:${color(element.accent||element.color)};${typographyStyle(element)}'>${dayImage}${visible&&element.showDayName!==false&&!detached.has('name')?`<div class="elDay__name" style="font-size:${size}px">${escapeHtml(day.name)}</div>`:''}${visible&&label?`<div class="specialLabel">${escapeHtml(label)}</div>`:''}${day.star?'<div class="starBadge">★ Jour star</div>':''}${visible&&element.showDayTime!==false&&!detached.has('time')?`<div class="elDay__time" style="font-size:${timeSize}px">${escapeHtml(off?'REPOS':day.time)}</div>`:''}${visible&&element.showDayTitle!==false&&!detached.has('title')?`<div class="elDay__title" style="font-size:${size*.84}px">${escapeHtml(day.title)}</div>`:''}${visible&&element.showDayNote!==false&&!detached.has('note')&&day.note?`<div class="elDay__note" style="font-size:${Math.max(10,size*.56)}px">${escapeHtml(day.note)}</div>`:''}</div>`;
     }
     return `<div class="canvasElement${selected}${locked}${element.role?` role-${element.role}`:''}" data-id="${element.id}" data-type="${element.type}" style="${elementStyle(element)}">${content}<span class="resizeHandle" data-resize="true"></span></div>`;
   }

@@ -1,5 +1,19 @@
 # Historique des versions
 
+## 2.0.3 — Grille pop et Colonnes gaming nouvelle génération
+
+- Refonte complète du modèle « Grille pop » autour d’une direction pop-culture et gaming beaucoup plus spectaculaire.
+- Nouvelle palette électrique mêlant violet profond, bleu arcade, cyan, rose, jaune, vert et orange.
+- Nouvelle composition en deux rangées de quatre puis trois cartes, adaptée séparément aux formats 16:9 et carré.
+- Cartes façon cases de comic avec rotations légères, bordures blanches, ombres franches, trames halftone et badges arrondis.
+- Titre transformé en véritable logo d’affiche avec capitales, contraste jaune, ombre dure et sous-titre cyan.
+- Ajout de rails néon, pixels colorés, pastilles, barres inclinées et slogans « POP! PLAY! REPEAT! » et « PRESS START ».
+- Ajout d’ornements gaming et pop avec manette, alien pixelisé et éclair.
+- Nouvel aperçu de modèle cohérent avec cette identité visuelle.
+- Ajout de l’alien de Space Invaders à la bibliothèque des emojis disponibles.
+- Refonte de « Colonnes gaming » en écran de sélection de joueurs coloré, avec sept cartes-univers, accents individuels, halos, badges, reliefs arcade et hauteurs rythmées.
+- Nouveau titre « PLAYER SELECT », signature « 7 JOURS • 7 UNIVERS • 1 AVENTURE » et décorations manette, trophée, alien et traînées colorées.
+
 ## 2.0.2 — Refonte complète de PlanningGPT
 
 PlanningGPT 2.0.2 transforme l’ancien générateur de planning en un studio créatif local à calques. Cette entrée regroupe la refonte et toutes les améliorations intégrées depuis son lancement. L’historique des versions antérieures à la V2 a été retiré.
