@@ -69,6 +69,17 @@ test('le modèle partition de violon possède ses ornements et son rendu PNG',()
   assert.match(script,/function exportClone\(\)/);
 });
 
+test('la seconde portée de violon et ses trois cartes sont décalées ensemble',()=>{
+  assert.match(script,/y:row\?\(square\?700:630\)/);
+  assert.match(script,/h:row\?\(square\?235:195\)/);
+  assert.match(script,/secondStaffTop=width===height\?650:590/);
+  assert.match(script,/secondStaffTop-35/);
+  assert.match(script,/secondStaffTop-27/);
+  assert.match(script,/function migrateViolinSecondScore\(\)/);
+  assert.match(script,/if\(previousRevision<5\)migrateViolinSecondScore\(\)/);
+  assert.match(script,/unlockDefaultLayers=previousRevision<4/);
+});
+
 test('les modèles inspirés des références ont une composition dédiée',()=>{
   for(const name of ['spotlight','columns','bubblegrid','horror']){
     assert.match(script,new RegExp(`style==='${name}'|name==='${name}'`));
@@ -110,14 +121,14 @@ test('Twitch Live remplace Quête fantasy avec une composition de diffusion déd
   assert.match(css,/\.variant-twitch/);
   assert.doesNotMatch(script,/spectateurs|chaînes programmées|#eb0400/);
   assert.doesNotMatch(css,/#eb0400/);
-  assert.match(script,/refreshReplacedModel=project\.modelRevision<3&&project\.template==='rpg'/);
+  assert.match(script,/refreshReplacedModel=previousRevision<3&&project\.template==='rpg'/);
 });
 
 test('aucun calque de modèle n’est verrouillé par défaut',()=>{
-  assert.match(script,/const MODEL_REVISION = 4;/);
+  assert.match(script,/const MODEL_REVISION = 5;/);
   assert.match(script,/modelRevision:MODEL_REVISION/);
   assert.match(script,/elements\.forEach\(element=>\{element\.builtIn=true;element\.locked=false;\}\)/);
-  assert.match(script,/unlockDefaultLayers=project\.modelRevision<MODEL_REVISION/);
+  assert.match(script,/unlockDefaultLayers=previousRevision<4/);
   assert.match(script,/project\.elements\.filter\(element=>element\.builtIn\)\.forEach\(element=>\{element\.locked=false;\}\)/);
 });
 
@@ -358,7 +369,7 @@ test('le PNG sérialise le vrai DOM sans remplacer l’aperçu par un raster',()
   assert.match(script,/encodeURIComponent\(svg\)/);
   assert.match(script,/const canvas=await renderArtboardToCanvas\(\)/);
   assert.doesNotMatch(script,/window\.html2canvas|prepareExportDom|renderSurface/);
-  assert.equal([...script.matchAll(/style='[^']*\$\{typographyStyle\(element\)\}'/g)].length,2);
+  assert.equal([...script.matchAll(/style='[^']*\$\{typographyStyle\(element\)\}/g)].length,2);
   assert.doesNotMatch(script,/function (drawDay|drawText|drawQr|drawCroppedImage)\(/);
 });
 
@@ -392,9 +403,20 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.0\.5'/);
-  assert.equal(packageJson.version,'2.0.5');
-  assert.match(readme,/PlanningGPT V2\.0\.5/);
+  assert.match(script,/const VERSION = '2\.0\.7'/);
+  assert.equal(packageJson.version,'2.0.7');
+  assert.match(readme,/PlanningGPT V2\.0\.7/);
+});
+
+test('les textes libérés conservent les styles calculés des cartes',()=>{
+  assert.match(script,/function dayVisualSnapshot\(computed\)/);
+  assert.match(script,/function dayVisualCss\(visual,element\)/);
+  assert.match(script,/dayVisual:placement\.visual\|\|null/);
+  assert.match(script,/dayVisualEffect:card\.variant==='bubblegrid'\?'none':card\.effect/);
+  for(const property of ['background-color','border-bottom','border-radius','box-shadow','text-shadow','-webkit-text-stroke-width'])assert.match(script,new RegExp(property));
+  for(const variant of ['bubblegrid','columns','arcade','twitch','violin','neonblue','astralblue'])assert.match(css,new RegExp(`detachedDayText--legacy\\.detachedDayText--${variant}`));
+  assert.match(css,/\.variant-bubblegrid::after\{display:none\}/);
+  assert.match(css,/\.variant-bubblegrid\.textEffect-hard\{text-shadow:none\}/);
 });
 
 test('le stockage est chargé avant le studio',()=>{

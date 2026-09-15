@@ -1,5 +1,17 @@
 # Historique des versions
 
+## 2.0.7 — Lisibilité pop et fidélité des textes séparés
+
+- « Grille pop » utilise une typographie plus nette dans les cartes ; les ombres épaisses, le contour des horaires et les traits qui traversaient les textes sont supprimés, y compris sur les plannings déjà enregistrés.
+- Lorsqu’un texte de jour est séparé, son fond, ses bordures, arrondis, espacements, ombres et autres attributs visuels sont copiés depuis la carte puis conservés dans le projet et le PNG.
+- Les anciens calques déjà séparés retrouvent les principaux accents visuels de « RPG », « Colonnes gaming », « Grille pop », « Twitch Live », « Duel néon », « Duo astral » et « Partition de violon ».
+
+## 2.0.6 — Partition de violon mieux espacée
+
+- La seconde portée, sa clé, ses notes et son intitulé « II. ANDANTE » sont abaissés pour ne plus empiéter sur la première rangée.
+- Les cartes Vendredi, Samedi et Dimanche suivent ce décalage ; en 16:9, leur hauteur est légèrement réduite pour garder le bas de page lisible.
+- Les projets « Partition de violon » déjà enregistrés migrent uniquement leurs calques intégrés restés à leurs positions d’origine ; les déplacements personnels et les verrouillages manuels sont préservés.
+
 ## 2.0.5 — Emojis fantasy accessibles dans Éléments
 
 - L’épée et les cœurs vert et rouge sont disponibles côte à côte en tête de la bibliothèque « Éléments ».

@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION = '2.0.6';
+  const VERSION = '2.0.7';
   const MODEL_REVISION = 5;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const DAY_SHORT = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
@@ -289,7 +289,7 @@
       }
       if(name==='bubblegrid'){
         const fills=['#14e6ff','#ff3bbb','#fff23d','#8d5cff','#58f77b','#ff8a2a','#4c7dff'];
-        Object.assign(card,{contentLayout:'standard',align:'left',font:'comic',fontSize:23,fill:fills[index],color:index===3||index===6?'#ffffff':'#17052e',effect:'hard'});
+        Object.assign(card,{contentLayout:'standard',align:'left',font:'rounded',fontSize:23,fill:fills[index],color:index===3||index===6?'#ffffff':'#17052e',effect:'none'});
         card.rotation=[-2,2,-1,2,1,-2,1][index];
       }
       if(name==='arcade')Object.assign(card,{contentLayout:'standard',font:'serif',fontSize:width===height?22:24,fill:'#102b28',color:'#f7edce',accent:'#e5c473'});
@@ -484,7 +484,7 @@
   async function load(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
-      if(raw){project=validateProject(JSON.parse(raw));missingImageCount=await hydrateImages(project)||0;const refreshReplacedModel=project.modelRevision<3&&project.template==='rpg',unlockDefaultLayers=project.modelRevision<MODEL_REVISION;project.modelRevision=MODEL_REVISION;if(refreshReplacedModel){const custom=project.elements.filter(element=>!element.builtIn).map(clone),template=project.template;buildTemplate(template);project.elements.push(...custom);}else if(unlockDefaultLayers)project.elements.filter(element=>element.builtIn).forEach(element=>{element.locked=false;});return;}
+      if(raw){project=validateProject(JSON.parse(raw));missingImageCount=await hydrateImages(project)||0;const previousRevision=project.modelRevision,refreshReplacedModel=previousRevision<3&&project.template==='rpg',unlockDefaultLayers=previousRevision<4;project.modelRevision=MODEL_REVISION;if(refreshReplacedModel){const custom=project.elements.filter(element=>!element.builtIn).map(clone),template=project.template;buildTemplate(template);project.elements.push(...custom);}else{if(previousRevision<5)migrateViolinSecondScore();if(unlockDefaultLayers)project.elements.filter(element=>element.builtIn).forEach(element=>{element.locked=false;});}return;}
     }catch{}
     if(!migrateV1()){project=defaultProject();buildTemplate('cloud');}
   }
@@ -548,8 +548,8 @@
     let content='';
     if(element.type==='text'){
       const card=element.dayField?project.elements.find(item=>item.type==='day'&&item.dayIndex===element.dayIndex):null;
-      const themed=card&&['neonblue','neonred','astralblue','astralrose'].includes(card.variant)?` detachedDayText detachedDayText--${card.variant} detachedDayText--${element.dayField}`:'';
-      content=`<div class="elText textEffect-${element.effect||'none'}${themed}" style='width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};${typographyStyle(element)}'>${escapeHtml(element.dayField?dayTextValue(element):element.text)}</div>`;
+      const themed=card?` detachedDayText detachedDayText--${card.variant} detachedDayText--${element.dayField}${element.dayVisual?'':' detachedDayText--legacy'}`:'';
+      content=`<div class="elText textEffect-${element.effect||'none'}${themed}" style='width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};--card-accent:${color(card?.accent||card?.color)};${typographyStyle(element)};${dayVisualCss(element.dayVisual,element)}'>${escapeHtml(element.dayField?dayTextValue(element):element.text)}</div>`;
     }
     if(element.type==='emoji')content=`<div class="elEmoji" style="width:100%;height:100%;font-size:${element.fontSize||80}px">${escapeHtml(element.text)}</div>`;
     if(element.type==='shape')content=`<div class="elShape" style="background:${color(element.fill)};border-radius:${element.shape==='circle'?'50%':`${element.radius||0}px`};border:${element.borderWidth||0}px solid ${color(element.borderColor,'#000000')}"></div>`;
@@ -704,13 +704,17 @@
     const fallback={name:{x:card.x+18,y:card.y+18,w:card.w-36,h:34,size:card.fontSize||22},time:{x:card.x+18,y:card.y+card.h-118,w:card.w-36,h:42,size:(card.fontSize||22)*1.2},title:{x:card.x+18,y:card.y+card.h-72,w:card.w-36,h:34,size:(card.fontSize||22)*.84},note:{x:card.x+18,y:card.y+card.h-38,w:card.w-36,h:28,size:Math.max(10,(card.fontSize||22)*.56)}}[field];
     const cardNode=[...els.artboard.querySelectorAll('.canvasElement')].find(node=>node.dataset.id===card.id),node=cardNode?.querySelector(DAY_TEXT_FIELDS[field].selector);if(!node)return fallback;
     const boardRect=els.artboard.getBoundingClientRect(),rect=node.getBoundingClientRect(),scale=boardRect.width/project.width||zoom/100,computed=getComputedStyle(node);
-    return {x:(rect.left-boardRect.left)/scale,y:(rect.top-boardRect.top)/scale,w:Math.max(60,rect.width/scale+8),h:Math.max(24,rect.height/scale+8),size:parseFloat(computed.fontSize)||fallback.size,align:computed.textAlign||card.align,font:computedFontKey(computed.fontFamily,card.font),weight:Number(computed.fontWeight)||card.weight,fontStyle:computed.fontStyle||card.fontStyle,transform:computed.textTransform||card.transform,letterSpacing:parseFloat(computed.letterSpacing)||0,color:computedColor(computed.color,project.days[card.dayIndex]?.imageSrc?'#ffffff':card.color)};
+    return {x:(rect.left-boardRect.left)/scale,y:(rect.top-boardRect.top)/scale,w:Math.max(60,rect.width/scale+8),h:Math.max(24,rect.height/scale+8),size:parseFloat(computed.fontSize)||fallback.size,align:computed.textAlign||card.align,font:computedFontKey(computed.fontFamily,card.font),weight:Number(computed.fontWeight)||card.weight,fontStyle:computed.fontStyle||card.fontStyle,transform:computed.textTransform||card.transform,letterSpacing:parseFloat(computed.letterSpacing)||0,color:computedColor(computed.color,project.days[card.dayIndex]?.imageSrc?'#ffffff':card.color),visual:dayVisualSnapshot(computed),opacity:parseFloat(computed.opacity)};
   }
+  const DAY_VISUAL_PROPERTIES=['background-color','background-image','border-top','border-right','border-bottom','border-left','border-radius','padding-top','padding-right','padding-bottom','padding-left','box-shadow','text-shadow','-webkit-text-stroke-width','-webkit-text-stroke-color','paint-order'];
+  function safeVisualValue(value){const text=String(value||'');return text.length<=500&&!/[;'"{}<>\\]|url\s*\(|expression\s*\(/i.test(text)?text:'';}
+  function dayVisualSnapshot(computed){return Object.fromEntries(DAY_VISUAL_PROPERTIES.map(property=>[property,safeVisualValue(computed.getPropertyValue(property))]).filter(([,value])=>value));}
+  function dayVisualCss(visual,element){if(!visual||typeof visual!=='object')return '';return DAY_VISUAL_PROPERTIES.map(property=>{if(element.effect!==element.dayVisualEffect&&['text-shadow','-webkit-text-stroke-width','-webkit-text-stroke-color','paint-order'].includes(property))return '';const value=safeVisualValue(visual[property]);return value?`${property}:${value};`:'';}).join('');}
   function separateDayTextLayers(dayIndex){
     if(linkedDayTexts(dayIndex).length)return [];
     const card=project.elements.find(element=>element.type==='day'&&element.dayIndex===dayIndex);if(!card)return [];
     const visibility={name:'showDayName',time:'showDayTime',title:'showDayTitle',note:'showDayNote'},created=[];
-    Object.keys(DAY_TEXT_FIELDS).forEach(field=>{if(card[visibility[field]]===false)return;const placement=dayTextPlacement(card,field),element=textElement(dayTextValue({dayIndex,dayField:field},true),placement.x,placement.y,placement.w,placement.h,placement.size,placement.color,placement.font,placement.weight,placement.align||card.align);Object.assign(element,{dayIndex,dayField:field,fontStyle:placement.fontStyle,transform:placement.transform,letterSpacing:placement.letterSpacing,effect:card.effect,builtIn:false});created.push(element);});
+    Object.keys(DAY_TEXT_FIELDS).forEach(field=>{if(card[visibility[field]]===false)return;const placement=dayTextPlacement(card,field),element=textElement(dayTextValue({dayIndex,dayField:field},true),placement.x,placement.y,placement.w,placement.h,placement.size,placement.color,placement.font,placement.weight,placement.align||card.align);Object.assign(element,{dayIndex,dayField:field,fontStyle:placement.fontStyle,transform:placement.transform,letterSpacing:placement.letterSpacing,effect:card.variant==='bubblegrid'?'none':card.effect,dayVisualEffect:card.variant==='bubblegrid'?'none':card.effect,dayVisual:placement.visual||null,opacity:Number.isFinite(placement.opacity)?placement.opacity:1,builtIn:false});created.push(element);});
     project.elements.push(...created);return created;
   }
   function toggleDayTextLayers(){
