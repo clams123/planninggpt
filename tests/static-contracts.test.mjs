@@ -36,6 +36,23 @@ test('Duel néon et Duo astral proposent deux compositions illustrées distincte
   assert.match(script,/const sigil=textElement\('✦'/);
 });
 
+test('les textes libérés des deux modèles duo conservent leurs accents',()=>{
+  assert.match(script,/detachedDayText--\$\{card\.variant\}/);
+  assert.match(script,/detachedDayText--\$\{element\.dayField\}/);
+  for(const variant of ['neonblue','neonred','astralblue','astralrose'])assert.match(css,new RegExp(`detachedDayText--${variant}`));
+  assert.match(css,/\.detachedDayText--neonblue\.detachedDayText--title[\s\S]*background:rgba\(1,5,14,\.78\)/);
+  assert.match(css,/\.detachedDayText--astralblue\.detachedDayText--title[\s\S]*border-radius:999px/);
+});
+
+test('Arcade night est remplacé par un modèle RPG Zelda distinct',()=>{
+  assert.match(html,/data-template="arcade"[\s\S]*<strong>RPG<\/strong>/);
+  assert.doesNotMatch(html,/Arcade night/i);
+  assert.match(script,/if\(style==='arcade'\)/);
+  assert.match(script,/function questCrestWatermark\(\)/);
+  assert.match(script,/JOURNAL DES QUÊTES/);
+  assert.match(css,/\.variant-arcade::before/);
+});
+
 test('le modèle partition de violon possède ses ornements et son rendu PNG',()=>{
   assert.match(html,/data-template="violin"/);
   assert.match(css,/\.variant-violin/);
@@ -225,9 +242,10 @@ test('le contenu de chaque carte peut être recomposé ou masqué',()=>{
   assert.match(script,/Composition appliquée à toutes les cartes/);
 });
 
-test('la bibliothèque contient trente-sept emojis sans illustrations intégrées',()=>{
+test('la bibliothèque contient trente-neuf emojis sans illustrations intégrées',()=>{
   const emojiBlock=script.match(/const EMOJIS = \[([^\]]+)\]/)?.[1]||'';
-  assert.equal([...emojiBlock.matchAll(/'[^']+'/g)].length,37);
+  assert.equal([...emojiBlock.matchAll(/'[^']+'/g)].length,39);
+  assert.match(emojiBlock,/^'🗡️','💚','❤️'/);
   for(const emoji of ['☁️','🎧','🕹️','🐉','🏆','🍄','🌈','🦇','🪄','🎲'])assert.match(script,new RegExp(emoji));
   for(const emoji of ['🎤','🎻','🎼','🎵','💀','📼'])assert.match(script,new RegExp(emoji));
   for(const emoji of ['⚔️','🗡️','🪽','🌌','⚡','🧪','🏙️','🐺'])assert.match(script,new RegExp(emoji));
@@ -374,9 +392,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.0\.3'/);
-  assert.equal(packageJson.version,'2.0.3');
-  assert.match(readme,/PlanningGPT V2\.0\.3/);
+  assert.match(script,/const VERSION = '2\.0\.5'/);
+  assert.equal(packageJson.version,'2.0.5');
+  assert.match(readme,/PlanningGPT V2\.0\.5/);
 });
 
 test('le stockage est chargé avant le studio',()=>{

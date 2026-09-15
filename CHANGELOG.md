@@ -1,5 +1,16 @@
 # Historique des versions
 
+## 2.0.5 — Emojis fantasy accessibles dans Éléments
+
+- L’épée et les cœurs vert et rouge sont disponibles côte à côte en tête de la bibliothèque « Éléments ».
+- La bibliothèque passe de 37 à 39 emojis ; l’épée déjà présente a été déplacée pour être plus facile à trouver, sans créer de doublon.
+
+## 2.0.4 — RPG et textes de duo indépendants
+
+- « Arcade night » est remplacé par « RPG », inspiré de Zelda : palette forêt et or, cartes de journal de quête, emblème triangulaire, épée, cœurs et composition en deux rangées.
+- Les textes séparés des cartes « Duel néon » et « Duo astral » conservent leurs plaques, halos et accents visuels après « Séparer les textes de ce jour ».
+- La clé interne du modèle remplacé reste compatible avec les projets enregistrés ; la nouvelle composition apparaît lors de la sélection du modèle.
+
 ## 2.0.3 — Grille pop et Colonnes gaming nouvelle génération
 
 - Refonte complète du modèle « Grille pop » autour d’une direction pop-culture et gaming beaucoup plus spectaculaire.

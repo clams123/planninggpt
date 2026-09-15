@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  const VERSION = '2.0.3';
-  const MODEL_REVISION = 4;
+  const VERSION = '2.0.6';
+  const MODEL_REVISION = 5;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const DAY_SHORT = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
   const DEFAULT_DAYS = [
@@ -14,7 +14,7 @@
     {name:'Samedi',time:'20h',title:'Avec la commu',note:'Viewers games',status:'live'},
     {name:'Dimanche',time:'14h30',title:'Stream chill',note:'Dimanche détente',status:'live'}
   ];
-  const EMOJIS = ['✨','🎮','🌙','⭐','💜','🔥','👻','🌸','🧙','☕','💎','🚀','☁️','🎧','🕹️','🐉','🏆','🍄','🌈','🦇','🪄','🎲','🎤','🎻','🎼','🎵','💀','📼','⚔️','🗡️','🪽','🌌','⚡','🧪','🏙️','🐺','👾'];
+  const EMOJIS = ['🗡️','💚','❤️','✨','🎮','🌙','⭐','💜','🔥','👻','🌸','🧙','☕','💎','🚀','☁️','🎧','🕹️','🐉','🏆','🍄','🌈','🦇','🪄','🎲','🎤','🎻','🎼','🎵','💀','📼','⚔️','🪽','🌌','⚡','🧪','🏙️','🐺','👾'];
   const FONT_MAP = {
     rounded:'"Trebuchet MS",ui-rounded,sans-serif',
     sans:'"Segoe UI",Arial,sans-serif',
@@ -32,7 +32,7 @@
     rpg:{bg:['#120b1d','#6f2dc5'],angle:145,card:'twitch',text:'#ffffff',accent:'#bf94ff'},
     manga:{bg:['#fff8ff','#d8c9ff'],angle:125,card:'manga',text:'#17121f',accent:'#a855f7'},
     cozy:{bg:['#e9aa83','#7da890'],angle:135,card:'cozy',text:'#fff8eb',accent:'#5c4033'},
-    arcade:{bg:['#140832','#c21870'],angle:135,card:'arcade',text:'#ffffff',accent:'#00f5ff'},
+    arcade:{bg:['#0d2d29','#496b3c'],angle:135,card:'arcade',text:'#f7edce',accent:'#e5c473'},
     agenda:{bg:['#f7f2e8','#c8d8e8'],angle:140,card:'agenda',text:'#18324a',accent:'#d25b47'},
     polaroid:{bg:['#f6a88d','#7d9fd3'],angle:130,card:'polaroid',text:'#fffdf8',accent:'#ffe16b'},
     roadmap:{bg:['#071b20','#1a6359'],angle:120,card:'roadmap',text:'#f0fffb',accent:'#54f2c2'},
@@ -157,13 +157,14 @@
   function svgImageElement(svg,x,y,w,h,name){return {...elementBase('image',x,y,w,h),src:`data:image/svg+xml;base64,${btoa(svg)}`,assetId:'',name,fit:'contain',...normalizeImageCrop(),color:'#ffffff',fill:'#ffffff'};}
   function violinWatermark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 600"><g fill="none" stroke="#70482d" stroke-linecap="round" stroke-linejoin="round"><path fill="#70482d" fill-opacity=".16" stroke-width="7" d="M120 586C54 570 42 510 70 454c17-34 8-68-24-96-42-37-25-112 32-132 27-10 35-38 25-76h34c-10 38-2 66 25 76 57 20 74 95 32 132-32 28-41 62-24 96 28 56 16 116-50 132Z"/><path stroke-width="12" d="M120 230V72M105 75h30l12-34-27-24-27 24 12 34Z"/><path stroke-width="6" d="M92 157h56M83 252c-34 35-31 72-4 99M157 252c34 35 31 72 4 99M78 466c25 27 59 27 84 0"/><path stroke-width="3" d="M114 77v447M120 77v447M126 77v447"/><path stroke-width="8" d="M91 405h58M98 418h44"/><path stroke-width="7" d="M84 286c-18 9-20 31-7 45M156 286c18 9 20 31 7 45"/></g></svg>`;}
   function fantasySwordWatermark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 720"><defs><linearGradient id="b" x1="0" x2="1"><stop stop-color="#253a39"/><stop offset=".5" stop-color="#d6fff0"/><stop offset="1" stop-color="#142625"/></linearGradient></defs><g stroke="#5df2ae" stroke-linejoin="round"><path fill="url(#b)" stroke-width="5" d="M78 545 91 80l20-65 20 65 12 465-32 76Z"/><path fill="#152725" stroke-width="7" d="m32 536 158 0-18 35H50Z"/><path fill="#10201e" stroke-width="6" d="M94 568h34v105H94z"/><path fill="#5df2ae" stroke-width="4" d="m72 687 39-22 39 22-39 18Z"/><circle cx="111" cy="553" r="15" fill="#07110f" stroke-width="6"/><path fill="none" stroke-width="3" opacity=".7" d="M111 90v425M98 118h26M96 165h30"/></g></svg>`;}
+  function questCrestWatermark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><g fill="none" stroke="#e5c473" stroke-linecap="round" stroke-linejoin="round"><circle cx="200" cy="200" r="174" stroke-width="3" opacity=".6"/><circle cx="200" cy="200" r="151" stroke-width="2" opacity=".35"/><path stroke-width="8" d="m200 69 42 74h-84zm-49 83 42 74h-84zm98 0 42 74h-84z"/><path stroke-width="2" opacity=".55" d="M200 29v30m0 282v30M29 200h30m282 0h30M74 74l21 21m210 210 21 21M326 74l-21 21M95 305l-21 21"/><path stroke-width="7" d="m200 229-12 85 12 23 12-23-12-85zm-28 59h56m-28 49v26"/></g></svg>`;}
   function resonanceWatermark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260"><g fill="none" stroke="#167a82" stroke-linecap="round"><path stroke-width="5" d="M8 144c62-112 105 92 170-8s112 77 176-11 110 79 174-4 107 48 184-69"/><path stroke-width="2" opacity=".55" d="M5 174c71-67 118 48 187-12s112 45 180-9 111 41 177-10 101 24 168-37"/><circle cx="548" cy="91" r="65" stroke-width="3"/><circle cx="548" cy="91" r="41" stroke-width="2"/><circle cx="548" cy="91" r="13" fill="#167a82" stroke="none"/><path stroke-width="3" d="M548 8v22M548 152v22M465 91h22M609 91h22"/></g></svg>`;}
   function twitchLogoMark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260"><path fill="#fff" d="M16 8h208v162l-57 57h-47l-48 33v-33H16Z"/><path fill="#9147ff" d="M32 24h176v139l-48 48h-48l-24 18v-18H32Z"/><path fill="#fff" d="M62 50h116v83l-33 33h-39l-27 21v-21H62Z"/><path fill="#9147ff" d="M95 72h20v55H95zm43 0h20v55h-20z"/></svg>`;}
   function normalizeImageCrop(element={}){return {cropZoom:clamp(element.cropZoom??1,.1,3),cropX:clamp(element.cropX??0,-200,200),cropY:clamp(element.cropY??0,-200,200),stretchX:clamp(element.stretchX??1,.5,3),stretchY:clamp(element.stretchY??1,.5,3)};}
   function imageCropStyle(element){const crop=normalizeImageCrop(element);return `object-fit:${element.fit||'cover'};left:calc(50% + ${crop.cropX}%);top:calc(50% + ${crop.cropY}%);transform:translate(-50%,-50%) scale(${crop.cropZoom}) scaleX(${crop.stretchX}) scaleY(${crop.stretchY})`;}
   function defaultCardColors(variant){
     return {
-      cloud:{fill:'#f7f1ff',color:'#292b63'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff7e7',color:'#4b3a31'},arcade:{fill:'#160f35',color:'#ffffff'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#25124f',color:'#ffffff'},bubblegrid:{fill:'#15e7ff',color:'#17052e'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
+      cloud:{fill:'#f7f1ff',color:'#292b63'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff7e7',color:'#4b3a31'},arcade:{fill:'#102b28',color:'#f7edce'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#25124f',color:'#ffffff'},bubblegrid:{fill:'#15e7ff',color:'#17052e'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
     }[variant] || {fill:'#ffffff',color:'#111827'};
   }
 
@@ -195,9 +196,13 @@
       const topY=square?265:250,topH=square?315:255,bottomY=square?615:550,bottomH=square?330:255;
       return Array.from({length:7},(_,i)=>i<topCount?{x:margin+i*(topW+gap),y:topY,w:topW,h:topH}:{x:margin+(i-topCount)*(bottomW+gap),y:bottomY,w:bottomW,h:bottomH});
     }
+    if(style==='arcade'){
+      const gap=square?18:22,margin=square?58:72,topW=(width-margin*2-gap*3)/4,bottomW=(width-margin*2-gap*2)/3;
+      return Array.from({length:7},(_,i)=>i<4?{x:margin+i*(topW+gap),y:square?295:290,w:topW,h:square?265:225}:{x:margin+(i-4)*(bottomW+gap),y:square?605:560,w:bottomW,h:square?265:225});
+    }
     if(style==='horror'&&!square){const spots=[[70,250],[440,225],[810,260],[1180,230],[255,555],[650,530],[1045,565]];return spots.map(([x,y])=>({x,y,w:300,h:245}));}
     if(style==='rpg'&&!square){const topGap=24,topW=430,topStart=(width-topW*3-topGap*2)/2,bottomGap=22,bottomW=322,bottomStart=(width-bottomW*4-bottomGap*3)/2;return Array.from({length:7},(_,index)=>index<3?{x:topStart+index*(topW+topGap),y:250,w:topW,h:260}:{x:bottomStart+(index-3)*(bottomW+bottomGap),y:548,w:bottomW,h:225});}
-    if(style==='violin'){const gap=square?18:22,margin=square?140:150,cardW=(width-margin*2-gap*3)/4,cardH=square?235:225;return Array.from({length:7},(_,i)=>{const row=i<4?0:1,index=row?i-4:i,count=row?3:4,rowWidth=count*cardW+(count-1)*gap;return {x:(width-rowWidth)/2+index*(cardW+gap),y:row?(square?625:565):(square?300:285),w:cardW,h:cardH};});}
+    if(style==='violin'){const gap=square?18:22,margin=square?140:150,cardW=(width-margin*2-gap*3)/4;return Array.from({length:7},(_,i)=>{const row=i<4?0:1,index=row?i-4:i,count=row?3:4,rowWidth=count*cardW+(count-1)*gap;return {x:(width-rowWidth)/2+index*(cardW+gap),y:row?(square?700:630):(square?300:285),w:cardW,h:row?(square?235:195):(square?235:225)};});}
     if(style==='fantasy7'&&!square){const gap=16,margin=46,cardW=(width-margin*2-gap*6)/7,tops=[300,266,314,250,302,274,320],bottom=820;return tops.map((y,index)=>({x:margin+index*(cardW+gap),y,w:cardW,h:bottom-y}));}
     if(style==='agenda'){
       const gap=18,top=225,margin=55,cardW=(width-margin*2-gap)/2,cardH=(height-top-45-gap*3)/4;
@@ -217,6 +222,22 @@
     return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:style==='cyber'?230+(i%2)*38:245,w:cardW,h:style==='manga'?500-(i%3)*22:520}));
   }
 
+  function migrateViolinSecondScore(){
+    if(project.template!=='violin')return;
+    const square=project.width===project.height,oldCardY=square?625:565,newCardY=square?700:630,oldStaffTop=532,newStaffTop=square?650:590,staffShift=newStaffTop-oldStaffTop;
+    project.elements.filter(element=>element.builtIn).forEach(element=>{
+      if(element.type==='day'&&element.dayIndex>=4&&element.y===oldCardY){element.y=newCardY;if(!square&&element.h===225)element.h=195;return;}
+      if(element.type==='shape'&&element.w===project.width-140&&element.h===2&&[532,550,568,586,604].includes(element.y)){element.y+=staffShift;return;}
+      if(element.type==='shape'&&element.w===3&&element.h===76&&element.y===530){element.y+=staffShift;return;}
+      if(element.type!=='text')return;
+      if(element.text==='II.  ANDANTE'&&element.y===498)element.y=newStaffTop-35;
+      else if(element.text==='𝄞'&&element.y===505)element.y=newStaffTop-27;
+      else if(['V','VI','VII'].includes(element.text)&&element.y===oldCardY-29)element.y=newCardY-29;
+      else if(['♪','♫','♩'].includes(element.text)&&[505,510,515,518].includes(element.y))element.y+=staffShift;
+      else if(element.text==='Op. 7  •  Moderato'&&element.x===55&&element.w===320)element.w=250;
+    });
+  }
+
   function buildTemplate(name){
     const previousTemplate=project.template;
     if(DUO_TEMPLATES.has(previousTemplate)&&!DUO_TEMPLATES.has(name))project.days.forEach(day=>{day.visible=true;});
@@ -232,6 +253,7 @@
     if(name==='rpg'){Object.assign(heading,{align:'left',x:55,w:1030,font:'sans',fontSize:76,color:'#ffffff',weight:900,letterSpacing:-2});Object.assign(subtitle,{align:'left',x:58,w:720,y:150,font:'sans',fontSize:25,color:'#d9c2ff',weight:700});}
     if(name==='columns'){Object.assign(heading,{align:'left',x:width===height?45:55,y:38,w:width===height?width-90:1040,font:'display',fontSize:width===height?62:80,color:'#ffe45e',transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:width===height?45:820,w:width===height?width-90:720,y:158,font:'typewriter',fontSize:23,color:'#55f3ff',transform:'uppercase',letterSpacing:3,effect:'neon'});}
     if(name==='bubblegrid'){Object.assign(heading,{align:'left',x:width===height?45:70,y:38,w:width===height?width-90:1110,font:'display',color:'#fff23d',fontSize:width===height?62:82,transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:width===height?45:820,y:157,w:width===height?width-90:690,font:'comic',color:'#63f5ff',fontSize:25,transform:'uppercase',letterSpacing:2,effect:'hard'});}
+    if(name==='arcade'){Object.assign(heading,{x:width===height?90:160,y:52,w:width===height?width-180:width-320,h:96,font:'serif',fontSize:width===height?63:76,color:'#f7edce',weight:900,letterSpacing:2,effect:'soft'});Object.assign(subtitle,{x:width===height?180:430,y:157,w:width===height?width-360:width-860,h:38,font:'serif',fontStyle:'italic',fontSize:24,color:'#e5c473',weight:700});}
     if(name==='horror'){Object.assign(heading,{align:'left',x:70,w:1050,font:'display',fontSize:86,color:'#f8fafc',transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:850,w:670,y:155,font:'typewriter',fontSize:24,color:'#ff334d',transform:'uppercase',letterSpacing:3});}
     if(name==='violin'){Object.assign(heading,{font:'serif',fontStyle:'italic',fontSize:70,color:style.text,letterSpacing:2});Object.assign(subtitle,{font:'serif',fontStyle:'italic',fontSize:25,color:style.accent});}
     if(name==='constellation'){Object.assign(heading,{align:'left',x:58,w:940,font:'sans',fontSize:68,transform:'none',letterSpacing:0,color:'#10363c'});Object.assign(subtitle,{align:'left',x:62,w:620,y:148,font:'mono',fontSize:20,color:style.accent,letterSpacing:4});}
@@ -270,6 +292,7 @@
         Object.assign(card,{contentLayout:'standard',align:'left',font:'comic',fontSize:23,fill:fills[index],color:index===3||index===6?'#ffffff':'#17052e',effect:'hard'});
         card.rotation=[-2,2,-1,2,1,-2,1][index];
       }
+      if(name==='arcade')Object.assign(card,{contentLayout:'standard',font:'serif',fontSize:width===height?22:24,fill:'#102b28',color:'#f7edce',accent:'#e5c473'});
       if(name==='horror'){Object.assign(card,{contentLayout:'poster',align:'center',font:'condensed',fontSize:23,fill:index%2?'#17090c':'#0d0d0f'});card.rotation=[-2,2,-1,2,1,-2,2][index];}
       if(name==='violin')Object.assign(card,{contentLayout:'standard',font:'serif',fontStyle:'italic',fontSize:24});
       if(name==='fantasy7')Object.assign(card,{contentLayout:'poster',align:'center',font:'condensed',fontSize:22});
@@ -305,8 +328,10 @@
       elements.push(emojiElement('☕',52,height-150,105));elements.push(emojiElement('🍄',155,height-105,66));
     }
     if(name==='arcade'){
-      elements.push(textElement('INSERT COIN',width-330,height-70,280,40,28,'#00f5ff','mono',900,'right'));
-      elements.push(emojiElement('🕹️',35,45,100));
+      const crest=svgImageElement(questCrestWatermark(),width===height?width-280:width-325,28,width===height?230:285,width===height?230:285,'Emblème de quête');crest.opacity=.32;elements.unshift(crest);
+      const rail=shapeElement('rect',70,230,width-140,4,'#e5c473',2);rail.opacity=.7;elements.unshift(rail);
+      const footer=textElement('✦  JOURNAL DES QUÊTES  •  SEPT JOURS D’AVENTURE  ✦',width===height?120:360,height-72,width===height?width-240:width-720,36,21,'#e5c473','serif',800,'center');footer.letterSpacing=2;elements.push(footer);
+      elements.push(emojiElement('🗡️',38,42,90));elements.push(emojiElement('💚',70,height-110,58));elements.push(emojiElement('💚',125,height-110,58));elements.push(emojiElement('💚',180,height-110,58));
     }
     if(name==='agenda'){elements.push(textElement('SEMAINE 01',width-340,65,270,48,28,style.accent,'condensed',900,'right'));}
     if(name==='polaroid'){elements.push(emojiElement('🌈',width-185,height-155,125));elements.push(emojiElement('🎧',width-275,height-105,78));elements.push(emojiElement('📌',35,45,76));}
@@ -341,19 +366,19 @@
       elements.push(emojiElement('🦇',width-145,height-145,105));elements.push(emojiElement('👻',25,55,92));
     }
     if(name==='violin'){
-      const frameColor='#70482d';
+      const frameColor='#70482d',secondStaffTop=width===height?650:590;
       [[24,24,width-48,3],[24,height-27,width-48,3],[24,24,3,height-48],[width-27,24,3,height-48],[34,34,width-68,1],[34,height-35,width-68,1],[34,34,1,height-68],[width-35,34,1,height-68]].forEach(([x,y,w,h])=>{const frame=shapeElement('rect',x,y,w,h,frameColor,0);frame.locked=true;elements.unshift(frame);});
-      [252,270,288,306,324,532,550,568,586,604].forEach(y=>{const staff=shapeElement('rect',70,y,width-140,2,'#76543b',0);staff.opacity=.72;staff.locked=true;elements.unshift(staff);});
+      [252,270,288,306,324,...Array.from({length:5},(_,index)=>secondStaffTop+index*18)].forEach(y=>{const staff=shapeElement('rect',70,y,width-140,2,'#76543b',0);staff.opacity=.72;staff.locked=true;elements.unshift(staff);});
       [width*.27,width*.51,width*.75].forEach(x=>{const bar=shapeElement('rect',x,250,3,76,'#76543b',0);bar.opacity=.72;bar.locked=true;elements.unshift(bar);});
-      [width*.35,width*.55,width*.75].forEach(x=>{const bar=shapeElement('rect',x,530,3,76,'#76543b',0);bar.opacity=.72;bar.locked=true;elements.unshift(bar);});
+      [width*.35,width*.55,width*.75].forEach(x=>{const bar=shapeElement('rect',x,secondStaffTop-2,3,76,'#76543b',0);bar.opacity=.72;bar.locked=true;elements.unshift(bar);});
       const watermark=svgImageElement(violinWatermark(),width-355,155,285,660,'Violon en filigrane');watermark.opacity=.34;watermark.locked=true;elements.unshift(watermark);
       const bow=shapeElement('rect',width-430,170,380,5,frameColor,3);bow.rotation=64;bow.opacity=.38;bow.locked=true;elements.unshift(bow);
-      const clefs=[[42,225],[42,505]];clefs.forEach(([x,y])=>{const clef=textElement('𝄞',x,y,100,125,105,frameColor,'serif',400,'center');clef.locked=true;elements.push(clef);});
-      [['I.  ALLEGRO',75,218],['II.  ANDANTE',75,498]].forEach(([label,x,y])=>{const movement=textElement(label,x,y,300,32,18,frameColor,'serif',700,'left');movement.letterSpacing=4;movement.locked=true;elements.push(movement);});
+      const clefs=[[42,225],[42,secondStaffTop-27]];clefs.forEach(([x,y])=>{const clef=textElement('𝄞',x,y,100,125,105,frameColor,'serif',400,'center');clef.locked=true;elements.push(clef);});
+      [['I.  ALLEGRO',75,218],['II.  ANDANTE',75,secondStaffTop-35]].forEach(([label,x,y])=>{const movement=textElement(label,x,y,300,32,18,frameColor,'serif',700,'left');movement.letterSpacing=4;movement.locked=true;elements.push(movement);});
       const romans=['I','II','III','IV','V','VI','VII'];layouts.forEach((layout,index)=>{const measure=textElement(romans[index],layout.x,layout.y-29,layout.w,24,15,frameColor,'serif',700,'center');measure.letterSpacing=2;measure.locked=true;elements.push(measure);});
-      const notes=[['♪',width*.17,230,44],['♫',width*.45,225,50],['♩',width*.69,236,42],['♪',width*.89,218,46],['♫',width*.22,510,48],['♩',width*.49,518,42],['♪',width*.72,505,46],['♫',width*.88,515,50]];notes.forEach(([note,x,y,size])=>{const item=textElement(note,x,y,64,64,size,frameColor,'serif',900,'center');item.locked=true;elements.push(item);});
+      const notes=[['♪',width*.17,230,44],['♫',width*.45,225,50],['♩',width*.69,236,42],['♪',width*.89,218,46],['♫',width*.22,secondStaffTop-22,48],['♩',width*.49,secondStaffTop-14,42],['♪',width*.72,secondStaffTop-27,46],['♫',width*.88,secondStaffTop-17,50]];notes.forEach(([note,x,y,size])=>{const item=textElement(note,x,y,64,64,size,frameColor,'serif',900,'center');item.locked=true;elements.push(item);});
       const ornament=textElement('❦',width/2-70,174,140,60,48,frameColor,'serif',400,'center');ornament.locked=true;elements.push(ornament);
-      const opus=textElement('Op. 7  •  Moderato',55,height-65,320,30,17,frameColor,'serif',700,'left');opus.fontStyle='italic';opus.locked=true;elements.push(opus);
+      const opus=textElement('Op. 7  •  Moderato',55,height-65,250,30,17,frameColor,'serif',700,'left');opus.fontStyle='italic';opus.locked=true;elements.push(opus);
       elements.push(emojiElement('🎻',42,42,88));elements.push(emojiElement('🎼',width-125,48,72));
     }
     if(name==='fantasy7'){
@@ -521,7 +546,11 @@
     if(isHiddenWithDay(element))return '';
     const selected=element.id===selectedId?' isSelected':'';const locked=element.locked?' isLocked':'';
     let content='';
-    if(element.type==='text')content=`<div class="elText textEffect-${element.effect||'none'}" style='width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};${typographyStyle(element)}'>${escapeHtml(element.dayField?dayTextValue(element):element.text)}</div>`;
+    if(element.type==='text'){
+      const card=element.dayField?project.elements.find(item=>item.type==='day'&&item.dayIndex===element.dayIndex):null;
+      const themed=card&&['neonblue','neonred','astralblue','astralrose'].includes(card.variant)?` detachedDayText detachedDayText--${card.variant} detachedDayText--${element.dayField}`:'';
+      content=`<div class="elText textEffect-${element.effect||'none'}${themed}" style='width:100%;height:100%;font-size:${element.fontSize||32}px;line-height:1.08;color:${color(element.color)};${typographyStyle(element)}'>${escapeHtml(element.dayField?dayTextValue(element):element.text)}</div>`;
+    }
     if(element.type==='emoji')content=`<div class="elEmoji" style="width:100%;height:100%;font-size:${element.fontSize||80}px">${escapeHtml(element.text)}</div>`;
     if(element.type==='shape')content=`<div class="elShape" style="background:${color(element.fill)};border-radius:${element.shape==='circle'?'50%':`${element.radius||0}px`};border:${element.borderWidth||0}px solid ${color(element.borderColor,'#000000')}"></div>`;
     if(element.type==='image')content=element.src?`<div class="elImage"><img src="${escapeHtml(element.src)}" alt="" style="${imageCropStyle(element)}"></div>`:'<div class="elImageMissing">Image introuvable<br>Utilise « Remplacer »</div>';

@@ -1,4 +1,4 @@
-# PlanningGPT V2.0.3
+# PlanningGPT V2.0.5
 
 PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twitch. Il associe les données structurées de la semaine à un éditeur visuel inspiré des outils de composition libre.
 
@@ -19,7 +19,7 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 - Recomposer chaque carte en mode classique, affiche illustrée, jour en vedette ou image seule, puis afficher ou masquer séparément le jour, l’horaire, le titre et la note. Une composition peut être appliquée à toutes les cartes en un clic.
 - Transformer n’importe quel modèle avec onze modificateurs accessibles directement sous les modèles : affiche, ticket, restaurant, RPG, journal de bord, anime, marathon, sortie de jeu, subathon, découverte indé et challenge.
 - Désigner un jour star, mis en avant visuellement et interprété par le modificateur actif.
-- Ajouter du texte, des formes et trente-sept emojis, avec notamment de nouveaux symboles fantasy, célestes, urbains et l’alien de Space Invaders.
+- Ajouter du texte, des formes et trente-neuf emojis, dont l’épée, les cœurs vert et rouge et l’alien de Space Invaders.
 - Importer ses propres images.
 - Recadrer chaque image sans modifier le fichier d’origine : remplissage ou image entière, zoom de 10 à 300 %, déplacement libre et étirement horizontal ou vertical.
 - Remplacer une image tout en conservant son calque et ses dimensions.
