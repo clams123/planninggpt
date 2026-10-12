@@ -69,6 +69,74 @@ test('le modèle partition de violon possède ses ornements et son rendu PNG',()
   assert.match(script,/function exportClone\(\)/);
 });
 
+test('Violon v2 est retiré et ses anciens projets migrent vers la partition originale',()=>{
+  assert.match(html,/data-template="violin"[\s\S]*<strong>Partition de violon<\/strong>/);
+  assert.doesNotMatch(html,/data-template="violin2"|<strong>Violon v2<\/strong>/);
+  assert.match(script,/if\(raw\.template==='violin2'\)raw\.template='violin'/);
+  assert.match(script,/removedViolin2=parsed\.template==='violin2'/);
+  assert.match(script,/if\(normalized\.variant==='violin2'\)normalized\.variant='violin'/);
+  assert.doesNotMatch(css,/\.tp-violin2|\.variant-violin2/);
+});
+
+test('le fond du planning peut être uni ou dégradé depuis le panneau Design',()=>{
+  const templatesPanel=html.match(/data-panel-content="templates"[\s\S]*?<\/section>/)?.[0]||'';
+  const designPanel=html.match(/data-panel-content="design"[\s\S]*?<\/section>/)?.[0]||'';
+  for(const id of ['backgroundColorPreview','backgroundColorPrimary','backgroundColorPrimaryValue','backgroundColorSecondary','backgroundColorSecondaryValue','backgroundAngle','backgroundAngleValue','resetBackgroundColorsBtn'])assert.match(designPanel,new RegExp(`id="${id}"`));
+  assert.match(designPanel,/data-background-mode="solid"[\s\S]*Fond normal/);
+  assert.match(designPanel,/data-background-mode="gradient"[\s\S]*Dégradé/);
+  assert.doesNotMatch(templatesPanel,/backgroundColorDisclosure|Couleurs du fond/);
+  assert.match(script,/background:\{mode:'gradient'/);
+  assert.match(script,/raw\.background\.mode=raw\.background\.mode==='solid'\?'solid':'gradient'/);
+  assert.match(script,/function backgroundCss\(bg=project\.background\)/);
+  assert.match(script,/els\.backgroundColorPrimary\.addEventListener\('input'/);
+  assert.match(script,/els\.backgroundColorSecondary\.addEventListener\('input'/);
+  assert.match(script,/els\.backgroundAngle\.addEventListener\('input'/);
+  assert.match(css,/\.backgroundModeSwitch/);
+  assert.match(css,/\.backgroundColorEditor\.isSolid/);
+  const disclosure=designPanel.match(/<details class="backgroundColorDisclosure"([^>]*)>/);
+  assert.ok(disclosure);
+  assert.doesNotMatch(disclosure[1],/\bopen\b/);
+  assert.ok(designPanel.indexOf('Personnaliser le modèle')<designPanel.indexOf('class="backgroundColorDisclosure"'));
+  assert.ok(designPanel.indexOf('class="backgroundColorDisclosure"')<designPanel.indexOf('Arrière-plan du planning'));
+});
+
+test('le planning rapide guide, valide et génère la semaine sans service distant',()=>{
+  for(const id of ['quickPlanningPanel','detailedPlanningPanel','quickPlanningInput','quickPlanningFeedback','quickTemplateSelect','quickTemplatePreview','quickPlanningCreateBtn'])assert.match(html,new RegExp(`id="${id}"`));
+  assert.match(html,/Catégorie - Titre - Jour - Heure/);
+  assert.match(html,/Wuthering Waves - Découverte de la mise à jour - Mardi - 20h30/);
+  assert.match(script,/function parseQuickPlanning\(value\)/);
+  assert.match(script,/function updateQuickPlanningFeedback\(\)/);
+  assert.match(script,/async function generateQuickPlanning\(\)/);
+  assert.match(script,/QUICK_DAY_ALIASES/);
+  assert.match(script,/Les jours non indiqués seront masqués|day\.visible=false/);
+  assert.match(script,/CATEGORY_LIBRARY_KEY/);
+  assert.match(script,/function rememberCategoryImage/);
+  assert.match(script,/function applyTemplateChoice\(name/);
+  assert.match(script,/quickTemplateSelect\.addEventListener\('change'/);
+  assert.match(css,/\.planningModeSwitch/);
+  assert.match(css,/\.quickPlanningExample/);
+  assert.match(css,/\.quickTemplatePicker/);
+});
+
+test('le titre et le sous-titre sont communs aux modes rapide et détaillé',()=>{
+  const titleIndex=html.indexOf('id="planningTitle"');
+  const subtitleIndex=html.indexOf('id="planningSubtitle"');
+  const modeIndex=html.indexOf('class="planningModeSwitch"');
+  const detailedIndex=html.indexOf('id="detailedPlanningPanel"');
+  assert.ok(titleIndex>0 && subtitleIndex>titleIndex);
+  assert.ok(subtitleIndex<modeIndex && modeIndex<detailedIndex);
+  assert.match(html,/class="sharedPlanningFields" aria-label="Informations communes au planning"/);
+  assert.match(css,/\.sharedPlanningFields/);
+});
+
+test('les dispositions affiche montrent la catégorie et le titre du planning rapide',()=>{
+  assert.match(script,/title:entry\.off\?entry\.title:entry\.category/);
+  assert.match(script,/note:entry\.off\?'':entry\.title/);
+  assert.match(css,/\.dayLayout-poster \.elDay__title\{[^}]*bottom:43px/);
+  assert.match(css,/\.dayLayout-poster \.elDay__note\{display:block;[^}]*bottom:15px/);
+  assert.match(css,/\.dayLayout-poster \.elDay__note\{[^}]*text-overflow:ellipsis;white-space:nowrap/);
+});
+
 test('la seconde portée de violon et ses trois cartes sont décalées ensemble',()=>{
   assert.match(script,/y:row\?\(square\?700:630\)/);
   assert.match(script,/h:row\?\(square\?235:195\)/);
@@ -125,7 +193,7 @@ test('Twitch Live remplace Quête fantasy avec une composition de diffusion déd
 });
 
 test('aucun calque de modèle n’est verrouillé par défaut',()=>{
-  assert.match(script,/const MODEL_REVISION = 5;/);
+  assert.match(script,/const MODEL_REVISION = 10;/);
   assert.match(script,/modelRevision:MODEL_REVISION/);
   assert.match(script,/elements\.forEach\(element=>\{element\.builtIn=true;element\.locked=false;\}\)/);
   assert.match(script,/unlockDefaultLayers=previousRevision<4/);
@@ -231,9 +299,9 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   assert.match(script,/els\.resetPlanning\.addEventListener\('click',resetPlanning\)/);
   assert.doesNotMatch(html,/dayMovePanel|data-move-day|data-arrange/);
   assert.match(html,/data-panel="design"[^>]*>Design</);
-  assert.match(html,/data-panel-content="design"[\s\S]*Personnaliser le modèle[\s\S]*Arrière-plan du planning/);
+  assert.match(html,/data-panel-content="design"[\s\S]*Personnaliser le modèle[\s\S]*Couleurs du fond[\s\S]*Arrière-plan du planning/);
   const templatesPanel=html.match(/data-panel-content="templates"[\s\S]*?<\/section>/)?.[0]||'';
-  assert.doesNotMatch(templatesPanel,/Personnaliser le modèle|Arrière-plan du planning/);
+  assert.doesNotMatch(templatesPanel,/Personnaliser le modèle|Couleurs du fond|Arrière-plan du planning/);
   assert.doesNotMatch(html,/QR Code<\/strong><small>|Jour star<\/strong><small>/);
 });
 
@@ -403,9 +471,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.0\.7'/);
-  assert.equal(packageJson.version,'2.0.7');
-  assert.match(readme,/PlanningGPT V2\.0\.7/);
+  assert.match(script,/const VERSION = '2\.1\.8'/);
+  assert.equal(packageJson.version,'2.1.8');
+  assert.match(readme,/PlanningGPT V2\.1\.8/);
 });
 
 test('les textes libérés conservent les styles calculés des cartes',()=>{

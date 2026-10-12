@@ -1,5 +1,67 @@
 # Historique des versions
 
+## 2.1.8 — Couleurs du fond dans Design
+
+- Déplacement du réglage « Couleurs du fond » de l’onglet Modèles vers l’onglet Design.
+- Organisation du panneau Design dans l’ordre : personnalisation du modèle, couleurs du fond, puis arrière-plan du planning.
+- Conservation du menu replié par défaut et de toutes les couleurs déjà enregistrées.
+
+## 2.1.7 — Modèles prioritaires
+
+- Affichage immédiat de la grille des modèles à l’ouverture de l’onglet Modèles.
+- Déplacement du réglage « Couleurs du fond » sous les modèles dans un menu réduit par défaut.
+- Conservation d’un aperçu des couleurs dans l’en-tête du menu pour identifier le fond actif sans l’ouvrir.
+
+## 2.1.6 — Titre commun aux deux modes
+
+- Déplacement de « Titre principal » et « Sous-titre » avant le choix Rapide/Détaillé.
+- Les deux informations restent ainsi visibles et modifiables dans les deux modes de saisie.
+- Conservation de la mise à jour immédiate du planning, de la sauvegarde locale et de l’export PNG.
+
+## 2.1.5 — Titres du planning rapide visibles
+
+- Correction des modèles utilisant la disposition « affiche », notamment Twitch Live : le titre saisi après la catégorie est désormais visible sur la carte.
+- Réorganisation du bas des cartes pour afficher séparément le jour, la catégorie et le titre sans chevauchement.
+- Les titres longs restent sur une ligne avec une coupure propre afin de préserver la lisibilité du planning et du PNG.
+
+## 2.1.4 — Couleurs de fond personnalisables
+
+- Ajout dans l’onglet Modèles d’un sélecteur permettant de choisir entre un fond uni et un dégradé.
+- Sélection directe des couleurs avec affichage de leur valeur hexadécimale et aperçu instantané.
+- Réglage de l’orientation du dégradé de 0 à 360 degrés et restauration rapide des couleurs du modèle.
+- Conservation des couleurs personnalisées dans le projet et dans l’export PNG.
+- Retrait du modèle Violon v2 ; les anciens projets qui l’utilisaient sont automatiquement convertis vers Partition de violon.
+
+## 2.1.3 — Alignement des mentions musicales de Violon v2
+
+- Placement de « I. Allegro luminoso » juste au-dessus de la portée bleue.
+- Placement de « II. Andante notturno » juste au-dessus de la portée rose.
+- Décalage vertical distinct de « Intermezzo » pour clarifier la hiérarchie de la seconde portée.
+- Placement de « Concerto pour sept jours · Opus II » entièrement sous la double ligne inférieure.
+
+## 2.1.2 — Corrections visuelles de Violon v2
+
+- Suppression de la barre diagonale qui traversait le filigrane du violon.
+- Repositionnement des intitulés des deux mouvements pour éviter leur superposition avec les clefs et les notes.
+- Déplacement et réduction du pied de page afin qu’il reste entièrement sous les cartes.
+- Migration automatique des projets Violon v2 déjà enregistrés vers cette disposition corrigée.
+
+## 2.1.1 — Choix du modèle rapide et Violon v2 recomposé
+
+- Ajout du choix de modèle directement dans le mode Planning rapide, avec miniature et aperçu immédiat avant la création de la semaine.
+- Recomposition complète de Violon v2 à partir de la logique musicale de Partition de violon : deux mouvements, deux portées, mesures numérotées, barres de mesure, notes, clefs de sol et intermezzo.
+- Conservation de la palette bleu nuit, bordeaux et or, désormais associée à des cartes claires inspirées de feuilles de partition pour améliorer la lisibilité.
+- Migration automatique des projets utilisant l’ancienne composition Violon v2, sans modifier le modèle Partition de violon original.
+
+## 2.1.0 — Planning rapide et Violon v2
+
+- Ajout d’un mode « Rapide » dans le panneau Planning : une ligne par stream au format `Catégorie - Titre - Jour - Heure`, avec consigne et exemple visibles en permanence.
+- Analyse instantanée de la saisie, messages d’erreur précis, compteur de streams et de repos, puis génération du planning en un clic dans le modèle actif.
+- Les jours absents de la saisie rapide sont masqués sans effacer leurs anciennes données ; le résultat reste entièrement modifiable dans le mode détaillé.
+- Les images ajoutées à un jour sont mémorisées localement pour sa catégorie et réutilisées automatiquement lors des prochaines générations, sans connexion Twitch ni dépendance distante.
+- Nouveau modèle indépendant « Violon v2 » : scène nocturne bleu et bordeaux, cadres dorés, cartes façon programme de concert, portées lumineuses et filigrane de violon.
+- Le modèle historique « Partition de violon » est conservé sans remplacement ni modification de son identité.
+
 ## 2.0.7 — Lisibilité pop et fidélité des textes séparés
 
 - « Grille pop » utilise une typographie plus nette dans les cartes ; les ombres épaisses, le contour des horaires et les traits qui traversaient les textes sont supprimés, y compris sur les plannings déjà enregistrés.

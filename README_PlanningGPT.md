@@ -1,10 +1,12 @@
-# PlanningGPT V2.0.7
+# PlanningGPT V2.1.8
 
 PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twitch. Il associe les données structurées de la semaine à un éditeur visuel inspiré des outils de composition libre.
 
 ## Ce que permet la V2
 
 - Modifier le contenu des sept jours indépendamment de la composition graphique.
+- Créer une semaine depuis le mode Planning rapide avec une ligne par stream au format `Catégorie - Titre - Jour - Heure`, une validation immédiate, un exemple toujours visible et le choix direct du modèle avec aperçu.
+- Réutiliser automatiquement les images de catégories déjà ajoutées, sans connexion, compte, serveur ni service distant.
 - Afficher ou masquer chaque jour directement depuis la rangée hebdomadaire, sans supprimer son contenu, avec des raccourcis pour tout afficher ou masquer les jours de repos.
 - Associer une image à chaque jour : elle remplit automatiquement toute la carte et suit directement sa taille et sa forme, tout en restant ajustable sans modifier le fichier original.
 - Régler indépendamment l’opacité de l’image de chaque jour sans atténuer les textes, la bordure ou la carte.
@@ -13,6 +15,7 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 - Choisir parmi dix-huit modèles structurellement différents, dont Twitch Live, Résonance WuWa, Duo et +, Duel néon, Duo astral, Horreur VHS, Partition de violon et Fantasy VII.
 - Composer librement Duo et + avec deux à sept jours choisis dans la semaine ; les cartes sont automatiquement recentrées et redimensionnées quand leur nombre change.
 - Le modèle Partition de violon compose les sept jours comme des mesures réparties en deux mouvements, avec portées, clés de sol, cadre gravé, ornements et filigrane vectoriel original.
+- Choisir directement dans l’onglet Modèles un fond uni ou un dégradé à deux couleurs, puis régler son orientation.
 - Le modèle Fantasy VII propose une direction fantasy industrielle originale : énergie verte, acier sombre, cartes asymétriques, réacteur et épée monumentale vectorielle, sans image distante.
 - Le modèle Twitch Live reprend les codes de la plateforme avec son logo, une identité intégralement violette, des tuiles de diffusion et des bulles de discussion, sans compteur ni métrique anxiogène.
 - Le modèle Résonance WuWa remplace entièrement Constellation par une composition claire, aérienne et techno-organique, faite d’ondes, d’anneaux et de cartes indépendantes.
