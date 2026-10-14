@@ -1,4 +1,4 @@
-# PlanningGPT V2.1.8
+# PlanningGPT V2.1.10
 
 PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twitch. Il associe les données structurées de la semaine à un éditeur visuel inspiré des outils de composition libre.
 
@@ -12,7 +12,8 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 - Régler indépendamment l’opacité de l’image de chaque jour sans atténuer les textes, la bordure ou la carte.
 - Utiliser le dégradé du modèle, importer une image comme fond global, la déplacer, la zoomer et l’étirer dans le même éditeur non destructif que les images de jour, ou exporter le planning sur un fond entièrement transparent.
 - Régler l’opacité de l’image de fond globale indépendamment du reste du planning.
-- Choisir parmi dix-huit modèles structurellement différents, dont Twitch Live, Résonance WuWa, Duo et +, Duel néon, Duo astral, Horreur VHS, Partition de violon et Fantasy VII.
+- Choisir parmi dix-neuf modèles structurellement différents, dont Affiche, Twitch Live, Résonance WuWa, Duo et +, Duel néon, Duo astral, Horreur VHS, Partition de violon et Fantasy VII.
+- Composer une affiche pour une journée précise avec une accroche, un mot vedette, un bandeau plateforme, trois créneaux détaillés, une annonce bonus et un message final ; chaque bloc reste modifiable comme un calque normal.
 - Composer librement Duo et + avec deux à sept jours choisis dans la semaine ; les cartes sont automatiquement recentrées et redimensionnées quand leur nombre change.
 - Le modèle Partition de violon compose les sept jours comme des mesures réparties en deux mouvements, avec portées, clés de sol, cadre gravé, ornements et filigrane vectoriel original.
 - Choisir directement dans l’onglet Modèles un fond uni ou un dégradé à deux couleurs, puis régler son orientation.

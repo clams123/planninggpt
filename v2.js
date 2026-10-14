@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  const VERSION = '2.1.8';
-  const MODEL_REVISION = 10;
+  const VERSION = '2.1.10';
+  const MODEL_REVISION = 11;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const CATEGORY_LIBRARY_KEY = 'planninggpt_v2_category_images';
   const DAY_SHORT = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
@@ -18,6 +18,15 @@
     {name:'Samedi',time:'20h',title:'Avec la commu',note:'Viewers games',status:'live'},
     {name:'Dimanche',time:'14h30',title:'Stream chill',note:'Dimanche détente',status:'live'}
   ];
+  const DEFAULT_POSTER = {
+    eyebrow:'ON SE RETROUVE EN',hero:'LIVE',platform:'EN DIRECT SUR TWITCH !',programTitle:'AU PROGRAMME',
+    slots:[
+      {time:'17H',title:'SESSION DÉCOUVERTE',details:'Présentation\nQuestions / réponses'},
+      {time:'18H',title:'JEU AVEC LA COMMU',details:'Défis participatifs\nInvités bienvenus'},
+      {time:'19H',title:'GRAND FINAL',details:'Challenge surprise\nMoment détente'}
+    ],
+    callout:'DEUX DÉFIS SURPRISE PENDANT LE LIVE !',footer:'BONNE HUMEUR GARANTIE — ON VOUS ATTEND !'
+  };
   const EMOJIS = ['🗡️','💚','❤️','✨','🎮','🌙','⭐','💜','🔥','👻','🌸','🧙','☕','💎','🚀','☁️','🎧','🕹️','🐉','🏆','🍄','🌈','🦇','🪄','🎲','🎤','🎻','🎼','🎵','💀','📼','⚔️','🪽','🌌','⚡','🧪','🏙️','🐺','👾'];
   const FONT_MAP = {
     rounded:'"Trebuchet MS",ui-rounded,sans-serif',
@@ -32,6 +41,7 @@
   };
   const TEMPLATE_STYLE = {
     cloud:{bg:['#f7b7df','#8399f5'],angle:135,card:'cloud',text:'#ffffff',accent:'#292b63'},
+    eventposter:{bg:['#241027','#8c284e'],angle:135,card:'eventposter',text:'#fff4df',accent:'#ffb36b'},
     cyber:{bg:['#05050d','#103d55'],angle:120,card:'cyber',text:'#e7fdff',accent:'#22d3ee'},
     rpg:{bg:['#120b1d','#6f2dc5'],angle:145,card:'twitch',text:'#ffffff',accent:'#bf94ff'},
     manga:{bg:['#fff8ff','#d8c9ff'],angle:125,card:'manga',text:'#17121f',accent:'#a855f7'},
@@ -51,6 +61,7 @@
     astralduo:{bg:['#071633','#310922'],angle:90,card:'astralblue',text:'#ffffff',accent:'#a9dcff'}
   };
   const DUO_TEMPLATES = new Set(['spotlight','neonduel','astralduo']);
+  const FOCUS_TEMPLATES = new Set(['eventposter']);
   const MODIFIERS = ['none','poster','ticket','restaurant','rpg','logbook','anime','marathon','release','subathon','indie','challenge'];
   const TYPE_PRESETS = {
     modern:{font:'sans',weight:700,fontStyle:'normal',transform:'none',letterSpacing:0,effect:'none'},
@@ -66,7 +77,7 @@
   const els = {
     app:$('appRoot'),
     projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'), quickPlanningPanel:$('quickPlanningPanel'), detailedPlanningPanel:$('detailedPlanningPanel'), quickPlanningInput:$('quickPlanningInput'), quickPlanningFeedback:$('quickPlanningFeedback'), quickPlanningCreate:$('quickPlanningCreateBtn'), quickTemplateSelect:$('quickTemplateSelect'), quickTemplatePreview:$('quickTemplatePreview'),
-    title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayCardColor:$('dayCardColor'), dayTextLayers:$('dayTextLayersBtn'), allDayTextLayers:$('allDayTextLayersBtn'), dayTextLayersStatus:$('dayTextLayersStatus'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), dayImageOpacity:$('dayImageOpacity'), dayImageOpacityValue:$('dayImageOpacityValue'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
+    title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), posterEditor:$('posterEditor'), posterEyebrow:$('posterEyebrow'), posterHero:$('posterHero'), posterPlatform:$('posterPlatform'), posterProgramTitle:$('posterProgramTitle'), posterCallout:$('posterCallout'), posterFooter:$('posterFooter'), posterSlot1Time:$('posterSlot1Time'), posterSlot1Title:$('posterSlot1Title'), posterSlot1Details:$('posterSlot1Details'), posterSlot2Time:$('posterSlot2Time'), posterSlot2Title:$('posterSlot2Title'), posterSlot2Details:$('posterSlot2Details'), posterSlot3Time:$('posterSlot3Time'), posterSlot3Title:$('posterSlot3Title'), posterSlot3Details:$('posterSlot3Details'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayCardColor:$('dayCardColor'), dayTextLayers:$('dayTextLayersBtn'), allDayTextLayers:$('allDayTextLayersBtn'), dayTextLayersStatus:$('dayTextLayersStatus'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), dayImageOpacity:$('dayImageOpacity'), dayImageOpacityValue:$('dayImageOpacityValue'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
     artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
     inspector:$('inspector'), closeInspector:$('closeInspectorBtn'), emptyInspector:$('emptyInspector'), propertyPanel:$('propertyPanel'), layerList:$('layerList'), layerSelect:$('layerSelect'),
     propX:$('propX'), propY:$('propY'), propW:$('propW'), propH:$('propH'), propRotation:$('propRotation'), propText:$('propText'), propFontSize:$('propFontSize'), propFont:$('propFont'), propWeight:$('propWeight'), propFontStyle:$('propFontStyle'), propTransform:$('propTransform'), propAlign:$('propAlign'), propTextEffect:$('propTextEffect'), propColor:$('propColor'), propFill:$('propFill'), propColorField:$('propColorField'), propFillField:$('propFillField'), propOpacity:$('propOpacity'), textProperties:$('textProperties'), textContentField:$('textContentField'), imageProperties:$('imageProperties'), propImageFit:$('propImageFit'), cropImage:$('cropImageBtn'), replaceImage:$('replaceImageInput'), dayCardProperties:$('dayCardProperties'), propDayLayout:$('propDayLayout'), propShowDayName:$('propShowDayName'), propShowDayTime:$('propShowDayTime'), propShowDayTitle:$('propShowDayTitle'), propShowDayNote:$('propShowDayNote'), applyDayStyleAll:$('applyDayStyleAllBtn'), duplicate:$('duplicateElementBtn'), remove:$('deleteElementBtn'),
@@ -112,7 +123,7 @@
   function minimumElementSize(element){return element?.type==='shape'?1:20;}
 
   function defaultProject(){
-    return {version:VERSION,modelRevision:MODEL_REVISION,name:'Mon planning Twitch',format:'wide',width:1600,height:900,template:'cloud',spotlightInitialized:false,modifier:'none',typePreset:'',hideModifierLabels:false,eventBanner:'',showQr:false,qrUrl:'https://twitch.tv/ton_lien',title:'Planning de la semaine',subtitle:'twitch.tv/ton_lien',background:{mode:'gradient',colors:['#f7b7df','#8399f5'],angle:135,transparent:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()},days:clone(DEFAULT_DAYS).map(day=>({...day,visible:true,star:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()})),elements:[]};
+    return {version:VERSION,modelRevision:MODEL_REVISION,name:'Mon planning Twitch',format:'wide',width:1600,height:900,template:'cloud',spotlightInitialized:false,modifier:'none',typePreset:'',hideModifierLabels:false,eventBanner:'',showQr:false,qrUrl:'https://twitch.tv/ton_lien',title:'Planning de la semaine',subtitle:'twitch.tv/ton_lien',poster:clone(DEFAULT_POSTER),background:{mode:'gradient',colors:['#f7b7df','#8399f5'],angle:135,transparent:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()},days:clone(DEFAULT_DAYS).map(day=>({...day,visible:true,star:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()})),elements:[]};
   }
   let project = defaultProject();
 
@@ -122,6 +133,7 @@
     if(raw.template==='candy')raw.template='horror';if(raw.template==='violin2')raw.template='violin';if(!TEMPLATE_STYLE[raw.template])raw.template='cloud';
     raw.modifier=MODIFIERS.includes(raw.modifier)?raw.modifier:'none';raw.typePreset=TYPE_PRESET_ALIASES[raw.typePreset]||raw.typePreset;raw.typePreset=TYPE_PRESETS[raw.typePreset]?raw.typePreset:'';raw.hideModifierLabels=!!raw.hideModifierLabels;raw.eventBanner=String(raw.eventBanner||'');raw.showQr=!!raw.showQr;raw.qrUrl=String(raw.qrUrl||raw.subtitle||'https://twitch.tv/ton_lien');
     raw.name=String(raw.name||'Mon planning Twitch');raw.title=String(raw.title||'Planning de la semaine');raw.subtitle=String(raw.subtitle||'');raw.spotlightInitialized=!!raw.spotlightInitialized;raw.modelRevision=Math.max(0,Number(raw.modelRevision)||0);raw.version=VERSION;
+    const poster=raw.poster&&typeof raw.poster==='object'?raw.poster:{};raw.poster={eyebrow:String(poster.eyebrow||DEFAULT_POSTER.eyebrow),hero:String(poster.hero||DEFAULT_POSTER.hero),platform:String(poster.platform||DEFAULT_POSTER.platform),programTitle:String(poster.programTitle||DEFAULT_POSTER.programTitle),slots:Array.from({length:3},(_,index)=>({time:String(poster.slots?.[index]?.time||DEFAULT_POSTER.slots[index].time),title:String(poster.slots?.[index]?.title||DEFAULT_POSTER.slots[index].title),details:String(poster.slots?.[index]?.details||DEFAULT_POSTER.slots[index].details)})),callout:String(poster.callout||DEFAULT_POSTER.callout),footer:String(poster.footer||DEFAULT_POSTER.footer)};
     raw.background=raw.background&&Array.isArray(raw.background.colors)&&raw.background.colors.length===2?raw.background:clone(TEMPLATE_STYLE[raw.template].bg);
     if(Array.isArray(raw.background))raw.background={colors:raw.background,angle:135};
     raw.background.mode=raw.background.mode==='solid'?'solid':'gradient';raw.background.colors=[color(raw.background.colors[0],TEMPLATE_STYLE[raw.template].bg[0]),color(raw.background.colors[1],TEMPLATE_STYLE[raw.template].bg[1])];raw.background.angle=Number.isFinite(Number(raw.background.angle))?clamp(raw.background.angle,0,360):135;raw.background.transparent=!!raw.background.transparent;raw.background.imageSrc=String(raw.background.imageSrc||'');raw.background.imageAssetId=String(raw.background.imageAssetId||'');raw.background.imageName=String(raw.background.imageName||'');raw.background.imageFit=['cover','contain','fill'].includes(raw.background.imageFit)?raw.background.imageFit:'cover';raw.background.imageOpacity=normalizeImageOpacity(raw.background.imageOpacity);Object.assign(raw.background,normalizeImageCrop(raw.background));
@@ -169,7 +181,7 @@
   function imageCropStyle(element){const crop=normalizeImageCrop(element);return `object-fit:${element.fit||'cover'};left:calc(50% + ${crop.cropX}%);top:calc(50% + ${crop.cropY}%);transform:translate(-50%,-50%) scale(${crop.cropZoom}) scaleX(${crop.stretchX}) scaleY(${crop.stretchY})`;}
   function defaultCardColors(variant){
     return {
-      cloud:{fill:'#f7f1ff',color:'#292b63'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff7e7',color:'#4b3a31'},arcade:{fill:'#102b28',color:'#f7edce'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#25124f',color:'#ffffff'},bubblegrid:{fill:'#15e7ff',color:'#17052e'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
+      cloud:{fill:'#f7f1ff',color:'#292b63'},eventposter:{fill:'#4b1732',color:'#fff4df'},eventpostersquare:{fill:'#4b1732',color:'#fff4df'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff7e7',color:'#4b3a31'},arcade:{fill:'#102b28',color:'#f7edce'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#25124f',color:'#ffffff'},bubblegrid:{fill:'#15e7ff',color:'#17052e'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
     }[variant] || {fill:'#ffffff',color:'#111827'};
   }
 
@@ -188,6 +200,7 @@
 
   function cardLayout(style,width,height){
     const square = width===height;
+    if(style==='eventposter'){const frame=square?{x:55,y:225,w:970,h:300}:{x:65,y:235,w:655,h:570};return Array.from({length:7},(_,dayIndex)=>({dayIndex,...frame}));}
     if(style==='spotlight')return spotlightCardLayout(width,height);
     if(['neonduel','astralduo'].includes(style))return featureDuoCardLayout(width,height);
     if(style==='columns'){
@@ -246,15 +259,18 @@
   function buildTemplate(name,{keepBackground=false}={}){
     const previousTemplate=project.template;
     if(DUO_TEMPLATES.has(previousTemplate)&&!DUO_TEMPLATES.has(name))project.days.forEach(day=>{day.visible=true;});
+    if(FOCUS_TEMPLATES.has(previousTemplate)&&!FOCUS_TEMPLATES.has(name))project.days.forEach(day=>{day.visible=true;});
     const style=TEMPLATE_STYLE[name]||TEMPLATE_STYLE.cloud;
     const {width,height}=project;
     if(name==='spotlight'&&!project.spotlightInitialized){project.days.forEach((day,index)=>{day.visible=index===1||index===4;});project.spotlightInitialized=true;}
     if(['neonduel','astralduo'].includes(name)&&project.days.filter(day=>day.visible!==false).length!==2)project.days.forEach((day,index)=>{day.visible=index===1||index===5;});
+    if(name==='eventposter'){const focus=project.days[selectedDay]?.visible!==false?selectedDay:Math.max(0,project.days.findIndex(day=>day.visible!==false));selectedDay=focus;project.days.forEach((day,index)=>{day.visible=index===focus;});}
     const elements=[];
     const dark=name==='manga' ? '#17121f' : style.text;
     const heading=textElement(project.title,70,45,width-140,105,width===height?64:76,dark,'rounded',900,'center');heading.role='title';elements.push(heading);
     const subtitle=textElement(project.subtitle,250,150,width-500,42,27,name==='manga'?'#6b21a8':style.text,'sans',800,'center');subtitle.role='subtitle';elements.push(subtitle);
     if(name==='spotlight'){Object.assign(heading,{font:'display',fontSize:68,transform:'uppercase',letterSpacing:3});Object.assign(subtitle,{font:'sans',fontStyle:'italic'});}
+    if(name==='eventposter'){Object.assign(heading,{align:'right',x:width===height?470:720,y:width===height?42:38,w:width===height?550:800,h:68,font:'rounded',fontSize:width===height?31:42,color:'#fff4df',weight:900,letterSpacing:-1,effect:'soft'});Object.assign(subtitle,{align:width===height?'center':'right',x:width===height?120:1080,y:height-(width===height?52:54),w:width===height?840:440,h:34,font:'rounded',fontSize:width===height?20:21,color:'#ffcf91',weight:800});}
     if(name==='rpg'){Object.assign(heading,{align:'left',x:55,w:1030,font:'sans',fontSize:76,color:'#ffffff',weight:900,letterSpacing:-2});Object.assign(subtitle,{align:'left',x:58,w:720,y:150,font:'sans',fontSize:25,color:'#d9c2ff',weight:700});}
     if(name==='columns'){Object.assign(heading,{align:'left',x:width===height?45:55,y:38,w:width===height?width-90:1040,font:'display',fontSize:width===height?62:80,color:'#ffe45e',transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:width===height?45:820,w:width===height?width-90:720,y:158,font:'typewriter',fontSize:23,color:'#55f3ff',transform:'uppercase',letterSpacing:3,effect:'neon'});}
     if(name==='bubblegrid'){Object.assign(heading,{align:'left',x:width===height?45:70,y:38,w:width===height?width-90:1110,font:'display',color:'#fff23d',fontSize:width===height?62:82,transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:width===height?45:820,y:157,w:width===height?width-90:690,font:'comic',color:'#63f5ff',fontSize:25,transform:'uppercase',letterSpacing:2,effect:'hard'});}
@@ -284,6 +300,7 @@
       const visibleSide=project.days.map((day,dayIndex)=>day.visible!==false?dayIndex:-1).filter(dayIndex=>dayIndex>=0).indexOf(layout.dayIndex??index);
       if(name==='manga') card.rotation=[-2,1,-1,2,-1,1,-2][index];
       if(name==='polaroid') card.rotation=[-3,2,-1,3,-2,1,-3][index];
+      if(name==='eventposter')Object.assign(card,{variant:width===height?'eventpostersquare':'eventposter',contentLayout:'feature',align:'left',font:'rounded',fontSize:width===height?30:36,fill:'#4b1732',color:'#fff4df',accent:'#ffb36b',showDayNote:false});
       if(name==='rpg')Object.assign(card,{contentLayout:'poster',align:'center',font:'sans',fontSize:index<3?24:21});
       if(name==='constellation')Object.assign(card,{contentLayout:'standard',align:'left',font:'condensed',fontSize:22});
       if(name==='spotlight')Object.assign(card,{contentLayout:'feature',align:'center',font:'condensed',fontSize:30});
@@ -309,6 +326,28 @@
       elements.push(emojiElement('☁️',-15,5,150));elements.push(emojiElement('☁️',width-165,55,130));
       elements.push(emojiElement('✨',width-125,15,84));
       elements.push(emojiElement('🌙',width/2-36,188,72));
+    }
+    if(name==='eventposter'){
+      const poster=project.poster||DEFAULT_POSTER,square=width===height;
+      const addPosterText=(role,text,x,y,w,h,size,fill,font='rounded',weight=900,align='left')=>{const item=textElement(text,x,y,w,h,size,fill,font,weight,align);item.role=role;elements.push(item);return item;};
+      const eyebrow=addPosterText('posterEyebrow',poster.eyebrow,square?55:72,square?28:24,square?390:560,38,square?20:24,'#ffcf91','hand',700,'left');eyebrow.rotation=-2;
+      const hero=addPosterText('posterHero',poster.hero,square?52:68,square?65:58,square?390:600,square?105:120,square?78:100,'#fff4df','rounded',900,'left');hero.effect='hard';hero.rotation=-2;
+      const platformBg=shapeElement('rect',square?70:105,square?162:166,square?360:500,48,'#fff0d2',13);platformBg.rotation=-2;elements.unshift(platformBg);
+      const platform=addPosterText('posterPlatform',poster.platform,square?82:120,square?172:176,square?336:470,30,square?17:21,'#5a1734','hand',800,'center');platform.rotation=-2;
+      const programY=square?558:205,programX=square?290:900,programW=square?500:560;
+      const programBg=shapeElement('rect',programX,programY,programW,54,'#fff0d2',17);programBg.rotation=-1;elements.push(programBg);
+      const program=addPosterText('posterProgramTitle',poster.programTitle,programX+12,programY+10,programW-24,34,square?24:27,'#5a1734','rounded',900,'center');program.letterSpacing=2;program.rotation=-1;
+      const slotX=square?55:770,slotW=square?970:765,slotH=square?96:128,slotStart=square?625:282,slotGap=square?110:142;
+      poster.slots.forEach((slot,index)=>{
+        const y=slotStart+index*slotGap,bg=shapeElement('rect',slotX,y,slotW,slotH,index%2?'#fff7e8':'#fff0d2',square?22:27);bg.rotation=index===1?1:-1;bg.borderColor='#ffb36b';bg.borderWidth=2;elements.unshift(bg);
+        const timeBg=shapeElement('rect',slotX+(square?18:24),y+(square?18:27),square?145:155,square?55:68,'#df654f',square?18:22);elements.push(timeBg);
+        addPosterText(`posterSlot${index+1}Time`,slot.time,slotX+(square?28:35),y+(square?29:41),square?125:135,36,square?25:29,'#fff4df','rounded',900,'center');
+        const text=addPosterText(`posterSlot${index+1}Content`,`${slot.title}\n${slot.details}`,slotX+(square?185:205),y+(square?14:20),slotW-(square?210:235),slotH-(square?20:28),square?20:23,'#4b1732','rounded',800,'left');text.lineHeight=1.18;
+      });
+      const calloutY=square?492:746,calloutX=square?185:115,calloutW=square?710:555;const calloutBg=shapeElement('rect',calloutX,calloutY,calloutW,62,'#f15d78',21);calloutBg.rotation=-1;elements.push(calloutBg);const callout=addPosterText('posterCallout',poster.callout,calloutX+15,calloutY+17,calloutW-30,31,square?18:20,'#fff4df','rounded',900,'center');callout.rotation=-1;
+      const footer=addPosterText('posterFooter',poster.footer,square?105:720,height-(square?88:66),square?870:770,32,square?17:19,'#fff4df','rounded',900,'center');footer.letterSpacing=1;
+      [[35,205,square?240:300,15,'#ffb36b',-5],[width-(square?275:340),190,square?230:290,14,'#f15d78',6],[30,height-105,230,15,'#fff0d2',5]].forEach(([x,y,w,h,fill,rotation])=>{const stroke=shapeElement('rect',x,y,w,h,fill,9);stroke.rotation=rotation;stroke.opacity=.9;elements.unshift(stroke);});
+      elements.push(emojiElement('✨',width-(square?125:150),square?105:118,square?64:74));elements.push(emojiElement('🎮',square?12:25,height-(square?120:135),square?72:82));elements.push(emojiElement('🎤',width-(square?90:115),height-(square?125:140),square?70:84));
     }
     if(name==='cyber'){
       elements.push(shapeElement('rect',35,205,width-70,8,'#22d3ee',0));
@@ -489,7 +528,7 @@
   async function load(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
-      if(raw){const parsed=JSON.parse(raw),removedViolin2=parsed.template==='violin2';project=validateProject(parsed);missingImageCount=await hydrateImages(project)||0;const previousRevision=project.modelRevision,refreshReplacedModel=previousRevision<3&&project.template==='rpg',unlockDefaultLayers=previousRevision<4;project.modelRevision=MODEL_REVISION;if(refreshReplacedModel||removedViolin2){const custom=project.elements.filter(element=>!element.builtIn).map(clone),template=project.template;buildTemplate(template);project.elements.push(...custom);}else{if(previousRevision<5)migrateViolinSecondScore();if(unlockDefaultLayers)project.elements.filter(element=>element.builtIn).forEach(element=>{element.locked=false;});}return;}
+      if(raw){const parsed=JSON.parse(raw),removedViolin2=parsed.template==='violin2';project=validateProject(parsed);missingImageCount=await hydrateImages(project)||0;const previousRevision=project.modelRevision,refreshReplacedModel=previousRevision<3&&project.template==='rpg',refreshEventPoster=project.template==='eventposter'&&(previousRevision<11||!project.elements.some(element=>element.role==='posterHero')||project.elements.some(element=>element.dayField)),unlockDefaultLayers=previousRevision<4;project.modelRevision=MODEL_REVISION;if(refreshReplacedModel||refreshEventPoster||removedViolin2){const custom=project.elements.filter(element=>!element.builtIn&&!(refreshEventPoster&&element.type==='text'&&element.dayField)).map(clone),template=project.template;buildTemplate(template);project.elements.push(...custom);}else{if(previousRevision<5)migrateViolinSecondScore();if(unlockDefaultLayers)project.elements.filter(element=>element.builtIn).forEach(element=>{element.locked=false;});}return;}
     }catch{}
     if(!migrateV1()){project=defaultProject();buildTemplate('cloud');}
   }
@@ -498,14 +537,14 @@
   function renderAll(){
     els.projectName.value=project.name;els.title.value=project.title;els.subtitle.value=project.subtitle;els.showQr.checked=!!project.showQr;els.qrUrl.value=project.qrUrl||'';renderQrControls();
     els.quickTemplateSelect.value=project.template;els.quickTemplatePreview.className=`templatePreview quickTemplatePreview tp-${project.template}`;
-    renderDays();renderModifierControls();renderTypePresetControls();renderBackgroundControls();renderCanvas();renderInspector();renderLayers();updateZoom();updateHistoryButtons();
+    renderDays();renderPosterControls();renderModifierControls();renderTypePresetControls();renderBackgroundControls();renderCanvas();renderInspector();renderLayers();updateZoom();updateHistoryButtons();
   }
   function renderDays(){
     els.dayStrip.innerHTML=DAY_SHORT.map((name,index)=>{const day=project.days[index],visible=day.visible!==false,action=visible?'Masquer':'Afficher';return `<div class="dayPickWrap${index===selectedDay?' isActive':''}${visible?'':' isHidden'}"><button class="dayPick" data-day="${index}" type="button">${day.star?'★ ':''}${name}</button><button class="dayToggle" data-toggle-day="${index}" type="button" aria-pressed="${visible}" title="${action} ${escapeHtml(day.name)}" aria-label="${action} ${escapeHtml(day.name)}">${visible?'●':'○'}</button></div>`;}).join('');
-    const visibleCount=project.days.filter(day=>day.visible!==false).length;els.visibleDaysStatus.textContent=`${visibleCount} jour${visibleCount>1?'s':''} affiché${visibleCount>1?'s':''} sur 7`;
+    const visibleCount=project.days.filter(day=>day.visible!==false).length;els.visibleDaysStatus.textContent=project.template==='eventposter'?`Affiche : ${project.days[selectedDay].name}`:`${visibleCount} jour${visibleCount>1?'s':''} affiché${visibleCount>1?'s':''} sur 7`;
     const day=project.days[selectedDay],card=project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay),separated=linkedDayTexts(selectedDay).length>0,visibleCards=project.elements.filter(element=>element.type==='day'&&project.days[element.dayIndex]?.visible!==false),allSeparated=visibleCards.length>0&&visibleCards.every(element=>linkedDayTexts(element.dayIndex).length>0);els.dayName.value=day.name;els.dayTime.value=day.time;els.dayTitle.value=day.title;els.dayNote.value=day.note;els.dayStatus.value=day.status;els.dayStar.checked=!!day.star;els.dayCardColor.value=color(card?.fill,'#111827');els.dayCardColor.disabled=!card;els.dayTextLayers.textContent=separated?'Regrouper les textes de ce jour':'Séparer les textes de ce jour';els.allDayTextLayers.textContent=allSeparated?'Regrouper les textes de tous les jours':'Libérer les textes de tous les jours';els.dayTextLayersStatus.textContent=separated?'Les textes restent liés à ce jour mais se déplacent maintenant séparément.':'La carte et chacun de ses textes pourront être déplacés séparément.';els.dayImageStatus.textContent=day.imageSrc?(day.imageName||'Image ajoutée'):'Aucune image';els.dayImageFit.value=day.imageFit||'contain';els.dayImageFit.disabled=!day.imageSrc;els.dayImageOpacity.value=Math.round(normalizeImageOpacity(day.imageOpacity)*100);els.dayImageOpacityValue.textContent=`${els.dayImageOpacity.value} %`;els.dayImageOpacity.disabled=!day.imageSrc;els.cropDayImage.disabled=!day.imageSrc;els.removeDayImage.disabled=!day.imageSrc;
   }
-  function selectDayForEditing(index){selectedDay=clamp(index,0,6);const card=project.days[selectedDay].visible===false?null:project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay);selectedId=card?.id||'';renderDays();renderCanvas();renderInspector();renderLayers();}
+  function selectDayForEditing(index){const next=clamp(index,0,6),switchingPoster=project.template==='eventposter'&&selectedDay!==next;selectedDay=next;if(project.template==='eventposter')project.days.forEach((day,dayIndex)=>{day.visible=dayIndex===selectedDay;});const card=project.days[selectedDay].visible===false?null:project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay);selectedId=card?.id||'';renderDays();renderCanvas();renderInspector();renderLayers();if(switchingPoster){pushHistory();save();toast(`Affiche centrée sur ${project.days[selectedDay].name}.`);}}
   function normalizeQuickValue(value){return String(value||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
   function parseQuickPlanning(value){
     const lines=String(value||'').split(/\r?\n/).map((text,index)=>({text:text.trim(),line:index+1})).filter(item=>item.text),entries=[],errors=[],usedDays=new Set();
@@ -537,7 +576,7 @@
   function setPlanningMode(mode){const quick=mode==='quick';els.quickPlanningPanel.hidden=!quick;els.detailedPlanningPanel.hidden=quick;document.querySelectorAll('[data-planning-mode]').forEach(button=>{const active=button.dataset.planningMode===mode;button.classList.toggle('isActive',active);button.setAttribute('aria-pressed',String(active));});if(quick)updateQuickPlanningFeedback();}
   function applyTemplateChoice(name,message='Modèle appliqué sans supprimer tes calques.'){
     if(!TEMPLATE_STYLE[name])return;
-    const custom=project.elements.filter(element=>!element.builtIn).map(clone);buildTemplate(name);project.elements.push(...custom);selectedId='';renderAll();pushHistory();save();toast(message);
+    const custom=project.elements.filter(element=>!element.builtIn).map(clone);buildTemplate(name);project.elements.push(...custom);selectedId='';renderAll();pushHistory();save();toast(name==='eventposter'&&message==='Modèle appliqué sans supprimer tes calques.'?`Affiche créée pour ${project.days[selectedDay].name}. Clique sur un autre jour pour la changer.`:message);
   }
   async function generateQuickPlanning(){
     const result=updateQuickPlanningFeedback();if(!result.entries.length||result.errors.length)return;
@@ -547,11 +586,30 @@
       if(entry.off){Object.assign(day,{imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()});}
       else if(normalizeQuickValue(previousCategory)!==normalizeQuickValue(entry.category)){Object.assign(day,{imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()});if(await reuseCategoryImage(day,entry.category))reusedImages++;}
     }
-    const custom=project.elements.filter(element=>!element.builtIn&&!(element.type==='text'&&element.dayField)).map(clone),template=project.template;buildTemplate(template,{keepBackground:true});project.elements.push(...custom);selectedDay=result.entries[0].dayIndex;selectedId=project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay)?.id||'';renderAll();pushHistory();save();toast(`Planning créé avec ${result.entries.length} jour${result.entries.length>1?'s':''}${reusedImages?` · ${reusedImages} image${reusedImages>1?'s':''} réutilisée${reusedImages>1?'s':''}`:''}.`);
+    selectedDay=result.entries[0].dayIndex;const custom=project.elements.filter(element=>!element.builtIn&&!(element.type==='text'&&element.dayField)).map(clone),template=project.template;buildTemplate(template,{keepBackground:true});project.elements.push(...custom);selectedId=project.elements.find(element=>element.type==='day'&&element.dayIndex===selectedDay)?.id||'';renderAll();pushHistory();save();toast(`Planning créé avec ${result.entries.length} jour${result.entries.length>1?'s':''}${reusedImages?` · ${reusedImages} image${reusedImages>1?'s':''} réutilisée${reusedImages>1?'s':''}`:''}.`);
   }
-  function setDayVisibility(index,visible){const day=project.days[clamp(index,0,6)];if(DUO_TEMPLATES.has(project.template)&&!visible&&project.days.filter(item=>item.visible!==false).length<=2)return toast(project.template==='spotlight'?'Duo et + conserve au moins deux jours affichés.':'Ce modèle conserve au moins deux jours affichés.');day.visible=visible;if(!visible&&isHiddenWithDay(selectedElement()))selectedId='';reflowSpotlightCards();reflowDuoFeatureCards();renderAll();pushHistory();save();toast(`${day.name} ${visible?'affiché':'masqué'} sans supprimer ses données.`);}
+  function setDayVisibility(index,visible){index=clamp(index,0,6);const day=project.days[index];if(project.template==='eventposter'){if(!visible)return toast('Le modèle Affiche conserve toujours une journée visible.');selectDayForEditing(index);return;}if(DUO_TEMPLATES.has(project.template)&&!visible&&project.days.filter(item=>item.visible!==false).length<=2)return toast(project.template==='spotlight'?'Duo et + conserve au moins deux jours affichés.':'Ce modèle conserve au moins deux jours affichés.');day.visible=visible;if(!visible&&isHiddenWithDay(selectedElement()))selectedId='';reflowSpotlightCards();reflowDuoFeatureCards();renderAll();pushHistory();save();toast(`${day.name} ${visible?'affiché':'masqué'} sans supprimer ses données.`);}
   function renderModifierControls(){
     els.modifierSelect.value=project.modifier;els.eventBanner.value=project.eventBanner||'';els.hideModifierLabels.checked=!!project.hideModifierLabels;
+  }
+  function posterControlBindings(){
+    return [
+      [els.posterEyebrow,'eyebrow','posterEyebrow'],[els.posterHero,'hero','posterHero'],[els.posterPlatform,'platform','posterPlatform'],[els.posterProgramTitle,'programTitle','posterProgramTitle'],[els.posterCallout,'callout','posterCallout'],[els.posterFooter,'footer','posterFooter']
+    ];
+  }
+  function renderPosterControls(){
+    const visible=project.template==='eventposter';els.posterEditor.hidden=!visible;if(!visible)return;
+    project.poster=project.poster||clone(DEFAULT_POSTER);posterControlBindings().forEach(([input,key])=>{input.value=project.poster[key]||'';});
+    project.poster.slots.forEach((slot,index)=>{const number=index+1;els[`posterSlot${number}Time`].value=slot.time||'';els[`posterSlot${number}Title`].value=slot.title||'';els[`posterSlot${number}Details`].value=slot.details||'';});
+  }
+  function updatePosterText(role,text){const element=project.elements.find(item=>item.role===role);if(element)element.text=text;}
+  function updatePosterFromControl(input,key,role){project.poster[key]=input.value;updatePosterText(role,input.value);renderCanvas();renderLayers();commit();}
+  function syncPosterFromElement(element){
+    if(project.template!=='eventposter'||element?.type!=='text'||!element.role)return;
+    const simple={posterEyebrow:'eyebrow',posterHero:'hero',posterPlatform:'platform',posterProgramTitle:'programTitle',posterCallout:'callout',posterFooter:'footer'};
+    if(simple[element.role])project.poster[simple[element.role]]=element.text;
+    const time=element.role.match(/^posterSlot([1-3])Time$/);if(time)project.poster.slots[Number(time[1])-1].time=element.text;
+    const content=element.role.match(/^posterSlot([1-3])Content$/);if(content){const lines=String(element.text||'').split('\n'),slot=project.poster.slots[Number(content[1])-1];slot.title=lines.shift()||'';slot.details=lines.join('\n');}
   }
   function renderTypePresetControls(){els.typePresetSelect.value=project.typePreset||'';}
   function renderBackgroundControls(){
@@ -669,13 +727,13 @@
   function updateSelectedFromProperties(){
     const element=selectedElement();if(!element)return;
     const minimum=minimumElementSize(element);element.x=snap(els.propX.value);element.y=snap(els.propY.value);element.w=Math.max(minimum,snap(els.propW.value));element.h=Math.max(minimum,snap(els.propH.value));element.rotation=Number(els.propRotation.value)||0;element.opacity=clamp(els.propOpacity.value,0,100)/100;
-    if(['text','emoji','day'].includes(element.type)){if(element.type!=='day'){if(element.dayField){const field=DAY_TEXT_FIELDS[element.dayField],day=project.days[element.dayIndex];if(field&&day)day[field.property]=els.propText.value;}else element.text=els.propText.value;}element.fontSize=clamp(els.propFontSize.value,8,240);element.font=els.propFont.value;element.weight=Number(els.propWeight.value)||800;element.fontStyle=els.propFontStyle.value;element.transform=els.propTransform.value;element.align=els.propAlign.value;element.effect=els.propTextEffect.value;element.color=els.propColor.value;}
+    if(['text','emoji','day'].includes(element.type)){if(element.type!=='day'){if(element.dayField){const field=DAY_TEXT_FIELDS[element.dayField],day=project.days[element.dayIndex];if(field&&day)day[field.property]=els.propText.value;}else element.text=els.propText.value;syncPosterFromElement(element);}element.fontSize=clamp(els.propFontSize.value,8,240);element.font=els.propFont.value;element.weight=Number(els.propWeight.value)||800;element.fontStyle=els.propFontStyle.value;element.transform=els.propTransform.value;element.align=els.propAlign.value;element.effect=els.propTextEffect.value;element.color=els.propColor.value;}
     if(element.type==='qr')element.color=els.propColor.value;
     if(element.type==='image')element.fit=els.propImageFit.value;
     if(element.type==='day'){element.contentLayout=els.propDayLayout.value;element.showDayName=els.propShowDayName.checked;element.showDayTime=els.propShowDayTime.checked;element.showDayTitle=els.propShowDayTitle.checked;element.showDayNote=els.propShowDayNote.checked;}
     if(['shape','day','qr'].includes(element.type))element.fill=els.propFill.value;
     if(element.dayField)renderDays();
-    renderCanvas();renderInspector();renderLayers();commit();
+    renderPosterControls();renderCanvas();renderInspector();renderLayers();commit();
   }
   function addElement(kind,value){
     let element;
@@ -883,9 +941,15 @@
     els.showQr.addEventListener('change',()=>{project.showQr=els.showQr.checked;if(project.showQr){let qr=project.elements.find(element=>element.type==='qr');if(!qr){qr=qrElement(project.width,project.height);project.elements.push(qr);}selectedId=qr.id;}else{const removedSelected=selectedElement()?.type==='qr';project.elements=project.elements.filter(element=>element.type!=='qr');if(removedSelected)selectedId='';}renderAll();pushHistory();save();});
     els.qrUrl.addEventListener('input',()=>{project.qrUrl=els.qrUrl.value;renderQrControls();renderCanvas();commit();});
     els.dayStrip.addEventListener('click',event=>{const toggle=event.target.closest('[data-toggle-day]');if(toggle){setDayVisibility(Number(toggle.dataset.toggleDay),toggle.getAttribute('aria-pressed')!=='true');return;}const button=event.target.closest('[data-day]');if(button)selectDayForEditing(Number(button.dataset.day));});
-    els.showAllDays.addEventListener('click',()=>{project.days.forEach(day=>{day.visible=true;});reflowSpotlightCards();renderAll();pushHistory();save();toast('Tous les jours sont affichés.');});
-    els.hideOffDays.addEventListener('click',()=>{let offDays=project.days.filter(day=>day.status==='off'&&day.visible!==false);if(project.template==='spotlight')offDays=offDays.slice(0,Math.max(0,project.days.filter(day=>day.visible!==false).length-2));if(!offDays.length)return toast(project.template==='spotlight'?'Duo et + doit conserver au moins deux jours.':'Aucun jour de repos à masquer.');offDays.forEach(day=>{day.visible=false;});if(selectedElement()?.type==='day'&&project.days[selectedElement().dayIndex].visible===false)selectedId='';reflowSpotlightCards();renderAll();pushHistory();save();toast(`${offDays.length} jour${offDays.length>1?'s':''} de repos masqué${offDays.length>1?'s':''}.`);});
+    els.showAllDays.addEventListener('click',()=>{if(project.template==='eventposter')return toast('Le modèle Affiche montre un jour à la fois. Clique sur le jour à mettre en avant.');project.days.forEach(day=>{day.visible=true;});reflowSpotlightCards();renderAll();pushHistory();save();toast('Tous les jours sont affichés.');});
+    els.hideOffDays.addEventListener('click',()=>{if(project.template==='eventposter')return toast('Choisis directement le jour de ton affiche dans la rangée ci-dessus.');let offDays=project.days.filter(day=>day.status==='off'&&day.visible!==false);if(project.template==='spotlight')offDays=offDays.slice(0,Math.max(0,project.days.filter(day=>day.visible!==false).length-2));if(!offDays.length)return toast(project.template==='spotlight'?'Duo et + doit conserver au moins deux jours.':'Aucun jour de repos à masquer.');offDays.forEach(day=>{day.visible=false;});if(selectedElement()?.type==='day'&&project.days[selectedElement().dayIndex].visible===false)selectedId='';reflowSpotlightCards();renderAll();pushHistory();save();toast(`${offDays.length} jour${offDays.length>1?'s':''} de repos masqué${offDays.length>1?'s':''}.`);});
     [els.dayName,els.dayTime,els.dayTitle,els.dayNote].forEach(input=>input.addEventListener('input',updateDay));els.dayStatus.addEventListener('change',updateDay);els.dayStar.addEventListener('change',()=>{updateDay();renderDays();});
+    posterControlBindings().forEach(([input,key,role])=>input.addEventListener('input',()=>updatePosterFromControl(input,key,role)));
+    [1,2,3].forEach(number=>{
+      const time=els[`posterSlot${number}Time`],title=els[`posterSlot${number}Title`],details=els[`posterSlot${number}Details`];
+      time.addEventListener('input',()=>{project.poster.slots[number-1].time=time.value;updatePosterText(`posterSlot${number}Time`,time.value);renderCanvas();renderLayers();commit();});
+      const updateContent=()=>{const current=project.poster.slots[number-1];current.title=title.value;current.details=details.value;updatePosterText(`posterSlot${number}Content`,`${current.title}${current.details?`\n${current.details}`:''}`);renderCanvas();renderLayers();commit();};title.addEventListener('input',updateContent);details.addEventListener('input',updateContent);
+    });
     els.title.addEventListener('input',()=>{project.title=els.title.value;const title=project.elements.find(element=>element.role==='title')||project.elements.find(element=>element.type==='text'&&element.y<140&&element.fontSize>50);if(title)title.text=project.title;renderCanvas();commit();});
     els.subtitle.addEventListener('input',()=>{project.subtitle=els.subtitle.value;const subtitle=project.elements.find(element=>element.role==='subtitle')||project.elements.find(element=>element.type==='text'&&element.y>=120&&element.y<220);if(subtitle)subtitle.text=project.subtitle;renderCanvas();commit();});
     els.projectName.addEventListener('input',()=>{project.name=els.projectName.value;save();});

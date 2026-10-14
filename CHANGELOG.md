@@ -1,5 +1,19 @@
 # Historique des versions
 
+## 2.1.10 — Éditeur d’affiche événementielle
+
+- Transformation du modèle « Affiche » en véritable composition éditable plutôt qu’en simple habillage automatique.
+- Ajout de champs dédiés pour l’accroche, le mot vedette, le bandeau plateforme, le titre du programme, trois créneaux détaillés, une annonce bonus et le message de fin.
+- Chaque partie de l’affiche est également un calque indépendant : déplacement, redimensionnement, typographie, couleur, effet et opacité restent personnalisables dans l’inspecteur.
+- Nouvelle mise en page événementielle adaptée séparément aux formats 16:9 et carré, compatible avec les images de fond et l’export PNG local.
+
+## 2.1.9 — Modèle Affiche
+
+- Ajout du modèle « Affiche » pour créer une composition événementielle centrée sur une seule journée.
+- Changement immédiat de la journée mise en avant en cliquant sur un autre jour, sans supprimer les contenus masqués.
+- Nouvelle direction visuelle chaleureuse : grande carte illustrée, date et heure fortes, zone programme multiligne, bandeaux et décorations de live.
+- Compatibilité avec le planning rapide, les images de jour, les textes séparés et l’export PNG local.
+
 ## 2.1.8 — Couleurs du fond dans Design
 
 - Déplacement du réglage « Couleurs du fond » de l’onglet Modèles vers l’onglet Design.

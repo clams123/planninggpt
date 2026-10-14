@@ -19,10 +19,35 @@ test('les identifiants HTML sont uniques',()=>{
   assert.equal(new Set(ids).size,ids.length);
 });
 
-test('les dix-huit modèles de l’interface possèdent un style V2',()=>{
+test('les dix-neuf modèles de l’interface possèdent un style V2',()=>{
   const templates=[...html.matchAll(/data-template="([^"]+)"/g)].map(match=>match[1]);
-  assert.equal(templates.length,18);
+  assert.equal(templates.length,19);
   templates.forEach(name=>assert.match(script,new RegExp(`${name}:\\{bg:`)));
+});
+
+test('Affiche crée un événement centré sur une seule journée',()=>{
+  assert.match(html,/value="eventposter">Affiche<\/option>/);
+  assert.match(html,/data-template="eventposter"[\s\S]*<strong>Affiche<\/strong>/);
+  assert.match(script,/eventposter:\{bg:/);
+  assert.match(script,/FOCUS_TEMPLATES = new Set\(\['eventposter'\]\)/);
+  assert.match(script,/if\(name==='eventposter'\)[\s\S]*day\.visible=index===focus/);
+  assert.match(script,/project\.template==='eventposter'[\s\S]*day\.visible=dayIndex===selectedDay/);
+  assert.match(script,/programTitle:'AU PROGRAMME'/);
+  assert.match(script,/footer:'BONNE HUMEUR GARANTIE/);
+  for(const token of ['tp-eventposter','variant-eventposter','variant-eventpostersquare'])assert.match(css,new RegExp(`\\.${token}`));
+  assert.match(css,/\.variant-eventposter \.elDay__note[\s\S]*display:none/);
+  assert.match(script,/async function renderArtboardToCanvas\(\)/);
+});
+
+test('Affiche propose un éditeur de contenu événementiel complet',()=>{
+  for(const id of ['posterEditor','posterEyebrow','posterHero','posterPlatform','posterProgramTitle','posterSlot1Time','posterSlot1Title','posterSlot1Details','posterSlot2Time','posterSlot2Title','posterSlot2Details','posterSlot3Time','posterSlot3Title','posterSlot3Details','posterCallout','posterFooter'])assert.match(html,new RegExp(`id="${id}"`));
+  assert.match(script,/const DEFAULT_POSTER =/);
+  assert.match(script,/poster\.slots\.forEach/);
+  assert.match(script,/refreshEventPoster=project\.template==='eventposter'[\s\S]*element\.role==='posterHero'/);
+  for(const role of ['posterEyebrow','posterHero','posterPlatform','posterProgramTitle','posterCallout','posterFooter'])assert.match(script,new RegExp(`['"]${role}['"]`));
+  assert.match(script,/`posterSlot\$\{index\+1\}Time`/);
+  assert.match(script,/`posterSlot\$\{index\+1\}Content`/);
+  assert.match(css,/\.posterEditor\{/);
 });
 
 test('Duel néon et Duo astral proposent deux compositions illustrées distinctes',()=>{
@@ -193,7 +218,7 @@ test('Twitch Live remplace Quête fantasy avec une composition de diffusion déd
 });
 
 test('aucun calque de modèle n’est verrouillé par défaut',()=>{
-  assert.match(script,/const MODEL_REVISION = 10;/);
+  assert.match(script,/const MODEL_REVISION = 11;/);
   assert.match(script,/modelRevision:MODEL_REVISION/);
   assert.match(script,/elements\.forEach\(element=>\{element\.builtIn=true;element\.locked=false;\}\)/);
   assert.match(script,/unlockDefaultLayers=previousRevision<4/);
@@ -471,9 +496,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.1\.8'/);
-  assert.equal(packageJson.version,'2.1.8');
-  assert.match(readme,/PlanningGPT V2\.1\.8/);
+  assert.match(script,/const VERSION = '2\.1\.10'/);
+  assert.equal(packageJson.version,'2.1.10');
+  assert.match(readme,/PlanningGPT V2\.1\.10/);
 });
 
 test('les textes libérés conservent les styles calculés des cartes',()=>{
