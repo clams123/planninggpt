@@ -48,6 +48,16 @@ test('Affiche propose un éditeur de contenu événementiel complet',()=>{
   assert.match(script,/`posterSlot\$\{index\+1\}Time`/);
   assert.match(script,/`posterSlot\$\{index\+1\}Content`/);
   assert.match(css,/\.posterEditor\{/);
+  const quickTemplateMarkup=html.match(/<select id="quickTemplateSelect"[\s\S]*?<\/select>/)?.[0]||'';
+  const quickTemplates=[...quickTemplateMarkup.matchAll(/<option value="([^"]+)"/g)].map(match=>match[1]);
+  const templateCards=[...html.matchAll(/data-template="([^"]+)"/g)].map(match=>match[1]);
+  assert.equal(quickTemplates.at(-1),'eventposter');
+  assert.equal(templateCards.at(-1),'eventposter');
+  const inspectorIndex=html.indexOf('<aside class="inspector"');
+  const posterEditorIndex=html.indexOf('id="posterEditor"');
+  const layerManagerIndex=html.indexOf('class="layerManager"');
+  assert.ok(posterEditorIndex>inspectorIndex && posterEditorIndex<layerManagerIndex);
+  assert.doesNotMatch(html,/<details class="posterEditor"[^>]*\bopen\b/);
 });
 
 test('Duel néon et Duo astral proposent deux compositions illustrées distinctes',()=>{
@@ -328,6 +338,8 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   const templatesPanel=html.match(/data-panel-content="templates"[\s\S]*?<\/section>/)?.[0]||'';
   assert.doesNotMatch(templatesPanel,/Personnaliser le modèle|Couleurs du fond|Arrière-plan du planning/);
   assert.doesNotMatch(html,/QR Code<\/strong><small>|Jour star<\/strong><small>/);
+  assert.match(script,/els\.artboard\.addEventListener\('pointerdown',event=>\{\s*event\.stopPropagation\(\)/);
+  assert.match(script,/els\.viewport\.addEventListener\('pointerdown',event=>\{[\s\S]*event\.target\.closest\('\.artboard'\)[\s\S]*selectElement\(''\)/);
 });
 
 test('les options de modèle sont repliées par défaut',()=>{
@@ -496,9 +508,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.1\.10'/);
-  assert.equal(packageJson.version,'2.1.10');
-  assert.match(readme,/PlanningGPT V2\.1\.10/);
+  assert.match(script,/const VERSION = '2\.1\.13'/);
+  assert.equal(packageJson.version,'2.1.13');
+  assert.match(readme,/PlanningGPT V2\.1\.13/);
 });
 
 test('les textes libérés conservent les styles calculés des cartes',()=>{

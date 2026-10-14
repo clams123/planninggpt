@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION = '2.1.10';
+  const VERSION = '2.1.13';
   const MODEL_REVISION = 11;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const CATEGORY_LIBRARY_KEY = 'planninggpt_v2_category_images';
@@ -763,10 +763,15 @@
 
   function bindPointer(){
     els.artboard.addEventListener('pointerdown',event=>{
+      event.stopPropagation();
       const node=event.target.closest('.canvasElement');if(!node){selectElement('');return;}
       const element=project.elements.find(item=>item.id===node.dataset.id);if(!element)return;selectElement(element.id);if(element.locked)return;
       event.preventDefault();
       interaction={mode:event.target.dataset.resize?'resize':'drag',id:element.id,startX:event.clientX,startY:event.clientY,x:element.x,y:element.y,w:element.w,h:element.h,node:[...els.artboard.querySelectorAll('.canvasElement')].find(item=>item.dataset.id===element.id)};
+    });
+    els.viewport.addEventListener('pointerdown',event=>{
+      if(event.target.closest('.artboard')||!selectedId)return;
+      selectElement('');
     });
     window.addEventListener('pointermove',event=>{
       if(!interaction)return;const element=project.elements.find(item=>item.id===interaction.id);if(!element)return;const scale=zoom/100,dx=(event.clientX-interaction.startX)/scale,dy=(event.clientY-interaction.startY)/scale;

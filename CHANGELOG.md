@@ -1,5 +1,23 @@
 # Historique des versions
 
+## 2.1.13 — Correction de la sélection des calques
+
+- Correction de la désélection immédiate qui pouvait survenir après avoir cliqué sur un calque du planning.
+- Le calque sélectionné reste maintenant visible dans le canvas et dans « Calque actif ».
+- Suppression du double rendu provoqué par le même clic, afin de retrouver une interaction fluide.
+
+## 2.1.12 — Désélection naturelle des calques
+
+- Un clic dans la zone vide autour du planning désélectionne maintenant le calque actif.
+- Le cadre de sélection et ses réglages disparaissent immédiatement, sans devoir repasser par le menu « Calque actif ».
+- Les clics sur le planning et dans l’inspecteur conservent leur comportement habituel.
+
+## 2.1.11 — Organisation du modèle Affiche
+
+- Déplacement du modèle « Affiche » à la fin des listes de modèles, dans les modes rapide et détaillé.
+- Déplacement des réglages « Contenu de l’affiche » dans l’inspecteur « Personnaliser », juste avant « Tous les calques ».
+- Le menu de contenu de l’affiche est désormais replié par défaut et n’apparaît que lorsque le modèle « Affiche » est actif.
+
 ## 2.1.10 — Éditeur d’affiche événementielle
 
 - Transformation du modèle « Affiche » en véritable composition éditable plutôt qu’en simple habillage automatique.

@@ -9,12 +9,12 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>PlanningGPT V2 — Studio créatif</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23080b14'/%3E%3Cpath d='M17 14h30a5 5 0 0 1 5 5v29a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V19a5 5 0 0 1 5-5Z' fill='%238b5cf6'/%3E%3Cpath d='M21 10v10M43 10v10M13 27h38' stroke='white' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='m32 33 2.4 5 5.6.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9 5.6-.8Z' fill='%23f9a8d4'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="v2.css?v=2.1.10">
+  <link rel="stylesheet" href="v2.css?v=2.1.13">
 </head>
 <body>
 <div class="app" id="appRoot">
   <header class="topbar">
-    <div class="brand"><div class="brandMark">✦</div><div><strong>PlanningGPT</strong><small>Studio créatif · V2.1.10</small></div></div>
+    <div class="brand"><div class="brandMark">✦</div><div><strong>PlanningGPT</strong><small>Studio créatif · V2.1.13</small></div></div>
     <input class="projectName" id="projectName" maxlength="60" value="Mon planning Twitch" aria-label="Nom du projet">
     <div class="topActions">
       <button class="iconBtn" id="undoBtn" type="button" title="Annuler" aria-label="Annuler">↶</button>
@@ -50,7 +50,7 @@
           <div class="quickTemplatePicker">
             <span class="templatePreview quickTemplatePreview tp-cloud" id="quickTemplatePreview" aria-hidden="true"></span>
             <label class="field quickTemplateField"><span>Modèle du planning</span><select id="quickTemplateSelect" aria-label="Modèle à utiliser pour le planning rapide">
-              <option value="cloud">Cloud gaming</option><option value="eventposter">Affiche</option><option value="cyber">Cyber HUD</option><option value="rpg">Twitch Live</option><option value="manga">Manga pop</option><option value="cozy">Cozy desk</option><option value="arcade">RPG</option><option value="agenda">Agenda éditorial</option><option value="polaroid">Mur Polaroid</option><option value="roadmap">Parcours live</option><option value="constellation">Résonance WuWa</option><option value="spotlight">Duo et +</option><option value="columns">Colonnes gaming</option><option value="bubblegrid">Grille pop</option><option value="horror">Horreur VHS</option><option value="violin">Partition de violon</option><option value="fantasy7">Fantasy VII</option><option value="neonduel">Duel néon</option><option value="astralduo">Duo astral</option>
+              <option value="cloud">Cloud gaming</option><option value="cyber">Cyber HUD</option><option value="rpg">Twitch Live</option><option value="manga">Manga pop</option><option value="cozy">Cozy desk</option><option value="arcade">RPG</option><option value="agenda">Agenda éditorial</option><option value="polaroid">Mur Polaroid</option><option value="roadmap">Parcours live</option><option value="constellation">Résonance WuWa</option><option value="spotlight">Duo et +</option><option value="columns">Colonnes gaming</option><option value="bubblegrid">Grille pop</option><option value="horror">Horreur VHS</option><option value="violin">Partition de violon</option><option value="fantasy7">Fantasy VII</option><option value="neonduel">Duel néon</option><option value="astralduo">Duo astral</option><option value="eventposter">Affiche</option>
             </select><small>Le rendu change tout de suite pour te permettre de vérifier ton choix.</small></label>
           </div>
           <button class="btn btn--primary btn--wide quickPlanningCreate" id="quickPlanningCreateBtn" type="button" disabled>Créer mon planning</button>
@@ -60,23 +60,6 @@
         <div class="sectionDivider"><strong>Jours de la semaine</strong><small>Choisis le jour puis affiche ou masque sa carte.</small></div>
         <div class="dayStrip" id="dayStrip" aria-label="Jour à modifier"></div>
         <div class="dayDisplayActions"><span id="visibleDaysStatus">7 jours affichés</span><button class="btn" id="showAllDaysBtn" type="button">Tout afficher</button><button class="btn" id="hideOffDaysBtn" type="button">Masquer les repos</button></div>
-        <details class="posterEditor" id="posterEditor" open hidden>
-          <summary><span><strong>Contenu de l’affiche</strong><small>Chaque texte reste un calque déplaçable.</small></span></summary>
-          <div class="posterEditorBody">
-            <div class="posterEditorHint"><b>Conseil</b> Ajoute l’illustration principale dans <strong>Fond de la carte</strong> plus bas, puis une ambiance générale dans <strong>Design → Image de fond</strong>. Le jour et l’heure se règlent juste en dessous.</div>
-            <div class="grid2">
-              <label class="field"><span>Accroche</span><input id="posterEyebrow" maxlength="60" placeholder="On se retrouve en"></label>
-              <label class="field"><span>Mot vedette</span><input id="posterHero" maxlength="24" placeholder="LIVE"></label>
-            </div>
-            <label class="field"><span>Bandeau plateforme</span><input id="posterPlatform" maxlength="70" placeholder="En direct sur Twitch !"></label>
-            <label class="field"><span>Titre du programme</span><input id="posterProgramTitle" maxlength="50" placeholder="Au programme"></label>
-            <div class="posterSlotEditor"><strong>Créneau 1</strong><div class="grid2"><label class="field"><span>Heure</span><input id="posterSlot1Time" maxlength="12"></label><label class="field"><span>Titre</span><input id="posterSlot1Title" maxlength="54"></label></div><label class="field"><span>Détails</span><textarea id="posterSlot1Details" maxlength="130" rows="2"></textarea></label></div>
-            <div class="posterSlotEditor"><strong>Créneau 2</strong><div class="grid2"><label class="field"><span>Heure</span><input id="posterSlot2Time" maxlength="12"></label><label class="field"><span>Titre</span><input id="posterSlot2Title" maxlength="54"></label></div><label class="field"><span>Détails</span><textarea id="posterSlot2Details" maxlength="130" rows="2"></textarea></label></div>
-            <div class="posterSlotEditor"><strong>Créneau 3</strong><div class="grid2"><label class="field"><span>Heure</span><input id="posterSlot3Time" maxlength="12"></label><label class="field"><span>Titre</span><input id="posterSlot3Title" maxlength="54"></label></div><label class="field"><span>Détails</span><textarea id="posterSlot3Details" maxlength="130" rows="2"></textarea></label></div>
-            <label class="field"><span>Annonce bonus</span><input id="posterCallout" maxlength="90" placeholder="Deux défis surprise pendant le live !"></label>
-            <label class="field"><span>Message de fin</span><input id="posterFooter" maxlength="100" placeholder="Bonne humeur garantie — on vous attend !"></label>
-          </div>
-        </details>
         <label class="field"><span>Nom du jour</span><input id="dayName" maxlength="20"></label>
         <div class="grid2">
           <label class="field"><span>Horaire</span><input id="dayTime" maxlength="18"></label>
@@ -100,7 +83,6 @@
         <div class="panelTitle"><h2>Modèles</h2><small>Composition complète</small></div>
         <div class="templateGrid">
           <button class="templateCard" data-template="cloud" type="button"><span class="templatePreview tp-cloud"></span><strong>Cloud gaming</strong></button>
-          <button class="templateCard" data-template="eventposter" type="button"><span class="templatePreview tp-eventposter"></span><strong>Affiche</strong></button>
           <button class="templateCard" data-template="cyber" type="button"><span class="templatePreview tp-cyber"></span><strong>Cyber HUD</strong></button>
           <button class="templateCard" data-template="rpg" type="button"><span class="templatePreview tp-rpg"></span><strong>Twitch Live</strong></button>
           <button class="templateCard" data-template="manga" type="button"><span class="templatePreview tp-manga"></span><strong>Manga pop</strong></button>
@@ -118,6 +100,7 @@
           <button class="templateCard" data-template="fantasy7" type="button"><span class="templatePreview tp-fantasy7"></span><strong>Fantasy VII</strong></button>
           <button class="templateCard" data-template="neonduel" type="button"><span class="templatePreview tp-neonduel"></span><strong>Duel néon</strong></button>
           <button class="templateCard" data-template="astralduo" type="button"><span class="templatePreview tp-astralduo"></span><strong>Duo astral</strong></button>
+          <button class="templateCard" data-template="eventposter" type="button"><span class="templatePreview tp-eventposter"></span><strong>Affiche</strong></button>
         </div>
       </section>
 
@@ -196,6 +179,23 @@
           <div class="propertyGroup"><h3>Style</h3><div class="grid2"><label class="field" id="propColorField"><span>Couleur</span><input id="propColor" type="color"></label><label class="field" id="propFillField"><span>Fond</span><input id="propFill" type="color"></label></div><label class="field"><span>Opacité</span><input id="propOpacity" type="range" min="0" max="100" value="100"></label></div>
           <div class="grid2"><button class="btn" id="duplicateElementBtn" type="button">Dupliquer</button><button class="btn btn--danger" id="deleteElementBtn" type="button">Supprimer</button></div>
         </div>
+        <details class="posterEditor" id="posterEditor" hidden>
+          <summary><span><strong>Contenu de l’affiche</strong><small>Chaque texte reste un calque déplaçable.</small></span></summary>
+          <div class="posterEditorBody">
+            <div class="posterEditorHint"><b>Conseil</b> Ajoute l’illustration principale dans <strong>Fond de la carte</strong>, puis une ambiance générale dans <strong>Design → Image de fond</strong>. Le jour et l’heure restent modifiables dans le panneau Planning.</div>
+            <div class="grid2">
+              <label class="field"><span>Accroche</span><input id="posterEyebrow" maxlength="60" placeholder="On se retrouve en"></label>
+              <label class="field"><span>Mot vedette</span><input id="posterHero" maxlength="24" placeholder="LIVE"></label>
+            </div>
+            <label class="field"><span>Bandeau plateforme</span><input id="posterPlatform" maxlength="70" placeholder="En direct sur Twitch !"></label>
+            <label class="field"><span>Titre du programme</span><input id="posterProgramTitle" maxlength="50" placeholder="Au programme"></label>
+            <div class="posterSlotEditor"><strong>Créneau 1</strong><div class="grid2"><label class="field"><span>Heure</span><input id="posterSlot1Time" maxlength="12"></label><label class="field"><span>Titre</span><input id="posterSlot1Title" maxlength="54"></label></div><label class="field"><span>Détails</span><textarea id="posterSlot1Details" maxlength="130" rows="2"></textarea></label></div>
+            <div class="posterSlotEditor"><strong>Créneau 2</strong><div class="grid2"><label class="field"><span>Heure</span><input id="posterSlot2Time" maxlength="12"></label><label class="field"><span>Titre</span><input id="posterSlot2Title" maxlength="54"></label></div><label class="field"><span>Détails</span><textarea id="posterSlot2Details" maxlength="130" rows="2"></textarea></label></div>
+            <div class="posterSlotEditor"><strong>Créneau 3</strong><div class="grid2"><label class="field"><span>Heure</span><input id="posterSlot3Time" maxlength="12"></label><label class="field"><span>Titre</span><input id="posterSlot3Title" maxlength="54"></label></div><label class="field"><span>Détails</span><textarea id="posterSlot3Details" maxlength="130" rows="2"></textarea></label></div>
+            <label class="field"><span>Annonce bonus</span><input id="posterCallout" maxlength="90" placeholder="Deux défis surprise pendant le live !"></label>
+            <label class="field"><span>Message de fin</span><input id="posterFooter" maxlength="100" placeholder="Bonne humeur garantie — on vous attend !"></label>
+          </div>
+        </details>
         <details class="layerManager"><summary>Tous les calques <small>glisser pour ordonner</small></summary><div class="layerList" id="layerList"></div></details>
       </div>
     </aside>
@@ -221,6 +221,6 @@
 <div id="toastRegion" aria-live="polite"></div>
 <script src="libs/qrcode.local.js"></script>
 <script src="storage.js"></script>
-<script src="v2.js?v=2.1.10"></script>
+<script src="v2.js?v=2.1.13"></script>
 </body>
 </html>
