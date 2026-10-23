@@ -318,7 +318,15 @@ test('colonnes, grille pop et horreur ont des structures visuelles propres',()=>
   assert.match(script,/normalized\.variant==='candy'/);
   assert.match(css,/\.variant-bubblegrid::before[\s\S]*radial-gradient/);
   assert.match(css,/\.variant-bubblegrid \.elDay__name[\s\S]*box-shadow:4px 4px 0/);
+  assert.match(css,/\.variant-bubblegrid\.hasImage \.elDay__name\{color:#17052e\}/);
+  assert.match(css,/\.detachedDayText--bubblegrid\.detachedDayText--name\{color:#17052e!important\}/);
   assert.match(css,/\.variant-horror::before/);
+});
+
+test('grille pop et agenda gardent leurs textes lisibles dans leurs zones',()=>{
+  assert.match(script,/if\(name==='agenda'\)[\s\S]*w:width===height\?width-140:1050[\s\S]*h:width===height\?92:112/);
+  assert.match(script,/Object\.assign\(subtitle,\{align:'left',x:72,y:width===height\?148:158/);
+  assert.match(script,/field==='name'&&element\.variant==='bubblegrid'\?Math\.min\(element\.w,Math\.max\(128,\(Number\(element\.fontSize\)\|\|22\)\*6\.2\)\):1/);
 });
 
 test('les quatre nouveaux modèles possèdent des compositions dédiées',()=>{
@@ -394,15 +402,25 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   assert.doesNotMatch(html,/dayMovePanel|data-move-day|data-arrange/);
   assert.match(html,/data-panel="design"[^>]*>[\s\S]*?<span>3<\/span>Design<\/button>/);
   assert.match(html,/data-panel="planning"[^>]*>[\s\S]*?<span>1<\/span>Contenu<\/button>/);
-  assert.match(html,/id="currentTemplateName"/);
+  assert.match(html,/<div class="panelTitle"><h2>Modèles<\/h2><button class="randomMixBtn" id="randomizeDesignBtn"[\s\S]*Random<\/button><\/div>/);
+  assert.doesNotMatch(html,/Choisis une ambiance|Modèle actuel/);
   assert.match(script,/card\.classList\.toggle\('isActive',active\)/);
-  assert.match(css,/\.activeTemplateBar/);
+  assert.match(css,/\.randomMixBtn\{/);
   assert.match(html,/data-panel-content="design"[\s\S]*Personnaliser le modèle[\s\S]*Couleurs du fond[\s\S]*Arrière-plan du planning/);
   const templatesPanel=html.match(/data-panel-content="templates"[\s\S]*?<\/section>/)?.[0]||'';
   assert.doesNotMatch(templatesPanel,/Personnaliser le modèle|Couleurs du fond|Arrière-plan du planning/);
   assert.doesNotMatch(html,/QR Code<\/strong><small>|Jour star<\/strong><small>/);
   assert.match(script,/els\.artboard\.addEventListener\('pointerdown',event=>\{\s*event\.stopPropagation\(\)/);
   assert.match(script,/els\.viewport\.addEventListener\('pointerdown',event=>\{[\s\S]*event\.target\.closest\('\.artboard'\)[\s\S]*selectElement\(''\)/);
+});
+
+test('Random compose un modèle hybride sans perdre le contenu utilisateur',()=>{
+  assert.match(script,/const RANDOM_LAYOUTS = Object\.keys\(TEMPLATE_STYLE\)/);
+  assert.match(script,/function randomizePlanningDesign\(\)/);
+  assert.match(script,/project\.background\.colors=\[\.\.\.palette\.bg\]/);
+  assert.match(script,/variant:skin\.card,fill:skinColors\.fill,color:skinColors\.color/);
+  assert.match(script,/project\.elements\.push\(\.\.\.custom\);selectedId='';renderAll\(\);pushHistory\(\);save\(\)/);
+  assert.match(script,/els\.randomizeDesign\.addEventListener\('click',randomizePlanningDesign\)/);
 });
 
 test('les options de modèle sont repliées par défaut',()=>{
@@ -640,9 +658,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.1\.36'/);
-  assert.equal(packageJson.version,'2.1.36');
-  assert.match(readme,/PlanningGPT V2\.1\.36/);
+  assert.match(script,/const VERSION = '2\.1\.39'/);
+  assert.equal(packageJson.version,'2.1.39');
+  assert.match(readme,/PlanningGPT V2\.1\.39/);
 });
 
 test('les textes libérés conservent les styles calculés des cartes',()=>{

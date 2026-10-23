@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION = '2.1.36';
+  const VERSION = '2.1.39';
   const MODEL_REVISION = 15;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const CATEGORY_LIBRARY_KEY = 'planninggpt_v2_category_images';
@@ -64,6 +64,8 @@
   };
   const DUO_TEMPLATES = new Set(['spotlight','neonduel','astralduo']);
   const FOCUS_TEMPLATES = new Set(['eventposter']);
+  const RANDOM_LAYOUTS = Object.keys(TEMPLATE_STYLE).filter(name=>!DUO_TEMPLATES.has(name)&&!FOCUS_TEMPLATES.has(name));
+  const RANDOM_CARD_SKINS = [...RANDOM_LAYOUTS,'spotlight'];
   const MODIFIERS = ['none','poster','ticket','restaurant','rpg','logbook','anime','marathon','release','subathon','indie','challenge'];
   const TYPE_PRESETS = {
     modern:{font:'sans',weight:700,fontStyle:'normal',transform:'none',letterSpacing:0,effect:'none'},
@@ -78,7 +80,7 @@
   const $ = id => document.getElementById(id);
   const els = {
     app:$('appRoot'),
-    projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'), currentTemplateName:$('currentTemplateName'), quickPlanningPanel:$('quickPlanningPanel'), detailedPlanningPanel:$('detailedPlanningPanel'), quickPlanningInput:$('quickPlanningInput'), quickPlanningFeedback:$('quickPlanningFeedback'), quickPlanningCreate:$('quickPlanningCreateBtn'), quickTemplateSelect:$('quickTemplateSelect'), quickTemplatePreview:$('quickTemplatePreview'),
+    projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'), randomizeDesign:$('randomizeDesignBtn'), quickPlanningPanel:$('quickPlanningPanel'), detailedPlanningPanel:$('detailedPlanningPanel'), quickPlanningInput:$('quickPlanningInput'), quickPlanningFeedback:$('quickPlanningFeedback'), quickPlanningCreate:$('quickPlanningCreateBtn'), quickTemplateSelect:$('quickTemplateSelect'), quickTemplatePreview:$('quickTemplatePreview'),
     title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), posterEditor:$('posterEditor'), posterEyebrow:$('posterEyebrow'), posterHero:$('posterHero'), posterPlatform:$('posterPlatform'), posterProgramTitle:$('posterProgramTitle'), posterCallout:$('posterCallout'), posterFooter:$('posterFooter'), posterSlot1Time:$('posterSlot1Time'), posterSlot1Title:$('posterSlot1Title'), posterSlot1Details:$('posterSlot1Details'), posterSlot2Time:$('posterSlot2Time'), posterSlot2Title:$('posterSlot2Title'), posterSlot2Details:$('posterSlot2Details'), posterSlot3Time:$('posterSlot3Time'), posterSlot3Title:$('posterSlot3Title'), posterSlot3Details:$('posterSlot3Details'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayCardColor:$('dayCardColor'), dayTextLayers:$('dayTextLayersBtn'), allDayTextLayers:$('allDayTextLayersBtn'), dayTextLayersStatus:$('dayTextLayersStatus'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), dayImageOpacity:$('dayImageOpacity'), dayImageOpacityValue:$('dayImageOpacityValue'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
     artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
     inspector:$('inspector'), closeInspector:$('closeInspectorBtn'), emptyInspector:$('emptyInspector'), propertyPanel:$('propertyPanel'), layerList:$('layerList'), layerSelect:$('layerSelect'), layerTransparentBackground:$('layerTransparentBackground'),
@@ -312,7 +314,7 @@
     if(name==='fantasy7'){Object.assign(heading,{align:'left',x:55,w:1030,font:'condensed',fontSize:86,color:style.text,transform:'uppercase',letterSpacing:6,effect:'hard'});Object.assign(subtitle,{align:'right',x:930,w:600,y:155,font:'mono',fontSize:23,color:style.accent,transform:'uppercase',letterSpacing:3});}
     if(name==='neonduel'){Object.assign(heading,{x:project.width/2-260,y:123,w:520,h:28,font:'condensed',fontSize:16,color:'#ffffff',transform:'uppercase',letterSpacing:6,effect:'none',opacity:.68});Object.assign(subtitle,{x:project.width/2-300,y:project.height-25,w:600,h:20,font:'mono',fontSize:13,color:'#ffffff',transform:'uppercase',letterSpacing:4,opacity:.72});}
     if(name==='astralduo'){Object.assign(heading,{x:project.width/2-360,y:34,w:720,h:70,font:'serif',fontStyle:'italic',fontSize:52,color:'#ffffff',letterSpacing:3,effect:'soft'});Object.assign(subtitle,{x:project.width/2-280,y:108,w:560,h:30,font:'sans',fontSize:16,color:'#f7d7f0',transform:'uppercase',letterSpacing:5});}
-    if(name==='agenda'){Object.assign(heading,{align:'left',font:'serif',x:70,w:720,color:style.text});Object.assign(subtitle,{align:'left',x:72,w:650,color:style.accent});elements.unshift(shapeElement('rect',42,42,10,height-84,style.accent,5));}
+    if(name==='agenda'){Object.assign(heading,{align:'left',font:'serif',x:70,w:width===height?width-140:1050,h:width===height?92:112,color:style.text});Object.assign(subtitle,{align:'left',x:72,y:width===height?148:158,w:650,color:style.accent});elements.unshift(shapeElement('rect',42,42,10,height-84,style.accent,5));}
     if(name==='roadmap'){elements.unshift(shapeElement('rect',65,438,width-130,10,style.accent,5));elements.push(emojiElement('🚀',width-125,390,82));}
     if(name==='rpg'){
       const topRail=shapeElement('rect',34,210,width-68,6,'#9147ff',3);topRail.locked=true;elements.unshift(topRail);
@@ -583,7 +585,7 @@
   function renderAll(){
     els.projectName.value=project.name;els.title.value=project.title;els.subtitle.value=project.subtitle;els.showQr.checked=!!project.showQr;els.qrUrl.value=project.qrUrl||'';renderQrControls();
     els.quickTemplateSelect.value=project.template;els.quickTemplatePreview.className=`templatePreview quickTemplatePreview tp-${project.template}`;
-    const activeTemplateOption=els.quickTemplateSelect.selectedOptions[0];els.currentTemplateName.textContent=activeTemplateOption?.textContent||'Modèle';document.querySelectorAll('.templateCard').forEach(card=>{const active=card.dataset.template===project.template;card.classList.toggle('isActive',active);card.setAttribute('aria-pressed',String(active));});
+    document.querySelectorAll('.templateCard').forEach(card=>{const active=card.dataset.template===project.template;card.classList.toggle('isActive',active);card.setAttribute('aria-pressed',String(active));});
     renderDays();renderPosterControls();renderModifierControls();renderTypePresetControls();renderBackgroundControls();renderCanvas();renderInspector();renderLayers();updateZoom();updateHistoryButtons();
   }
   function renderDays(){
@@ -624,6 +626,22 @@
   function applyTemplateChoice(name,message='Modèle appliqué sans supprimer tes calques.'){
     if(!TEMPLATE_STYLE[name])return;
     const custom=project.elements.filter(element=>!element.builtIn).map(clone);buildTemplate(name);project.elements.push(...custom);selectedId='';renderAll();pushHistory();save();toast(name==='eventposter'&&message==='Modèle appliqué sans supprimer tes calques.'?`Affiche créée pour ${project.days[selectedDay].name}. Clique sur un autre jour pour la changer.`:message);
+  }
+  function randomChoice(values,excluded=''){
+    const choices=values.filter(value=>value!==excluded);return choices[Math.floor(Math.random()*choices.length)]||values[0];
+  }
+  function templateDisplayName(name){return document.querySelector(`.templateCard[data-template="${name}"] strong`)?.textContent||name;}
+  function randomizePlanningDesign(){
+    const previousVisibility=project.days.map(day=>day.visible!==false),custom=project.elements.filter(element=>!element.builtIn).map(clone);
+    const layoutName=randomChoice(RANDOM_LAYOUTS,project.template),skinName=randomChoice(RANDOM_CARD_SKINS,layoutName),paletteName=randomChoice(Object.keys(TEMPLATE_STYLE),layoutName);
+    const modifier=randomChoice(MODIFIERS),preset=randomChoice(['',...Object.keys(TYPE_PRESETS)]),skin=TEMPLATE_STYLE[skinName],skinColors=defaultCardColors(skin.card),palette=TEMPLATE_STYLE[paletteName];
+    project.modifier=modifier;project.typePreset=preset;buildTemplate(layoutName,{keepBackground:true});project.days.forEach((day,index)=>{day.visible=previousVisibility[index];});
+    project.background.mode='gradient';project.background.colors=[...palette.bg];project.background.angle=Math.floor(Math.random()*361);
+    project.elements.filter(element=>element.type==='day').forEach(element=>Object.assign(element,{variant:skin.card,fill:skinColors.fill,color:skinColors.color,accent:skin.accent,effectOverride:false,layoutOverride:false}));
+    project.elements.push(...custom);selectedId='';renderAll();pushHistory();save();
+    els.randomizeDesign.classList.remove('isRolling');void els.randomizeDesign.offsetWidth;els.randomizeDesign.classList.add('isRolling');setTimeout(()=>els.randomizeDesign.classList.remove('isRolling'),420);
+    const modifierLabel=els.modifierSelect.selectedOptions[0]?.textContent||'Original',presetLabel=els.typePresetSelect.selectedOptions[0]?.textContent||'Style du modèle';
+    toast(`Random : ${templateDisplayName(layoutName)} · cartes ${templateDisplayName(skinName)} · ${modifierLabel} · ${presetLabel}`);
   }
   async function generateQuickPlanning(){
     const result=updateQuickPlanningFeedback();if(!result.entries.length||result.errors.length)return;
@@ -702,7 +720,8 @@
   function qrSvg(element){try{return (makeQr()?.createSvgTag(5,2)||'<span>QR indisponible</span>').replace('#fff',color(element?.fill,'#ffffff')).replace('#111827',color(element?.color,'#111827'));}catch{return '<span>QR indisponible</span>';}}
   function constrainDayPartPlacement(element,field,source=element.dayPartPositions?.[field]){
     if(!source)return null;
-    const placement={x:Number(source.x)||0,y:Number(source.y)||0,w:clamp(source.w,1,element.w),h:clamp(source.h,1,element.h)};
+    const minimumWidth=field==='name'&&element.variant==='bubblegrid'?Math.min(element.w,Math.max(128,(Number(element.fontSize)||22)*6.2)):1;
+    const placement={x:Number(source.x)||0,y:Number(source.y)||0,w:clamp(source.w,minimumWidth,element.w),h:clamp(source.h,1,element.h)};
     placement.x=clamp(placement.x,0,Math.max(0,element.w-placement.w));
     placement.y=clamp(placement.y,0,Math.max(0,element.h-placement.h));
     return placement;
@@ -1012,6 +1031,7 @@
     els.quickPlanningInput.addEventListener('input',updateQuickPlanningFeedback);els.quickPlanningCreate.addEventListener('click',()=>{generateQuickPlanning().catch(()=>toast('Impossible de créer ce planning.'));});
     els.quickTemplateSelect.addEventListener('change',()=>applyTemplateChoice(els.quickTemplateSelect.value,'Modèle choisi pour le planning rapide.'));
     document.querySelectorAll('.templateCard').forEach(button=>button.addEventListener('click',()=>applyTemplateChoice(button.dataset.template)));
+    els.randomizeDesign.addEventListener('click',randomizePlanningDesign);
     document.querySelectorAll('[data-background-mode]').forEach(button=>button.addEventListener('click',()=>{project.background.mode=button.dataset.backgroundMode;renderBackgroundControls();renderCanvas();commit();toast(project.background.mode==='solid'?'Fond normal activé.':'Dégradé activé.');}));
     els.backgroundColorPrimary.addEventListener('input',()=>{project.background.colors[0]=els.backgroundColorPrimary.value;renderBackgroundControls();renderCanvas();commit();});
     els.backgroundColorSecondary.addEventListener('input',()=>{project.background.colors[1]=els.backgroundColorSecondary.value;renderBackgroundControls();renderCanvas();commit();});

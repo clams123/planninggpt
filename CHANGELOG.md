@@ -1,5 +1,25 @@
 # Historique des versions
 
+## 2.1.39 — Random compact
+
+- place le générateur Random dans un petit bouton à droite du titre « Modèles » ;
+- retire la grande carte descriptive pour rendre toute la place à la liste ;
+- conserve le mélange aléatoire, son animation et son annulation.
+
+## 2.1.38 — Générateur Random
+
+- remplace les indications « Choisis une ambiance » et « Modèle actuel » par un bouton Random unique ;
+- combine à chaque tirage une disposition, un style de cartes, une palette, un modificateur et une typographie issus des modèles existants ;
+- conserve les contenus, images, jours visibles et calques personnalisés du planning ;
+- enregistre chaque tirage en une seule étape annulable.
+
+## 2.1.37 — Textes complets dans Grille pop et Agenda
+
+- conserve le nom du jour en couleur sombre dans le badge blanc de Grille pop lorsqu’une image est ajoutée à la carte ;
+- agrandit automatiquement un badge de jour déplacé devenu trop étroit, sans jamais le laisser sortir de sa carte ;
+- élargit la zone du titre d’Agenda éditorial pour afficher « Planning de la semaine » sur une seule ligne ;
+- adapte aussi la hauteur et l’espacement du titre au format carré.
+
 ## 2.1.36 — Image recentrée dans le portail
 
 - limite l’image d’Aventure 2 à l’ouverture centrale du portail, y compris lorsqu’une carte est fortement agrandie ;
