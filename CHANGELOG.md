@@ -1,5 +1,158 @@
 # Historique des versions
 
+## 2.1.36 — Image recentrée dans le portail
+
+- limite l’image d’Aventure 2 à l’ouverture centrale du portail, y compris lorsqu’une carte est fortement agrandie ;
+- réduit la zone de fondu de l’image à la seule jointure intérieure pour ne plus la voir sous toute l’aura ;
+- conserve l’anneau vaporeux au-dessus de l’image afin de masquer proprement sa découpe.
+
+## 2.1.35 — Jointure magique compacte
+
+- remplace la couronne filamenteuse d’Aventure 2 par une double couche de brume bleue compacte inspirée des références fournies ;
+- fait passer l’image sous l’anneau afin que celui-ci masque réellement sa découpe et forme une jointure continue ;
+- supprime les rayons, éclairs et filaments qui dépassaient autour des cartes ;
+- affine le contour principal sans perdre sa fonction de jointure, puis transforme les anneaux secondaires en voiles plus fins qui disparaissent progressivement vers l’extérieur ;
+- retire le cadre autour du nom du jour dans les portails.
+
+## 2.1.34 — Aura alignée sur l’image
+
+- recentre et réduit la couronne magique afin que ses filaments principaux chevauchent exactement la découpe de l’image ;
+- transforme l’aura en véritable jointure visuelle au lieu d’un anneau placé autour de l’illustration ;
+- conserve ce chevauchement sur les portails circulaires et les grandes cartes elliptiques.
+
+## 2.1.33 — Jonction magique des portails
+
+- remplace la couronne brumeuse par un nouvel anneau transparent inspiré de la référence fournie ;
+- conserve l’image nette jusqu’au bord et masque uniquement sa jonction sous les filaments magiques ;
+- retire le masque diffus qui assombrissait et délavavait une large partie de l’illustration.
+
+## 2.1.32 — Fusion douce des portails
+
+- retire entièrement le liseré artificiel autour des images d’Aventure 2 ;
+- fond progressivement l’image sous la couronne magique grâce à un masque elliptique doux ;
+- conserve cette fusion sans démarcation lorsque les portails sont étirés.
+
+## 2.1.31 — Ouverture délimitée des portails
+
+- ajoute un fin liseré cyan continu sur la découpe exacte de l'image ;
+- renforce légèrement la matière de l'aura sans retrouver l'ancien halo électrique massif ;
+- conserve la délimitation sur les portails circulaires comme sur les ellipses redimensionnées.
+
+## 2.1.30 — Bordure des portails Aventure 2
+
+- replace le disque intérieur sous la couronne magique pour qu'il ne dépasse jamais de l'aura ;
+- conserve cet emboîtement lorsque les cartes sont agrandies ou étirées ;
+- ravive légèrement le cyan sans réintroduire un halo agressif.
+
+## 2.1.29 — Portails vaporeux Aventure 2
+
+- affine fortement la couronne magique avec une brume peu opaque et sans effet de corde ;
+- réduit la luminosité et la saturation pour retrouver un rendu fluide et vaporeux ;
+- agrandit l'image intérieure jusqu'au bord du sort, sans espace vide visible.
+
+## 2.1.28 — Portails magiques Aventure 2
+
+- remplace l'épais anneau électrique par de fins filaments magiques tressés ;
+- agrandit l'ouverture transparente afin de mieux préserver l'image et les textes du jour ;
+- conserve une lueur cyan maîtrisée, ponctuée de discrètes touches violettes.
+
+## 2.1.27 — Fonds personnalisés et transparence Aventure
+
+- affiche désormais l’image de fond personnalisée à la place du décor plein écran sur Aventure et Aventure 2 ;
+- rend réellement transparent l’arrière-plan de ces deux modèles dans l’aperçu et le PNG ;
+- élargit et sécurise la fenêtre de recadrage pour empêcher l’aperçu de chevaucher ses réglages.
+
+## 2.1.26 — Édition directe du contenu des cartes
+
+- ajoute une sélection secondaire rose pour le jour, l'horaire, la catégorie et la note d'une carte sélectionnée ;
+- déplace chaque texte directement dans sa carte sans créer de calque séparé ;
+- contraint le glisser-déposer et les flèches du clavier aux limites exactes de la carte ;
+- conserve les positions personnalisées dans le projet et dans l'export PNG.
+
+## 2.1.25 — Réglages cohérents sur tous les modèles
+
+- fait primer les positions horizontale et verticale choisies par l'utilisateur sur les styles propres aux modèles ;
+- rend les cinq effets de texte réellement applicables aux cartes comme aux textes séparés ;
+- fiabilise les compositions Classique, Affiche illustrée, Jour en vedette et Image seule sur les modèles très stylisés ;
+- place les positions horizontale et verticale côte à côte dans l'inspecteur.
+
+## 2.1.24 — Textes séparés fidèles et repositionnables
+
+- conserve exactement la boîte visuelle de chaque texte lors de sa séparation, sans décalage ajouté ;
+- restaure l'alignement horizontal gauche/centre/droite et la position verticale haut/centre/bas pour les calques texte ;
+- applique ces réglages à l'aperçu comme à l'export PNG.
+
+## 2.1.23 — Ouverture de portail sans interstice
+
+- étend l'image intérieure sous le bord électrique pour supprimer tout interstice avec l'anneau ;
+- descend le cartouche du jour dans l'ouverture afin qu'il ne chevauche plus les éclairs ;
+- conserve ces proportions lors du redimensionnement circulaire ou ovale.
+
+## 2.1.22 — Contenu sécurisé dans les portails
+
+- remplace l'anneau électrique par une version nettoyée, sans brume périphérique qui se déforme à l'agrandissement ;
+- maintient l'image du jeu dans l'ouverture intérieure du portail ;
+- positionne le jour, l'heure, le titre et la note avec des marges proportionnelles adaptées aux portails redimensionnés.
+
+## 2.1.21 — Anneau électrique sans halo doublé
+
+- retire l'ancien halo circulaire derrière les portails du modèle Aventure 2 ;
+- conserve uniquement l'anneau électrique détouré et sa légère lueur propre ;
+- applique le même rendu dans l'éditeur et dans l'export PNG.
+
+## 2.1.20 — Portails électriques et jours contenus
+
+- Remplacement des anneaux réguliers d’Aventure 2 par une couronne électrique organique locale, composée de filaments, d’arcs et d’un halo bleu irrégulier.
+- Recentrage automatique du nom du jour dans la zone intérieure du portail, y compris lorsque sa carte est fortement agrandie ou étirée.
+- Conservation de l’image du jeu, des textes, du halo et de la transparence lors du redimensionnement et de l’export PNG.
+
+## 2.1.19 — Aventure 2 : sept portails
+
+- Ajout du modèle « Aventure 2 » sans modifier ni remplacer le modèle « Aventure » original.
+- Conservation de la forêt enchantée dans un nouveau décor local débarrassé du grand portail central.
+- Répartition des sept jours en sept portails de même importance, sur deux rangées équilibrées en 16:9 comme au format carré.
+- Affichage de l’image du jeu à l’intérieur de chaque portail, avec jour, horaire, titre et note superposés de façon lisible.
+- Reproduction d’un halo électrique bleu en plusieurs anneaux, conservé lors du déplacement, du redimensionnement et de l’export PNG.
+
+## 2.1.18 — Images contenues dans Aventure
+
+- Correction du mode « Remplir automatiquement » dans le modèle Aventure : les quatre coins de l’image sont désormais écrêtés selon l’arrondi de la carte.
+- Conservation des halos et des ombres extérieurs du cadre, dans l’aperçu comme dans le PNG exporté.
+
+## 2.1.17 — Aventure interdimensionnelle
+
+- Refonte complète du modèle « Aventure » autour d’un portail de transport entre une forêt ancienne et un monde montagneux.
+- Ajout d’un décor original local : anneau électrique bleu, éclairs latéraux, lumière volumétrique et destination visible au travers du portail.
+- Nouvelle composition qui laisse le portail respirer et regroupe les sept destinations dans une barre de cartes en bas du format 16:9.
+- Adaptation dédiée au format carré, avec deux rangées compactes sous le portail.
+- Nouveau style de cartes façon interface de voyage dimensionnel, avec verre sombre, liserés cyan et halos lumineux.
+- Migration automatique des projets « Aventure » existants vers cette nouvelle composition, sans supprimer les calques personnels.
+- Navigation principale recalée dans le panneau latéral : les quatre étapes restent lisibles et ne chevauchent plus l’en-tête du planning dans une fenêtre étroite.
+
+## 2.1.16 — Transparence rapide dans Tous les calques
+
+- Ajout d’un raccourci « Fond transparent » directement dans le menu « Tous les calques ».
+- Synchronisation immédiate avec le réglage équivalent du menu Design : les deux commandes pilotent le même fond.
+- Conservation du damier dans l’aperçu et de la vraie transparence alpha dans le PNG exporté pour faciliter les montages.
+
+## 2.1.15 — Interface guidée, Aventure et Cozy
+
+- Navigation rendue plus logique avec quatre étapes numérotées : Contenu, Modèles, Design et Éléments.
+- Ajout d’un indicateur du modèle actif et d’un état de sélection visible directement dans la galerie.
+- Renommage de « Duel néon » en « Duo Néon » dans toute l’interface.
+- Ajout du modèle « Aventure » : horizon montagneux, rose des vents, palette forêt et or, cartes de quête et ambiance d’exploration épique.
+- Refonte de « Cozy desk » avec une lumière de soirée plus chaude, des guirlandes, des cartes papier, une palette crème et terracotta et des décorations plus chaleureuses.
+- Adaptation des deux ambiances aux formats 16:9 et carré, aux textes séparés et à l’export PNG.
+- Migration automatique des projets Cozy existants vers la nouvelle composition sans supprimer les calques personnels.
+
+## 2.1.14 — Refonte complète de Duel néon
+
+- Nouvelle composition inspirée d’une arène versus : fond noir texturé, séparation centrale et éclairages bleus et rouges.
+- Grands noms de jours lumineux, horaires dominants, images verticales arrondies et catégories placées au pied de chaque affiche.
+- Ajout de cadres hexagonaux et d’un sol quadrillé lumineux pour renforcer la profondeur de la scène.
+- Adaptation dédiée aux formats 16:9 et carré, aux images de jours, aux textes séparés et à l’export PNG.
+- Migration automatique des anciens projets « Duel néon » vers la nouvelle structure, sans supprimer les contenus ni les images des jours.
+
 ## 2.1.13 — Correction de la sélection des calques
 
 - Correction de la désélection immédiate qui pouvait survenir après avoir cliqué sur un calque du planning.

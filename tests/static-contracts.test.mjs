@@ -19,9 +19,9 @@ test('les identifiants HTML sont uniques',()=>{
   assert.equal(new Set(ids).size,ids.length);
 });
 
-test('les dix-neuf modèles de l’interface possèdent un style V2',()=>{
+test('les vingt et un modèles de l’interface possèdent un style V2',()=>{
   const templates=[...html.matchAll(/data-template="([^"]+)"/g)].map(match=>match[1]);
-  assert.equal(templates.length,19);
+  assert.equal(templates.length,21);
   templates.forEach(name=>assert.match(script,new RegExp(`${name}:\\{bg:`)));
 });
 
@@ -60,22 +60,79 @@ test('Affiche propose un éditeur de contenu événementiel complet',()=>{
   assert.doesNotMatch(html,/<details class="posterEditor"[^>]*\bopen\b/);
 });
 
-test('Duel néon et Duo astral proposent deux compositions illustrées distinctes',()=>{
-  assert.match(html,/data-template="neonduel"[\s\S]*<strong>Duel néon<\/strong>/);
+test('Duo Néon et Duo astral proposent deux compositions illustrées distinctes',()=>{
+  assert.match(html,/data-template="neonduel"[\s\S]*<strong>Duo Néon<\/strong>/);
+  assert.match(html,/value="neonduel">Duo Néon<\/option>/);
   assert.match(html,/data-template="astralduo"[\s\S]*<strong>Duo astral<\/strong>/);
   for(const token of ['tp-neonduel','tp-astralduo','variant-neonblue','variant-neonred','variant-astralblue','variant-astralrose'])assert.match(css,new RegExp(`\\.${token}`));
   assert.match(script,/function featureDuoCardLayout\(width,height\)/);
+  assert.match(script,/function neonDuelCardLayout\(width,height\)/);
   assert.match(script,/DUO_TEMPLATES = new Set\(\['spotlight','neonduel','astralduo'\]\)/);
   assert.match(script,/day\.visible=index===1\|\|index===5/);
-  assert.match(script,/const versus=textElement\('VS'/);
+  assert.match(script,/els\.artboard\.className=`artboard template-\$\{project\.template\} format-\$\{project\.format\} modifier-\$\{project\.modifier\|\|'none'\}[^`]*`/);
+  assert.match(script,/const keepImageFrame=element\.variant==='neonblue'\|\|element\.variant==='neonred'/);
+  assert.match(css,/\.artboard\.template-neonduel::before/);
+  assert.match(css,/\.variant-neonblue::before/);
+  assert.doesNotMatch(script,/const versus=textElement\('VS'/);
   assert.match(script,/const sigil=textElement\('✦'/);
+});
+
+test('Aventure possède un portail interdimensionnel original et exportable',async()=>{
+  assert.match(html,/value="adventure">Aventure<\/option>/);
+  assert.match(html,/data-template="adventure"[\s\S]*<strong>Aventure<\/strong>/);
+  assert.match(script,/adventure:\{bg:\['#030b12','#0b2a38'\]/);
+  assert.match(script,/if\(style==='adventure'\)/);
+  assert.match(script,/assets\/adventure-portal-v1\.png/);
+  assert.match(script,/PASSAGE INTERDIMENSIONNEL/);
+  assert.match(script,/CHOISIS TA DESTINATION/);
+  assert.match(script,/refreshAdventure=project\.template==='adventure'&&previousRevision<14/);
+  assert.match(css,/\.artboard\.template-adventure::after/);
+  assert.match(css,/\.variant-adventure/);
+  assert.match(css,/\.variant-adventure \.elDay__image\{border-radius:16px;clip-path:inset\(0 round 16px\)\}/);
+  assert.match(css,/\.detachedDayText--adventure/);
+  await access(new URL('../assets/adventure-portal-v1.png',import.meta.url));
+});
+
+test('Aventure 2 répartit sept portails égaux sur la forêt sans portail central',async()=>{
+  assert.match(html,/value="adventure2">Aventure 2<\/option>/);
+  assert.match(html,/data-template="adventure2"[\s\S]*<strong>Aventure 2<\/strong>/);
+  assert.match(script,/adventure2:\{bg:\['#020b10','#0b3027'\]/);
+  assert.match(script,/if\(style==='adventure2'\)/);
+  assert.match(script,/assets\/adventure-forest-v2\.png/);
+  assert.match(script,/assets\/adventure-portal-joint-v8\.png/);
+  assert.match(script,/SEPT PASSAGES  •  SEPT DESTINATIONS/);
+  assert.match(script,/element\.variant==='adventure2'/);
+  assert.match(script,/class="elDay__portalRing" src="assets\/adventure-portal-joint-v8\.png"/);
+  assert.match(css,/\.artboard\.template-adventure2::after/);
+  assert.match(css,/\.variant-adventure2::before/);
+  assert.match(css,/\.variant-adventure2 \.elDay__portalRing/);
+  assert.match(css,/\.variant-adventure2,\.variant-adventure2\.hasImage,\.variant-adventure2\.isStar\{background:transparent!important;box-shadow:none!important\}/);
+  assert.match(css,/\.variant-adventure2::after\{display:none\}/);
+  assert.match(css,/\.variant-adventure2 \.elDay__image\{inset:13px;[\s\S]*clip-path:ellipse\(50% 50% at 50% 50%\)/);
+  assert.match(css,/\.detachedDayText--adventure2/);
+  await access(new URL('../assets/adventure-forest-v2.png',import.meta.url));
+  assert.match(css,/\.variant-adventure2 \.elDay__image\{inset:24%;border:0/);
+  assert.match(css,/\.variant-adventure2 \.elDay__name\{top:30%;width:44%;max-width:44%;border:0;background:transparent;box-shadow:none/);
+  assert.match(css,/\.variant-adventure2 \.elDay__portalRing\{inset:0;width:100%;height:100%;opacity:\.72;filter:saturate\(1\.02\) brightness\(1\.04\);-webkit-mask-image:radial-gradient/);
+  assert.match(css,/rgba\(0,0,0,\.62\) 43%,rgba\(0,0,0,\.22\) 48%,rgba\(0,0,0,\.06\) 52%,transparent 56%/);
+  assert.match(css,/-webkit-mask-image:radial-gradient\(ellipse at center,#000 0 82%,rgba\(0,0,0,\.86\) 90%,rgba\(0,0,0,\.35\) 96%,transparent 100%\)/);
+  await access(new URL('../assets/adventure-portal-joint-v8.png',import.meta.url));
+});
+
+test('Cozy desk adopte une ambiance chaleureuse complète',()=>{
+  assert.match(script,/cozy:\{bg:\['#3a241f','#a96650'\]/);
+  assert.match(script,/UNE SEMAINE AU CHAUD/);
+  assert.match(script,/refreshCozy=project\.template==='cozy'&&previousRevision<13/);
+  assert.match(css,/\.artboard\.template-cozy::before/);
+  assert.match(css,/\.variant-cozy::before/);
+  assert.match(css,/\.detachedDayText--cozy/);
 });
 
 test('les textes libérés des deux modèles duo conservent leurs accents',()=>{
   assert.match(script,/detachedDayText--\$\{card\.variant\}/);
   assert.match(script,/detachedDayText--\$\{element\.dayField\}/);
   for(const variant of ['neonblue','neonred','astralblue','astralrose'])assert.match(css,new RegExp(`detachedDayText--${variant}`));
-  assert.match(css,/\.detachedDayText--neonblue\.detachedDayText--title[\s\S]*background:rgba\(1,5,14,\.78\)/);
+  assert.match(css,/\.detachedDayText--neonblue\.detachedDayText--title[\s\S]*text-shadow:0 0 12px/);
   assert.match(css,/\.detachedDayText--astralblue\.detachedDayText--title[\s\S]*border-radius:999px/);
 });
 
@@ -228,7 +285,7 @@ test('Twitch Live remplace Quête fantasy avec une composition de diffusion déd
 });
 
 test('aucun calque de modèle n’est verrouillé par défaut',()=>{
-  assert.match(script,/const MODEL_REVISION = 11;/);
+  assert.match(script,/const MODEL_REVISION = 15;/);
   assert.match(script,/modelRevision:MODEL_REVISION/);
   assert.match(script,/elements\.forEach\(element=>\{element\.builtIn=true;element\.locked=false;\}\)/);
   assert.match(script,/unlockDefaultLayers=previousRevision<4/);
@@ -293,7 +350,7 @@ test('les douze modificateurs historiques sont disponibles',()=>{
 
 test('les effets des modificateurs essentiels existent aussi dans le PNG',()=>{
   for(const modifier of ['anime','release','challenge','marathon','subathon','rpg'])assert.match(css,new RegExp(`modifier-${modifier}`));
-  assert.match(script,/els\.artboard\.className=`artboard modifier-\$\{project\.modifier\|\|'none'\}`/);
+  assert.match(script,/els\.artboard\.className=`artboard template-\$\{project\.template\} format-\$\{project\.format\} modifier-\$\{project\.modifier\|\|'none'\}[^`]*`/);
   assert.match(script,/function exportClone\(\)/);
 });
 
@@ -329,11 +386,17 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   assert.match(html,/id="dayStar"[\s\S]*id="resetPlanningBtn"[^>]*>Réinitialiser le planning</);
   assert.match(html,/class="quickToggleRow"[\s\S]*id="showQr"[\s\S]*id="dayStar"[\s\S]*id="qrUrlField"[\s\S]*id="resetPlanningBtn"/);
   assert.match(css,/\.quickToggleRow\{display:grid;grid-template-columns:1fr 1fr/);
+  assert.match(css,/\.sideTabs\{[^}]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+  assert.match(css,/\.tabBtn\{[^}]*min-width:0;[^}]*flex-direction:column/);
   assert.doesNotMatch(html,/id="resetBtn"|↺ Réinitialiser/);
   assert.match(script,/function resetPlanning\(\)/);
   assert.match(script,/els\.resetPlanning\.addEventListener\('click',resetPlanning\)/);
   assert.doesNotMatch(html,/dayMovePanel|data-move-day|data-arrange/);
-  assert.match(html,/data-panel="design"[^>]*>Design</);
+  assert.match(html,/data-panel="design"[^>]*>[\s\S]*?<span>3<\/span>Design<\/button>/);
+  assert.match(html,/data-panel="planning"[^>]*>[\s\S]*?<span>1<\/span>Contenu<\/button>/);
+  assert.match(html,/id="currentTemplateName"/);
+  assert.match(script,/card\.classList\.toggle\('isActive',active\)/);
+  assert.match(css,/\.activeTemplateBar/);
   assert.match(html,/data-panel-content="design"[\s\S]*Personnaliser le modèle[\s\S]*Couleurs du fond[\s\S]*Arrière-plan du planning/);
   const templatesPanel=html.match(/data-panel-content="templates"[\s\S]*?<\/section>/)?.[0]||'';
   assert.doesNotMatch(templatesPanel,/Personnaliser le modèle|Couleurs du fond|Arrière-plan du planning/);
@@ -439,6 +502,48 @@ test('les textes d’un jour peuvent devenir des calques liés et indépendants'
   assert.match(script,/fontStyle:placement\.fontStyle,transform:placement\.transform,letterSpacing:placement\.letterSpacing/);
 });
 
+test('la séparation conserve exactement la boîte du texte et ses alignements',()=>{
+  assert.match(html,/id="propVAlign"/);
+  assert.match(html,/Position verticale/);
+  assert.match(script,/verticalAlign:'top'/);
+  assert.match(script,/justify-content:\$\{verticalAlignment\(element\.verticalAlign\)\}/);
+  assert.match(script,/els\.propVAlign\.value=element\.verticalAlign\|\|\(element\.type==='day'\?'theme':'top'\)/);
+  assert.match(script,/element\.verticalAlign=els\.propVAlign\.value/);
+  assert.match(script,/w:Math\.max\(20,rect\.width\/scale\),h:Math\.max\(20,rect\.height\/scale\)/);
+  assert.doesNotMatch(script,/rect\.width\/scale\+8|rect\.height\/scale\+8/);
+});
+
+test('les textes intégrés se déplacent dans leur carte avec une sélection secondaire bornée',()=>{
+  assert.match(script,/let selectedDayPart = null/);
+  assert.match(script,/data-day-part="\$\{field\}"/);
+  assert.match(script,/function beginDayPartInteraction/);
+  assert.match(script,/mode:'dayPartDrag'/);
+  assert.match(script,/function constrainDayPartPlacement/);
+  assert.match(script,/Math\.max\(0,element\.w-placement\.w\)/);
+  assert.match(script,/Math\.max\(0,element\.h-placement\.h\)/);
+  assert.match(script,/selectedDayPart=null/);
+  assert.match(css,/\.dayPart\.isDayPartSelected/);
+  assert.match(css,/--day-part-selection/);
+  assert.match(css,/\.dayPart\.hasCustomPosition/);
+  assert.match(css,/Carte · clique un texte/);
+  assert.match(css,/Texte · reste dans la carte/);
+});
+
+test('alignements effets et compositions utilisateur priment sur les vingt et un modèles',()=>{
+  const horizontal=html.indexOf('id="propAlign"'),vertical=html.indexOf('id="propVAlign"'),textCase=html.indexOf('id="propTransform"');
+  assert.ok(horizontal>0&&vertical>horizontal&&textCase>vertical,'les deux positions doivent être voisines avant la casse');
+  assert.match(html,/id="propVAlign"[\s\S]*?<option value="theme">Selon le modèle<\/option>/);
+  assert.match(script,/dayAlign-\$\{element\.align\|\|'left'\}/);
+  assert.match(script,/dayVAlign-\$\{element\.verticalAlign\|\|'theme'\}/);
+  assert.match(script,/element\.effectOverride\?' hasEffectOverride':''/);
+  assert.match(script,/element\.layoutOverride\?' hasLayoutOverride':''/);
+  assert.match(script,/if\(event\?\.target===els\.propTextEffect\)element\.effectOverride=true/);
+  assert.match(script,/if\(event\?\.target===els\.propDayLayout\)element\.layoutOverride=true/);
+  assert.match(script,/if\(\(element\.effectOverride\|\|element\.effect!==element\.dayVisualEffect\)/);
+  for(const selector of ['dayAlign-left','dayAlign-center','dayAlign-right','dayVAlign-top','dayVAlign-center','dayVAlign-bottom','hasEffectOverride','hasLayoutOverride'])assert.match(css,new RegExp(selector));
+  for(const layout of ['poster','feature','image'])assert.match(css,new RegExp(`hasLayoutOverride\\.dayLayout-${layout}`));
+});
+
 test('une nouvelle image de jour est affichée entièrement par défaut',()=>{
   assert.match(html,/Afficher l’image entière sans découpe/);
   assert.match(script,/async function importDayImage[\s\S]*imageFit:'contain'/);
@@ -450,7 +555,7 @@ test('une nouvelle image de jour est affichée entièrement par défaut',()=>{
 });
 
 test('le planning accepte une image de fond ajustable, transparente ou un PNG transparent',()=>{
-  for(const id of ['transparentBackground','backgroundImageInput','backgroundImageFit','backgroundImageOpacity','backgroundImageOpacityValue','cropBackgroundImageBtn','removeBackgroundImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
+  for(const id of ['transparentBackground','layerTransparentBackground','backgroundImageInput','backgroundImageFit','backgroundImageOpacity','backgroundImageOpacityValue','cropBackgroundImageBtn','removeBackgroundImageBtn'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/async function importBackgroundImage/);
   assert.match(script,/openCropEditor\('background'\)/);
   assert.match(script,/cropDraft\.kind==='background'\?project\.background/);
@@ -464,11 +569,38 @@ test('le planning accepte une image de fond ajustable, transparente ou un PNG tr
   assert.match(script,/project\.background\.imageAssetId/);
 });
 
+test('le fond utilisateur remplace aussi les décors plein écran d’Aventure',()=>{
+  assert.match(script,/hasUserBackground/);
+  assert.match(script,/hasTransparentBackground/);
+  assert.match(script,/veil\.role='templateBackgroundOverlay'/);
+  assert.match(script,/\['adventure','adventure2'\]\.includes\(raw\.template\)[\s\S]*element\.role='templateBackgroundOverlay'/);
+  assert.match(css,/\.artboard\.hasUserBackground \.role-templateBackground/);
+  assert.match(css,/\.artboard\.hasTransparentBackground \.role-templateBackground/);
+  assert.match(css,/\.artboard\.hasTransparentBackground \.role-templateBackgroundOverlay/);
+  assert.match(css,/\.cropDialog\{width:min\(980px,calc\(100vw - 32px\)\)/);
+  assert.match(css,/\.cropStage\{[^}]*min-width:0/);
+  assert.match(css,/\.cropControls\{[^}]*min-width:0/);
+});
+
+test('Tous les calques propose un raccourci synchronisé vers le fond transparent',()=>{
+  const manager=html.match(/<details class="layerManager">[\s\S]*?<div class="layerList" id="layerList"><\/div>/)?.[0]||'';
+  assert.match(manager,/id="layerTransparentBackground"/);
+  assert.ok(manager.indexOf('id="layerTransparentBackground"')<manager.indexOf('id="layerList"'));
+  assert.match(script,/els\.transparentBackground\.checked=!!bg\.transparent;els\.layerTransparentBackground\.checked=!!bg\.transparent/);
+  assert.match(script,/function setTransparentBackground\(enabled\)/);
+  assert.match(script,/els\.transparentBackground\.addEventListener\('change',\(\)=>setTransparentBackground\(els\.transparentBackground\.checked\)\)/);
+  assert.match(script,/els\.layerTransparentBackground\.addEventListener\('change',\(\)=>setTransparentBackground\(els\.layerTransparentBackground\.checked\)\)/);
+  assert.match(css,/\.layerTransparencyToggle/);
+});
+
 test('le PNG sérialise le vrai DOM sans remplacer l’aperçu par un raster',()=>{
   assert.doesNotMatch(html,/html2canvas|renderSurface/);
   assert.match(script,/function renderArtboardToCanvas\(\)/);
   assert.match(script,/function inlineStyle\(source,target,pseudo=''\)/);
   assert.match(script,/function exportClone\(\)/);
+  assert.match(script,/async function portableImageSrc\(image\)/);
+  assert.match(script,/target\.setAttribute\('src',await portableImageSrc\(source\)\)/);
+  assert.match(script,/copy=await exportClone\(\)/);
   assert.match(script,/new XMLSerializer\(\)\.serializeToString\(copy\)/);
   assert.match(script,/<foreignObject x=/);
   assert.match(script,/encodeURIComponent\(svg\)/);
@@ -508,9 +640,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.1\.13'/);
-  assert.equal(packageJson.version,'2.1.13');
-  assert.match(readme,/PlanningGPT V2\.1\.13/);
+  assert.match(script,/const VERSION = '2\.1\.36'/);
+  assert.equal(packageJson.version,'2.1.36');
+  assert.match(readme,/PlanningGPT V2\.1\.36/);
 });
 
 test('les textes libérés conservent les styles calculés des cartes',()=>{
