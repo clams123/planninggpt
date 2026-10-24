@@ -1,5 +1,13 @@
 # Historique des versions
 
+## 2.2.0 — Random verrouillable et diagnostic export
+
+- ajoute cinq verrous au générateur Random : disposition, cartes, couleurs, effets et typographie ;
+- conserve les trois derniers tirages et permet de les restaurer ;
+- transforme le statut d’export en diagnostic détaillé et sélectionnable ;
+- détecte les débordements, textes coupés ou trop petits, contrastes faibles, images absentes, QR invalide et fortes superpositions personnalisées ;
+- extrait les moteurs Random et diagnostic dans deux modules autonomes couverts par des tests comportementaux.
+
 ## 2.1.39 — Random compact
 
 - place le générateur Random dans un petit bouton à droite du titre « Modèles » ;

@@ -1,4 +1,4 @@
-# PlanningGPT V2.1.39
+# PlanningGPT V2.2.0
 
 PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twitch. Il associe les données structurées de la semaine à un éditeur visuel inspiré des outils de composition libre.
 

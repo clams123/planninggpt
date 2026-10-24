@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION = '2.1.39';
+  const VERSION = '2.2.0';
   const MODEL_REVISION = 15;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const CATEGORY_LIBRARY_KEY = 'planninggpt_v2_category_images';
@@ -80,9 +80,9 @@
   const $ = id => document.getElementById(id);
   const els = {
     app:$('appRoot'),
-    projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'), randomizeDesign:$('randomizeDesignBtn'), quickPlanningPanel:$('quickPlanningPanel'), detailedPlanningPanel:$('detailedPlanningPanel'), quickPlanningInput:$('quickPlanningInput'), quickPlanningFeedback:$('quickPlanningFeedback'), quickPlanningCreate:$('quickPlanningCreateBtn'), quickTemplateSelect:$('quickTemplateSelect'), quickTemplatePreview:$('quickTemplatePreview'),
+    projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'), randomizeDesign:$('randomizeDesignBtn'), randomSettings:$('randomSettingsBtn'), randomControls:$('randomControls'), randomRecent:$('randomRecent'), quickPlanningPanel:$('quickPlanningPanel'), detailedPlanningPanel:$('detailedPlanningPanel'), quickPlanningInput:$('quickPlanningInput'), quickPlanningFeedback:$('quickPlanningFeedback'), quickPlanningCreate:$('quickPlanningCreateBtn'), quickTemplateSelect:$('quickTemplateSelect'), quickTemplatePreview:$('quickTemplatePreview'),
     title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), posterEditor:$('posterEditor'), posterEyebrow:$('posterEyebrow'), posterHero:$('posterHero'), posterPlatform:$('posterPlatform'), posterProgramTitle:$('posterProgramTitle'), posterCallout:$('posterCallout'), posterFooter:$('posterFooter'), posterSlot1Time:$('posterSlot1Time'), posterSlot1Title:$('posterSlot1Title'), posterSlot1Details:$('posterSlot1Details'), posterSlot2Time:$('posterSlot2Time'), posterSlot2Title:$('posterSlot2Title'), posterSlot2Details:$('posterSlot2Details'), posterSlot3Time:$('posterSlot3Time'), posterSlot3Title:$('posterSlot3Title'), posterSlot3Details:$('posterSlot3Details'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayCardColor:$('dayCardColor'), dayTextLayers:$('dayTextLayersBtn'), allDayTextLayers:$('allDayTextLayersBtn'), dayTextLayersStatus:$('dayTextLayersStatus'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), dayImageOpacity:$('dayImageOpacity'), dayImageOpacityValue:$('dayImageOpacityValue'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
-    artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
+    artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), preflightPanel:$('preflightPanel'), preflightIssues:$('preflightIssues'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
     inspector:$('inspector'), closeInspector:$('closeInspectorBtn'), emptyInspector:$('emptyInspector'), propertyPanel:$('propertyPanel'), layerList:$('layerList'), layerSelect:$('layerSelect'), layerTransparentBackground:$('layerTransparentBackground'),
     propX:$('propX'), propY:$('propY'), propW:$('propW'), propH:$('propH'), propRotation:$('propRotation'), propText:$('propText'), propFontSize:$('propFontSize'), propFont:$('propFont'), propWeight:$('propWeight'), propFontStyle:$('propFontStyle'), propTransform:$('propTransform'), propAlign:$('propAlign'), propVAlign:$('propVAlign'), propVAlignField:$('propVAlignField'), propTextEffect:$('propTextEffect'), propColor:$('propColor'), propFill:$('propFill'), propColorField:$('propColorField'), propFillField:$('propFillField'), propOpacity:$('propOpacity'), textProperties:$('textProperties'), textContentField:$('textContentField'), imageProperties:$('imageProperties'), propImageFit:$('propImageFit'), cropImage:$('cropImageBtn'), replaceImage:$('replaceImageInput'), dayCardProperties:$('dayCardProperties'), propDayLayout:$('propDayLayout'), propShowDayName:$('propShowDayName'), propShowDayTime:$('propShowDayTime'), propShowDayTitle:$('propShowDayTitle'), propShowDayNote:$('propShowDayNote'), applyDayStyleAll:$('applyDayStyleAllBtn'), duplicate:$('duplicateElementBtn'), remove:$('deleteElementBtn'),
     modifierSelect:$('modifierSelect'), typePresetSelect:$('typePresetSelect'), eventBanner:$('eventBanner'), hideModifierLabels:$('hideModifierLabels'), resetLayout:$('resetLayoutBtn'), backgroundColorEditor:document.querySelector('.backgroundColorEditor'), backgroundColorPreview:$('backgroundColorPreview'), backgroundColorPrimary:$('backgroundColorPrimary'), backgroundColorPrimaryValue:$('backgroundColorPrimaryValue'), backgroundColorPrimaryLabel:$('backgroundColorPrimaryLabel'), backgroundColorSecondary:$('backgroundColorSecondary'), backgroundColorSecondaryValue:$('backgroundColorSecondaryValue'), backgroundColorSecondaryField:$('backgroundColorSecondaryField'), backgroundAngle:$('backgroundAngle'), backgroundAngleValue:$('backgroundAngleValue'), backgroundAngleField:$('backgroundAngleField'), resetBackgroundColors:$('resetBackgroundColorsBtn'), transparentBackground:$('transparentBackground'), backgroundImageInput:$('backgroundImageInput'), backgroundImageStatus:$('backgroundImageStatus'), backgroundImageFit:$('backgroundImageFit'), backgroundImageOpacity:$('backgroundImageOpacity'), backgroundImageOpacityValue:$('backgroundImageOpacityValue'), cropBackgroundImage:$('cropBackgroundImageBtn'), removeBackgroundImage:$('removeBackgroundImageBtn'),
@@ -128,7 +128,7 @@
   function minimumElementSize(element){return element?.type==='shape'?1:20;}
 
   function defaultProject(){
-    return {version:VERSION,modelRevision:MODEL_REVISION,name:'Mon planning Twitch',format:'wide',width:1600,height:900,template:'cloud',spotlightInitialized:false,modifier:'none',typePreset:'',hideModifierLabels:false,eventBanner:'',showQr:false,qrUrl:'https://twitch.tv/ton_lien',title:'Planning de la semaine',subtitle:'twitch.tv/ton_lien',poster:clone(DEFAULT_POSTER),background:{mode:'gradient',colors:['#f7b7df','#8399f5'],angle:135,transparent:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()},days:clone(DEFAULT_DAYS).map(day=>({...day,visible:true,star:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()})),elements:[]};
+    return {version:VERSION,modelRevision:MODEL_REVISION,name:'Mon planning Twitch',format:'wide',width:1600,height:900,template:'cloud',spotlightInitialized:false,modifier:'none',typePreset:'',randomLocks:{layout:false,cards:false,palette:false,effects:false,typography:false},randomHistory:[],hideModifierLabels:false,eventBanner:'',showQr:false,qrUrl:'https://twitch.tv/ton_lien',title:'Planning de la semaine',subtitle:'twitch.tv/ton_lien',poster:clone(DEFAULT_POSTER),background:{mode:'gradient',colors:['#f7b7df','#8399f5'],angle:135,transparent:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()},days:clone(DEFAULT_DAYS).map(day=>({...day,visible:true,star:false,imageSrc:'',imageAssetId:'',imageName:'',imageFit:'cover',imageOpacity:1,...normalizeImageCrop()})),elements:[]};
   }
   let project = defaultProject();
 
@@ -136,7 +136,7 @@
     if(!raw||typeof raw!=='object'||!Array.isArray(raw.days)||raw.days.length!==7||!Array.isArray(raw.elements))throw new Error('Projet V2 invalide');
     if(!['wide','square'].includes(raw.format)||(raw.format==='wide'&&(Number(raw.width)!==1600||Number(raw.height)!==900))||(raw.format==='square'&&(Number(raw.width)!==1080||Number(raw.height)!==1080)))throw new Error('Format V2 invalide');
     if(raw.template==='candy')raw.template='horror';if(raw.template==='violin2')raw.template='violin';if(!TEMPLATE_STYLE[raw.template])raw.template='cloud';
-    raw.modifier=MODIFIERS.includes(raw.modifier)?raw.modifier:'none';raw.typePreset=TYPE_PRESET_ALIASES[raw.typePreset]||raw.typePreset;raw.typePreset=TYPE_PRESETS[raw.typePreset]?raw.typePreset:'';raw.hideModifierLabels=!!raw.hideModifierLabels;raw.eventBanner=String(raw.eventBanner||'');raw.showQr=!!raw.showQr;raw.qrUrl=String(raw.qrUrl||raw.subtitle||'https://twitch.tv/ton_lien');
+    raw.modifier=MODIFIERS.includes(raw.modifier)?raw.modifier:'none';raw.typePreset=TYPE_PRESET_ALIASES[raw.typePreset]||raw.typePreset;raw.typePreset=TYPE_PRESETS[raw.typePreset]?raw.typePreset:'';raw.randomLocks=window.PlanningRandomizer.normalizeLocks(raw.randomLocks);raw.randomHistory=(Array.isArray(raw.randomHistory)?raw.randomHistory:[]).filter(item=>item&&TEMPLATE_STYLE[item.layout]&&TEMPLATE_STYLE[item.skin]&&TEMPLATE_STYLE[item.palette]).slice(0,3).map(item=>({layout:item.layout,skin:item.skin,palette:item.palette,angle:clamp(item.angle,0,360),modifier:MODIFIERS.includes(item.modifier)?item.modifier:'none',preset:TYPE_PRESETS[item.preset]?item.preset:''}));raw.hideModifierLabels=!!raw.hideModifierLabels;raw.eventBanner=String(raw.eventBanner||'');raw.showQr=!!raw.showQr;raw.qrUrl=String(raw.qrUrl||raw.subtitle||'https://twitch.tv/ton_lien');
     raw.name=String(raw.name||'Mon planning Twitch');raw.title=String(raw.title||'Planning de la semaine');raw.subtitle=String(raw.subtitle||'');raw.spotlightInitialized=!!raw.spotlightInitialized;raw.modelRevision=Math.max(0,Number(raw.modelRevision)||0);raw.version=VERSION;
     const poster=raw.poster&&typeof raw.poster==='object'?raw.poster:{};raw.poster={eyebrow:String(poster.eyebrow||DEFAULT_POSTER.eyebrow),hero:String(poster.hero||DEFAULT_POSTER.hero),platform:String(poster.platform||DEFAULT_POSTER.platform),programTitle:String(poster.programTitle||DEFAULT_POSTER.programTitle),slots:Array.from({length:3},(_,index)=>({time:String(poster.slots?.[index]?.time||DEFAULT_POSTER.slots[index].time),title:String(poster.slots?.[index]?.title||DEFAULT_POSTER.slots[index].title),details:String(poster.slots?.[index]?.details||DEFAULT_POSTER.slots[index].details)})),callout:String(poster.callout||DEFAULT_POSTER.callout),footer:String(poster.footer||DEFAULT_POSTER.footer)};
     raw.background=raw.background&&Array.isArray(raw.background.colors)&&raw.background.colors.length===2?raw.background:clone(TEMPLATE_STYLE[raw.template].bg);
@@ -586,7 +586,7 @@
     els.projectName.value=project.name;els.title.value=project.title;els.subtitle.value=project.subtitle;els.showQr.checked=!!project.showQr;els.qrUrl.value=project.qrUrl||'';renderQrControls();
     els.quickTemplateSelect.value=project.template;els.quickTemplatePreview.className=`templatePreview quickTemplatePreview tp-${project.template}`;
     document.querySelectorAll('.templateCard').forEach(card=>{const active=card.dataset.template===project.template;card.classList.toggle('isActive',active);card.setAttribute('aria-pressed',String(active));});
-    renderDays();renderPosterControls();renderModifierControls();renderTypePresetControls();renderBackgroundControls();renderCanvas();renderInspector();renderLayers();updateZoom();updateHistoryButtons();
+    renderDays();renderPosterControls();renderModifierControls();renderTypePresetControls();renderBackgroundControls();renderRandomControls();renderCanvas();renderInspector();renderLayers();updateZoom();updateHistoryButtons();
   }
   function renderDays(){
     els.dayStrip.innerHTML=DAY_SHORT.map((name,index)=>{const day=project.days[index],visible=day.visible!==false,action=visible?'Masquer':'Afficher';return `<div class="dayPickWrap${index===selectedDay?' isActive':''}${visible?'':' isHidden'}"><button class="dayPick" data-day="${index}" type="button">${day.star?'★ ':''}${name}</button><button class="dayToggle" data-toggle-day="${index}" type="button" aria-pressed="${visible}" title="${action} ${escapeHtml(day.name)}" aria-label="${action} ${escapeHtml(day.name)}">${visible?'●':'○'}</button></div>`;}).join('');
@@ -627,21 +627,29 @@
     if(!TEMPLATE_STYLE[name])return;
     const custom=project.elements.filter(element=>!element.builtIn).map(clone);buildTemplate(name);project.elements.push(...custom);selectedId='';renderAll();pushHistory();save();toast(name==='eventposter'&&message==='Modèle appliqué sans supprimer tes calques.'?`Affiche créée pour ${project.days[selectedDay].name}. Clique sur un autre jour pour la changer.`:message);
   }
-  function randomChoice(values,excluded=''){
-    const choices=values.filter(value=>value!==excluded);return choices[Math.floor(Math.random()*choices.length)]||values[0];
-  }
   function templateDisplayName(name){return document.querySelector(`.templateCard[data-template="${name}"] strong`)?.textContent||name;}
+  function currentDesignRecipe(){
+    const card=project.elements.find(element=>element.type==='day'),skin=Object.keys(TEMPLATE_STYLE).find(name=>TEMPLATE_STYLE[name].card===card?.variant)||project.template,palette=Object.keys(TEMPLATE_STYLE).find(name=>TEMPLATE_STYLE[name].bg.every((value,index)=>value.toLowerCase()===String(project.background.colors[index]||'').toLowerCase()))||project.template;
+    return {layout:project.template,skin,palette,angle:project.background.angle,modifier:project.modifier,preset:project.typePreset};
+  }
+  function randomRecipeLabel(recipe){return `${templateDisplayName(recipe.layout)} · cartes ${templateDisplayName(recipe.skin)}`;}
+  function renderRandomControls(){
+    document.querySelectorAll('[data-random-lock]').forEach(input=>{input.checked=!!project.randomLocks[input.dataset.randomLock];});
+    els.randomRecent.innerHTML=project.randomHistory.length?project.randomHistory.map((recipe,index)=>`<button class="randomRecentBtn" data-random-recent="${index}" type="button"><span>${escapeHtml(randomRecipeLabel(recipe))}</span><b>Restaurer</b></button>`).join(''):'<small>Aucun tirage pour le moment.</small>';
+  }
+  function applyRandomRecipe(recipe,{remember=false,preservePalette=false}={}){
+    const previousVisibility=project.days.map(day=>day.visible!==false),custom=project.elements.filter(element=>!element.builtIn).map(clone),skin=TEMPLATE_STYLE[recipe.skin],palette=TEMPLATE_STYLE[recipe.palette];
+    if(!skin||!palette||!TEMPLATE_STYLE[recipe.layout])return;
+    project.modifier=recipe.modifier;project.typePreset=recipe.preset;buildTemplate(recipe.layout,{keepBackground:true});project.days.forEach((day,index)=>{day.visible=previousVisibility[index];});
+    if(!preservePalette){project.background.mode='gradient';project.background.colors=[...palette.bg];project.background.angle=recipe.angle;}
+    const skinColors=defaultCardColors(skin.card);project.elements.filter(element=>element.type==='day').forEach(element=>Object.assign(element,{variant:skin.card,fill:skinColors.fill,color:skinColors.color,accent:skin.accent,effectOverride:false,layoutOverride:false}));
+    project.elements.push(...custom);if(remember)project.randomHistory=window.PlanningRandomizer.rememberRecipe(project.randomHistory,recipe);selectedId='';renderAll();pushHistory();save();
+  }
   function randomizePlanningDesign(){
-    const previousVisibility=project.days.map(day=>day.visible!==false),custom=project.elements.filter(element=>!element.builtIn).map(clone);
-    const layoutName=randomChoice(RANDOM_LAYOUTS,project.template),skinName=randomChoice(RANDOM_CARD_SKINS,layoutName),paletteName=randomChoice(Object.keys(TEMPLATE_STYLE),layoutName);
-    const modifier=randomChoice(MODIFIERS),preset=randomChoice(['',...Object.keys(TYPE_PRESETS)]),skin=TEMPLATE_STYLE[skinName],skinColors=defaultCardColors(skin.card),palette=TEMPLATE_STYLE[paletteName];
-    project.modifier=modifier;project.typePreset=preset;buildTemplate(layoutName,{keepBackground:true});project.days.forEach((day,index)=>{day.visible=previousVisibility[index];});
-    project.background.mode='gradient';project.background.colors=[...palette.bg];project.background.angle=Math.floor(Math.random()*361);
-    project.elements.filter(element=>element.type==='day').forEach(element=>Object.assign(element,{variant:skin.card,fill:skinColors.fill,color:skinColors.color,accent:skin.accent,effectOverride:false,layoutOverride:false}));
-    project.elements.push(...custom);selectedId='';renderAll();pushHistory();save();
+    const recipe=window.PlanningRandomizer.createRecipe({current:currentDesignRecipe(),pools:{layouts:RANDOM_LAYOUTS,skins:RANDOM_CARD_SKINS,palettes:Object.keys(TEMPLATE_STYLE),modifiers:MODIFIERS,presets:['',...Object.keys(TYPE_PRESETS)]},locks:project.randomLocks});
+    applyRandomRecipe(recipe,{remember:true,preservePalette:project.randomLocks.palette});
     els.randomizeDesign.classList.remove('isRolling');void els.randomizeDesign.offsetWidth;els.randomizeDesign.classList.add('isRolling');setTimeout(()=>els.randomizeDesign.classList.remove('isRolling'),420);
-    const modifierLabel=els.modifierSelect.selectedOptions[0]?.textContent||'Original',presetLabel=els.typePresetSelect.selectedOptions[0]?.textContent||'Style du modèle';
-    toast(`Random : ${templateDisplayName(layoutName)} · cartes ${templateDisplayName(skinName)} · ${modifierLabel} · ${presetLabel}`);
+    toast(`Random : ${randomRecipeLabel(recipe)} · ${els.modifierSelect.selectedOptions[0]?.textContent||'Original'} · ${els.typePresetSelect.selectedOptions[0]?.textContent||'Style du modèle'}`);
   }
   async function generateQuickPlanning(){
     const result=updateQuickPlanningFeedback();if(!result.entries.length||result.errors.length)return;
@@ -774,12 +782,11 @@
     renderPreflightStatus();
   }
   function renderPreflightStatus(){
-    const warnings=[];
-    if(project.elements.some(element=>element.opacity>0&&!isHiddenWithDay(element)&&(element.x<0||element.y<0||element.x+element.w>project.width||element.y+element.h>project.height)))warnings.push('élément hors du planning');
-    if(project.elements.some(element=>element.type==='image'&&!element.src)||project.days.some(day=>day.visible!==false&&day.imageAssetId&&!day.imageSrc)||(project.background.imageAssetId&&!project.background.imageSrc))warnings.push('image introuvable');
-    if(project.showQr&&!makeQr())warnings.push('QR invalide');
-    const overflow=[...els.artboard.querySelectorAll('.elText,.elDay')].some(node=>node.scrollHeight>node.clientHeight+2||node.scrollWidth>node.clientWidth+2);if(overflow)warnings.push('texte potentiellement coupé');
-    els.preflightStatus.textContent=warnings.length?`${warnings.length} point${warnings.length>1?'s':''} à vérifier`:'Prêt à exporter';els.preflightStatus.title=warnings.join(' · ');els.preflightStatus.classList.toggle('hasWarnings',!!warnings.length);
+    const overflowIds=[...els.artboard.querySelectorAll('.canvasElement[data-id]')].filter(wrapper=>{const node=wrapper.querySelector('.elText,.elDay');return node&&(node.scrollHeight>node.clientHeight+2||node.scrollWidth>node.clientWidth+2);}).map(wrapper=>wrapper.dataset.id);
+    const missingImageIds=[...project.elements.filter(element=>element.type==='image'&&!element.src).map(element=>element.id),...project.days.flatMap((day,index)=>day.visible!==false&&day.imageAssetId&&!day.imageSrc?[project.elements.find(element=>element.type==='day'&&element.dayIndex===index)?.id||'']:[]),...(project.background.imageAssetId&&!project.background.imageSrc?['']:[])];
+    const visibleProject={...project,elements:project.elements.filter(element=>!isHiddenWithDay(element))},issues=window.PlanningPreflight.inspectProject(visibleProject,{overflowIds,missingImageIds,qrValid:!project.showQr||makeQr()});
+    els.preflightStatus.textContent=issues.length?`${issues.length} point${issues.length>1?'s':''} à vérifier`:'Prêt à exporter';els.preflightStatus.title=issues.map(issue=>issue.label).join(' · ');els.preflightStatus.classList.toggle('hasWarnings',!!issues.length);
+    els.preflightIssues.innerHTML=issues.length?issues.map(issue=>`<button class="preflightIssue" type="button"${issue.elementId?` data-preflight-id="${escapeHtml(issue.elementId)}"`:' disabled'}>${escapeHtml(issue.label)}</button>`).join(''):'<div class="preflightOk">✓ Aucun problème détecté. Le planning est prêt à être exporté.</div>';
   }
   function updateZoom(){
     zoom=clamp(zoom,20,120);els.zoom.value=String(zoom);els.zoomValue.textContent=`${zoom}%`;
@@ -1032,6 +1039,11 @@
     els.quickTemplateSelect.addEventListener('change',()=>applyTemplateChoice(els.quickTemplateSelect.value,'Modèle choisi pour le planning rapide.'));
     document.querySelectorAll('.templateCard').forEach(button=>button.addEventListener('click',()=>applyTemplateChoice(button.dataset.template)));
     els.randomizeDesign.addEventListener('click',randomizePlanningDesign);
+    els.randomSettings.addEventListener('click',()=>{const open=els.randomControls.hidden;els.randomControls.hidden=!open;els.randomSettings.setAttribute('aria-expanded',String(open));});
+    els.randomControls.addEventListener('change',event=>{const input=event.target.closest('[data-random-lock]');if(!input)return;project.randomLocks[input.dataset.randomLock]=input.checked;save();});
+    els.randomRecent.addEventListener('click',event=>{const button=event.target.closest('[data-random-recent]');if(!button)return;const recipe=project.randomHistory[Number(button.dataset.randomRecent)];if(recipe){applyRandomRecipe(recipe);toast(`Tirage restauré : ${randomRecipeLabel(recipe)}.`);}});
+    els.preflightStatus.addEventListener('click',()=>{const open=els.preflightPanel.hidden;els.preflightPanel.hidden=!open;els.preflightStatus.setAttribute('aria-expanded',String(open));});
+    els.preflightIssues.addEventListener('click',event=>{const issueButton=event.target.closest('[data-preflight-id]');if(!issueButton)return;selectElement(issueButton.dataset.preflightId);els.preflightPanel.hidden=true;els.preflightStatus.setAttribute('aria-expanded','false');});
     document.querySelectorAll('[data-background-mode]').forEach(button=>button.addEventListener('click',()=>{project.background.mode=button.dataset.backgroundMode;renderBackgroundControls();renderCanvas();commit();toast(project.background.mode==='solid'?'Fond normal activé.':'Dégradé activé.');}));
     els.backgroundColorPrimary.addEventListener('input',()=>{project.background.colors[0]=els.backgroundColorPrimary.value;renderBackgroundControls();renderCanvas();commit();});
     els.backgroundColorSecondary.addEventListener('input',()=>{project.background.colors[1]=els.backgroundColorSecondary.value;renderBackgroundControls();renderCanvas();commit();});

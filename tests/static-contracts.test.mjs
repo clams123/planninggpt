@@ -5,6 +5,7 @@ import test from 'node:test';
 const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
 const script=await readFile(new URL('../v2.js',import.meta.url),'utf8');
 const css=await readFile(new URL('../v2.css',import.meta.url),'utf8');
+const preflightScript=await readFile(new URL('../preflight.js',import.meta.url),'utf8');
 const packageJson=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
 const readme=await readFile(new URL('../README_PlanningGPT.md',import.meta.url),'utf8');
 
@@ -402,7 +403,7 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   assert.doesNotMatch(html,/dayMovePanel|data-move-day|data-arrange/);
   assert.match(html,/data-panel="design"[^>]*>[\s\S]*?<span>3<\/span>Design<\/button>/);
   assert.match(html,/data-panel="planning"[^>]*>[\s\S]*?<span>1<\/span>Contenu<\/button>/);
-  assert.match(html,/<div class="panelTitle"><h2>Modèles<\/h2><button class="randomMixBtn" id="randomizeDesignBtn"[\s\S]*Random<\/button><\/div>/);
+  assert.match(html,/<div class="panelTitle"><h2>Modèles<\/h2>[\s\S]*id="randomizeDesignBtn"[\s\S]*Random<\/button>/);
   assert.doesNotMatch(html,/Choisis une ambiance|Modèle actuel/);
   assert.match(script,/card\.classList\.toggle\('isActive',active\)/);
   assert.match(css,/\.randomMixBtn\{/);
@@ -419,8 +420,17 @@ test('Random compose un modèle hybride sans perdre le contenu utilisateur',()=>
   assert.match(script,/function randomizePlanningDesign\(\)/);
   assert.match(script,/project\.background\.colors=\[\.\.\.palette\.bg\]/);
   assert.match(script,/variant:skin\.card,fill:skinColors\.fill,color:skinColors\.color/);
-  assert.match(script,/project\.elements\.push\(\.\.\.custom\);selectedId='';renderAll\(\);pushHistory\(\);save\(\)/);
+  assert.match(script,/function applyRandomRecipe\(recipe/);
   assert.match(script,/els\.randomizeDesign\.addEventListener\('click',randomizePlanningDesign\)/);
+});
+
+test('Random expose cinq verrous et trois tirages récents',()=>{
+  for(const id of ['randomSettingsBtn','randomControls','randomRecent'])assert.match(html,new RegExp(`id="${id}"`));
+  for(const lock of ['layout','cards','palette','effects','typography'])assert.match(html,new RegExp(`data-random-lock="${lock}"`));
+  assert.match(html,/randomizer\.js[\s\S]*preflight\.js[\s\S]*v2\.js/);
+  assert.match(script,/PlanningRandomizer\.createRecipe/);
+  assert.match(script,/PlanningRandomizer\.rememberRecipe/);
+  assert.match(script,/data-random-recent/);
 });
 
 test('les options de modèle sont repliées par défaut',()=>{
@@ -637,8 +647,16 @@ test('le stockage refuse un import non persistant et nettoie les ressources orph
 test('les contrôles avancés restent contextuels et le canvas signale les risques',()=>{
   for(const id of ['propColorField','propFillField','preflightStatus'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(script,/function renderPreflightStatus/);
-  assert.match(script,/élément hors du planning/);
-  assert.match(script,/texte potentiellement coupé/);
+  assert.match(preflightScript,/Élément hors du planning/);
+  assert.match(preflightScript,/Texte potentiellement coupé/);
+});
+
+test('le diagnostic détaillé ouvre des alertes qui sélectionnent leur calque',()=>{
+  for(const id of ['preflightStatus','preflightPanel','preflightIssues'])assert.match(html,new RegExp(`id="${id}"`));
+  assert.match(html,/<button[^>]+id="preflightStatus"/);
+  assert.match(script,/PlanningPreflight\.inspectProject/);
+  assert.match(script,/data-preflight-id/);
+  assert.match(script,/selectElement\(issueButton\.dataset\.preflightId\)/);
 });
 
 test('les calques sont réordonnables sans réintroduire les flèches',()=>{
@@ -658,9 +676,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.1\.39'/);
-  assert.equal(packageJson.version,'2.1.39');
-  assert.match(readme,/PlanningGPT V2\.1\.39/);
+  assert.match(script,/const VERSION = '2\.2\.0'/);
+  assert.equal(packageJson.version,'2.2.0');
+  assert.match(readme,/PlanningGPT V2\.2\.0/);
 });
 
 test('les textes libérés conservent les styles calculés des cartes',()=>{
