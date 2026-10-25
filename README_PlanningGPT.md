@@ -1,6 +1,8 @@
-# PlanningGPT V2.2.0
+# PlanningGPT V2.2.2
 
-PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twitch. Il associe les données structurées de la semaine à un éditeur visuel inspiré des outils de composition libre.
+**PlanningGPT** est un éditeur gratuit permettant de créer facilement un planning hebdomadaire personnalisé pour Twitch et les réseaux sociaux. Il propose de nombreux thèmes prédéfinis pour démarrer rapidement, tout en permettant de personnaliser entièrement les fonds, y compris leur transparence. Ajoutez vos images, textes, emojis, QR codes et effets, déplacez librement chaque élément ou utilisez le mode Random personnalisable, puis exportez le résultat en PNG. Tout fonctionne directement dans le navigateur, sans compte ni installation.
+
+PlanningGPT V2 associe les données structurées de la semaine à un éditeur visuel inspiré des outils de composition libre.
 
 ## Ce que permet la V2
 
@@ -13,7 +15,9 @@ PlanningGPT V2 est un studio créatif local spécialisé dans les plannings Twit
 - Régler indépendamment l’opacité de l’image de chaque jour sans atténuer les textes, la bordure ou la carte.
 - Utiliser le dégradé du modèle, importer une image comme fond global, la déplacer, la zoomer et l’étirer dans le même éditeur non destructif que les images de jour, ou exporter le planning sur un fond entièrement transparent.
 - Régler l’opacité de l’image de fond globale indépendamment du reste du planning.
-- Choisir parmi vingt et un modèles structurellement différents, dont Aventure, Aventure 2, Affiche, Twitch Live, Résonance WuWa, Duo et +, Duo Néon, Duo astral, Horreur VHS, Partition de violon et Fantasy VII.
+- Choisir parmi vingt-trois modèles structurellement différents, dont Carnet des saisons, Cathédrale noire, Aventure, Aventure 2, Affiche, Twitch Live, Résonance WuWa, Duo et +, Duo Néon, Duo astral, Horreur VHS, Partition de violon et Fantasy VII.
+- Le modèle Carnet des saisons mêle printemps, été, automne et hiver dans une composition originale : cartes organiques, cycle coloré et frise vectorielle, sans photo ni ressource distante imposée.
+- Le modèle Cathédrale noire propose une identité hardcore, métal et gothique : acier noirci, rouge sang, vitrail, chaînes et cartes en ogive, avec une composition originale qui reste lisible et personnalisable.
 - Utiliser Aventure 2 pour répartir les sept jours dans sept portails indépendants de même importance, avec l’image du jeu fondue sous une double jointure de brume magique bleue, sans grand portail central.
 - Composer une affiche pour une journée précise avec une accroche, un mot vedette, un bandeau plateforme, trois créneaux détaillés, une annonce bonus et un message final ; chaque bloc reste modifiable comme un calque normal.
 - Composer librement Duo et + avec deux à sept jours choisis dans la semaine ; les cartes sont automatiquement recentrées et redimensionnées quand leur nombre change.

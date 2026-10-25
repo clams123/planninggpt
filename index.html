@@ -9,17 +9,27 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>PlanningGPT V2 — Studio créatif</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23080b14'/%3E%3Cpath d='M17 14h30a5 5 0 0 1 5 5v29a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V19a5 5 0 0 1 5-5Z' fill='%238b5cf6'/%3E%3Cpath d='M21 10v10M43 10v10M13 27h38' stroke='white' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='m32 33 2.4 5 5.6.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9 5.6-.8Z' fill='%23f9a8d4'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="v2.css?v=2.2.0">
+  <link rel="stylesheet" href="v2.css?v=2.2.2">
 </head>
 <body>
 <div class="app" id="appRoot">
   <header class="topbar">
-    <div class="brand"><div class="brandMark">✦</div><div><strong>PlanningGPT</strong><small>Studio créatif · V2.2.0</small></div></div>
+    <div class="brand">
+      <div class="brandMark">✦</div>
+      <div class="brandText">
+        <strong>PlanningGPT</strong>
+        <small>Studio créatif · V2.2.2</small>
+      </div>
+    </div>
     <input class="projectName" id="projectName" maxlength="60" value="Mon planning Twitch" aria-label="Nom du projet">
     <div class="topActions">
       <button class="iconBtn" id="undoBtn" type="button" title="Annuler" aria-label="Annuler">↶</button>
       <button class="iconBtn" id="redoBtn" type="button" title="Rétablir" aria-label="Rétablir">↷</button>
       <button class="btn btn--primary" id="exportBtn" type="button">Exporter PNG</button>
+      <div class="projectInfoWrap">
+        <button class="iconBtn projectInfoBtn" id="projectInfoBtn" type="button" aria-label="À propos de PlanningGPT" aria-expanded="false" aria-controls="projectInfoTooltip">?</button>
+        <div class="projectInfoTooltip" id="projectInfoTooltip" role="tooltip" hidden><strong>À propos de PlanningGPT</strong>PlanningGPT est un éditeur gratuit permettant de créer facilement un planning hebdomadaire personnalisé pour Twitch et les réseaux sociaux. Il propose de nombreux thèmes prédéfinis pour démarrer rapidement, tout en permettant de personnaliser entièrement les fonds, y compris leur transparence. Ajoutez vos images, textes, emojis, QR codes et effets, déplacez librement chaque élément ou utilisez le mode Random personnalisable, puis exportez le résultat en PNG. Tout fonctionne directement dans le navigateur, sans compte ni installation.</div>
+      </div>
     </div>
   </header>
 
@@ -50,7 +60,7 @@
           <div class="quickTemplatePicker">
             <span class="templatePreview quickTemplatePreview tp-cloud" id="quickTemplatePreview" aria-hidden="true"></span>
             <label class="field quickTemplateField"><span>Modèle du planning</span><select id="quickTemplateSelect" aria-label="Modèle à utiliser pour le planning rapide">
-              <option value="cloud">Cloud gaming</option><option value="cyber">Cyber HUD</option><option value="rpg">Twitch Live</option><option value="manga">Manga pop</option><option value="cozy">Cozy desk</option><option value="arcade">RPG</option><option value="adventure">Aventure</option><option value="adventure2">Aventure 2</option><option value="agenda">Agenda éditorial</option><option value="polaroid">Mur Polaroid</option><option value="roadmap">Parcours live</option><option value="constellation">Résonance WuWa</option><option value="spotlight">Duo et +</option><option value="columns">Colonnes gaming</option><option value="bubblegrid">Grille pop</option><option value="horror">Horreur VHS</option><option value="violin">Partition de violon</option><option value="fantasy7">Fantasy VII</option><option value="neonduel">Duo Néon</option><option value="astralduo">Duo astral</option><option value="eventposter">Affiche</option>
+              <option value="cloud">Cloud gaming</option><option value="cyber">Cyber HUD</option><option value="rpg">Twitch Live</option><option value="manga">Manga pop</option><option value="cozy">Cozy desk</option><option value="seasonboard">Carnet des saisons</option><option value="arcade">RPG</option><option value="adventure">Aventure</option><option value="adventure2">Aventure 2</option><option value="agenda">Agenda éditorial</option><option value="polaroid">Mur Polaroid</option><option value="roadmap">Parcours live</option><option value="constellation">Résonance WuWa</option><option value="spotlight">Duo et +</option><option value="columns">Colonnes gaming</option><option value="bubblegrid">Grille pop</option><option value="horror">Horreur VHS</option><option value="violin">Partition de violon</option><option value="fantasy7">Fantasy VII</option><option value="neonduel">Duo Néon</option><option value="astralduo">Duo astral</option><option value="eventposter">Affiche</option>
             </select><small>Le rendu change tout de suite pour te permettre de vérifier ton choix.</small></label>
           </div>
           <button class="btn btn--primary btn--wide quickPlanningCreate" id="quickPlanningCreateBtn" type="button" disabled>Créer mon planning</button>
@@ -94,6 +104,7 @@
           <button class="templateCard" data-template="rpg" type="button"><span class="templatePreview tp-rpg"></span><strong>Twitch Live</strong></button>
           <button class="templateCard" data-template="manga" type="button"><span class="templatePreview tp-manga"></span><strong>Manga pop</strong></button>
           <button class="templateCard" data-template="cozy" type="button"><span class="templatePreview tp-cozy"></span><strong>Cozy desk</strong></button>
+          <button class="templateCard" data-template="seasonboard" type="button"><span class="templatePreview tp-seasonboard"></span><strong>Carnet des saisons</strong></button>
           <button class="templateCard" data-template="arcade" type="button"><span class="templatePreview tp-arcade"></span><strong>RPG</strong></button>
           <button class="templateCard" data-template="adventure" type="button"><span class="templatePreview tp-adventure"></span><strong>Aventure</strong></button>
           <button class="templateCard" data-template="adventure2" type="button"><span class="templatePreview tp-adventure2"></span><strong>Aventure 2</strong></button>
@@ -241,6 +252,6 @@
 <script src="storage.js"></script>
 <script src="randomizer.js"></script>
 <script src="preflight.js"></script>
-<script src="v2.js?v=2.2.0"></script>
+<script src="v2.js?v=2.2.2"></script>
 </body>
 </html>

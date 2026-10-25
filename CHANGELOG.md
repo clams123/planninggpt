@@ -1,5 +1,16 @@
 # Historique des versions
 
+## 2.2.2 — Cathédrale noire
+
+- ajoute un thème original hardcore, métal et gothique avec acier noirci, vitrail rouge, chaînes, rivets et cartes en ogive ;
+- adapte sa composition aux formats 16:9 et carré, aux images de jour, aux textes détachés, au mode Random et à l’export PNG ;
+- conserve une lisibilité élevée malgré une direction visuelle sombre et agressive.
+
+## 2.2.1 — Carnet des saisons
+
+- ajoute le modèle original « Carnet des saisons » : sept cartes organiques, cycle annuel coloré et ornements vectoriels évoquant printemps, été, automne et hiver, sans portrait intégré ;
+- conserve la personnalisation complète des cartes, des images, des textes et du fond dans les formats 16:9 et carré.
+
 ## 2.2.0 — Random verrouillable et diagnostic export
 
 - ajoute cinq verrous au générateur Random : disposition, cartes, couleurs, effets et typographie ;

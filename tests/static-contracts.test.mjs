@@ -20,10 +20,42 @@ test('les identifiants HTML sont uniques',()=>{
   assert.equal(new Set(ids).size,ids.length);
 });
 
-test('les vingt et un modèles de l’interface possèdent un style V2',()=>{
+test('un bouton après l’export présente le projet dans une infobulle accessible',()=>{
+  assert.doesNotMatch(html,/class="brandVersionTip"/);
+  assert.match(html,/id="exportBtn"[\s\S]*id="projectInfoBtn"[^>]*aria-expanded="false"[^>]*aria-controls="projectInfoTooltip"/);
+  assert.match(html,/id="projectInfoTooltip" role="tooltip" hidden/);
+  assert.match(html,/thèmes prédéfinis[\s\S]*fonds[\s\S]*transparence[\s\S]*mode Random[\s\S]*exportez le résultat en PNG/);
+  assert.match(script,/projectInfoBtn:\$\('projectInfoBtn'\)/);
+  assert.match(script,/els\.projectInfoBtn\.addEventListener\('click'/);
+  assert.match(script,/event\.key==='Escape'[\s\S]*closeProjectInfo/);
+});
+
+test('les vingt-trois modèles de l’interface possèdent un style V2',()=>{
   const templates=[...html.matchAll(/data-template="([^"]+)"/g)].map(match=>match[1]);
-  assert.equal(templates.length,21);
+  assert.equal(templates.length,23);
   templates.forEach(name=>assert.match(script,new RegExp(`${name}:\\{bg:`)));
+});
+
+test('Carnet des saisons fournit une composition originale utilisable toute l’année',()=>{
+  assert.match(html,/value="seasonboard">Carnet des saisons<\/option>/);
+  assert.match(html,/data-template="seasonboard"[\s\S]*<strong>Carnet des saisons<\/strong>/);
+  assert.match(script,/seasonboard:\{bg:/);
+  assert.match(script,/if\(style==='seasonboard'\)/);
+  assert.match(script,/if\(name==='seasonboard'\)/);
+  assert.match(script,/function seasonWheel\(\)/);
+  assert.match(script,/function seasonGarden\(\)/);
+  for(const token of ['tp-seasonboard','template-seasonboard','variant-seasonboard'])assert.match(css,new RegExp(`\\.${token}`));
+  assert.doesNotMatch(script,/seasonboard[^\n]*(portrait|photo|citrouille|pumpkin)/i);
+});
+
+test('Cathédrale noire fournit une composition métal gothique complète',()=>{
+  assert.match(html,/value="metalcore">Cathédrale noire<\/option>/);
+  assert.match(html,/data-template="metalcore"[\s\S]*<strong>Cathédrale noire<\/strong>/);
+  assert.match(script,/metalcore:\{bg:/);
+  assert.match(script,/if\(style==='metalcore'\)/);
+  assert.match(script,/if\(name==='metalcore'\)/);
+  assert.match(script,/function ironCathedral\(\)/);
+  for(const token of ['tp-metalcore','template-metalcore','variant-metalcore'])assert.match(css,new RegExp(`\\.${token}`));
 });
 
 test('Affiche crée un événement centré sur une seule journée',()=>{
@@ -557,7 +589,7 @@ test('les textes intégrés se déplacent dans leur carte avec une sélection se
   assert.match(css,/Texte · reste dans la carte/);
 });
 
-test('alignements effets et compositions utilisateur priment sur les vingt et un modèles',()=>{
+test('alignements effets et compositions utilisateur priment sur les vingt-trois modèles',()=>{
   const horizontal=html.indexOf('id="propAlign"'),vertical=html.indexOf('id="propVAlign"'),textCase=html.indexOf('id="propTransform"');
   assert.ok(horizontal>0&&vertical>horizontal&&textCase>vertical,'les deux positions doivent être voisines avant la casse');
   assert.match(html,/id="propVAlign"[\s\S]*?<option value="theme">Selon le modèle<\/option>/);
@@ -676,9 +708,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.2\.0'/);
-  assert.equal(packageJson.version,'2.2.0');
-  assert.match(readme,/PlanningGPT V2\.2\.0/);
+  assert.match(script,/const VERSION = '2\.2\.2'/);
+  assert.equal(packageJson.version,'2.2.2');
+  assert.match(readme,/PlanningGPT V2\.2\.2/);
 });
 
 test('les textes libérés conservent les styles calculés des cartes',()=>{

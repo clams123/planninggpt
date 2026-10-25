@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION = '2.2.0';
+  const VERSION = '2.2.2';
   const MODEL_REVISION = 15;
   const STORAGE_KEY = 'planninggpt_v2_project';
   const CATEGORY_LIBRARY_KEY = 'planninggpt_v2_category_images';
@@ -46,6 +46,8 @@
     rpg:{bg:['#120b1d','#6f2dc5'],angle:145,card:'twitch',text:'#ffffff',accent:'#bf94ff'},
     manga:{bg:['#fff8ff','#d8c9ff'],angle:125,card:'manga',text:'#17121f',accent:'#a855f7'},
     cozy:{bg:['#3a241f','#a96650'],angle:135,card:'cozy',text:'#fff2dc',accent:'#f3c98b'},
+    seasonboard:{bg:['#eef4e8','#e9dff4'],angle:135,card:'seasonboard',text:'#263238',accent:'#5c8f82'},
+    metalcore:{bg:['#050506','#251016'],angle:145,card:'metalcore',text:'#f0e9df',accent:'#a7192f'},
     arcade:{bg:['#0d2d29','#496b3c'],angle:135,card:'arcade',text:'#f7edce',accent:'#e5c473'},
     adventure:{bg:['#030b12','#0b2a38'],angle:145,card:'adventure',text:'#edfaff',accent:'#58d8ff'},
     adventure2:{bg:['#020b10','#0b3027'],angle:145,card:'adventure2',text:'#edfaff',accent:'#64dcff'},
@@ -80,7 +82,7 @@
   const $ = id => document.getElementById(id);
   const els = {
     app:$('appRoot'),
-    projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), saveStatus:$('saveStatus'), randomizeDesign:$('randomizeDesignBtn'), randomSettings:$('randomSettingsBtn'), randomControls:$('randomControls'), randomRecent:$('randomRecent'), quickPlanningPanel:$('quickPlanningPanel'), detailedPlanningPanel:$('detailedPlanningPanel'), quickPlanningInput:$('quickPlanningInput'), quickPlanningFeedback:$('quickPlanningFeedback'), quickPlanningCreate:$('quickPlanningCreateBtn'), quickTemplateSelect:$('quickTemplateSelect'), quickTemplatePreview:$('quickTemplatePreview'),
+    projectName:$('projectName'), undo:$('undoBtn'), redo:$('redoBtn'), resetPlanning:$('resetPlanningBtn'), export:$('exportBtn'), projectInfoBtn:$('projectInfoBtn'), projectInfoTooltip:$('projectInfoTooltip'), saveStatus:$('saveStatus'), randomizeDesign:$('randomizeDesignBtn'), randomSettings:$('randomSettingsBtn'), randomControls:$('randomControls'), randomRecent:$('randomRecent'), quickPlanningPanel:$('quickPlanningPanel'), detailedPlanningPanel:$('detailedPlanningPanel'), quickPlanningInput:$('quickPlanningInput'), quickPlanningFeedback:$('quickPlanningFeedback'), quickPlanningCreate:$('quickPlanningCreateBtn'), quickTemplateSelect:$('quickTemplateSelect'), quickTemplatePreview:$('quickTemplatePreview'),
     title:$('planningTitle'), subtitle:$('planningSubtitle'), showQr:$('showQr'), qrUrl:$('qrUrl'), qrUrlField:$('qrUrlField'), qrStatus:$('qrStatus'), dayStrip:$('dayStrip'), visibleDaysStatus:$('visibleDaysStatus'), showAllDays:$('showAllDaysBtn'), hideOffDays:$('hideOffDaysBtn'), posterEditor:$('posterEditor'), posterEyebrow:$('posterEyebrow'), posterHero:$('posterHero'), posterPlatform:$('posterPlatform'), posterProgramTitle:$('posterProgramTitle'), posterCallout:$('posterCallout'), posterFooter:$('posterFooter'), posterSlot1Time:$('posterSlot1Time'), posterSlot1Title:$('posterSlot1Title'), posterSlot1Details:$('posterSlot1Details'), posterSlot2Time:$('posterSlot2Time'), posterSlot2Title:$('posterSlot2Title'), posterSlot2Details:$('posterSlot2Details'), posterSlot3Time:$('posterSlot3Time'), posterSlot3Title:$('posterSlot3Title'), posterSlot3Details:$('posterSlot3Details'), dayName:$('dayName'), dayTime:$('dayTime'), dayStatus:$('dayStatus'), dayTitle:$('dayTitle'), dayNote:$('dayNote'), dayCardColor:$('dayCardColor'), dayTextLayers:$('dayTextLayersBtn'), allDayTextLayers:$('allDayTextLayersBtn'), dayTextLayersStatus:$('dayTextLayersStatus'), dayStar:$('dayStar'), dayImageInput:$('dayImageInput'), dayImageStatus:$('dayImageStatus'), dayImageFit:$('dayImageFit'), dayImageOpacity:$('dayImageOpacity'), dayImageOpacityValue:$('dayImageOpacityValue'), cropDayImage:$('cropDayImageBtn'), removeDayImage:$('removeDayImageBtn'),
     artboard:$('artboard'), viewport:$('canvasViewport'), sizer:$('canvasSizer'), canvasLabel:$('canvasLabel'), preflightStatus:$('preflightStatus'), preflightPanel:$('preflightPanel'), preflightIssues:$('preflightIssues'), zoom:$('zoomInput'), zoomValue:$('zoomValue'), zoomOut:$('zoomOutBtn'), zoomIn:$('zoomInBtn'), grid:$('toggleGridBtn'),
     inspector:$('inspector'), closeInspector:$('closeInspectorBtn'), emptyInspector:$('emptyInspector'), propertyPanel:$('propertyPanel'), layerList:$('layerList'), layerSelect:$('layerSelect'), layerTransparentBackground:$('layerTransparentBackground'),
@@ -192,12 +194,15 @@
   function fantasySwordWatermark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 720"><defs><linearGradient id="b" x1="0" x2="1"><stop stop-color="#253a39"/><stop offset=".5" stop-color="#d6fff0"/><stop offset="1" stop-color="#142625"/></linearGradient></defs><g stroke="#5df2ae" stroke-linejoin="round"><path fill="url(#b)" stroke-width="5" d="M78 545 91 80l20-65 20 65 12 465-32 76Z"/><path fill="#152725" stroke-width="7" d="m32 536 158 0-18 35H50Z"/><path fill="#10201e" stroke-width="6" d="M94 568h34v105H94z"/><path fill="#5df2ae" stroke-width="4" d="m72 687 39-22 39 22-39 18Z"/><circle cx="111" cy="553" r="15" fill="#07110f" stroke-width="6"/><path fill="none" stroke-width="3" opacity=".7" d="M111 90v425M98 118h26M96 165h30"/></g></svg>`;}
   function questCrestWatermark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><g fill="none" stroke="#e5c473" stroke-linecap="round" stroke-linejoin="round"><circle cx="200" cy="200" r="174" stroke-width="3" opacity=".6"/><circle cx="200" cy="200" r="151" stroke-width="2" opacity=".35"/><path stroke-width="8" d="m200 69 42 74h-84zm-49 83 42 74h-84zm98 0 42 74h-84z"/><path stroke-width="2" opacity=".55" d="M200 29v30m0 282v30M29 200h30m282 0h30M74 74l21 21m210 210 21 21M326 74l-21 21M95 305l-21 21"/><path stroke-width="7" d="m200 229-12 85 12 23 12-23-12-85zm-28 59h56m-28 49v26"/></g></svg>`;}
   function resonanceWatermark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260"><g fill="none" stroke="#167a82" stroke-linecap="round"><path stroke-width="5" d="M8 144c62-112 105 92 170-8s112 77 176-11 110 79 174-4 107 48 184-69"/><path stroke-width="2" opacity=".55" d="M5 174c71-67 118 48 187-12s112 45 180-9 111 41 177-10 101 24 168-37"/><circle cx="548" cy="91" r="65" stroke-width="3"/><circle cx="548" cy="91" r="41" stroke-width="2"/><circle cx="548" cy="91" r="13" fill="#167a82" stroke="none"/><path stroke-width="3" d="M548 8v22M548 152v22M465 91h22M609 91h22"/></g></svg>`;}
+  function seasonWheel(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><g fill="none" stroke-linecap="round"><circle cx="200" cy="200" r="154" stroke="#ffffff" stroke-width="18" opacity=".72"/><path d="M200 46a154 154 0 0 1 154 154" stroke="#f2bf57" stroke-width="20"/><path d="M354 200a154 154 0 0 1-154 154" stroke="#d78051" stroke-width="20"/><path d="M200 354A154 154 0 0 1 46 200" stroke="#8db8d8" stroke-width="20"/><path d="M46 200A154 154 0 0 1 200 46" stroke="#79b98f" stroke-width="20"/><path d="M200 60v280M60 200h280" stroke="#ffffff" stroke-width="5" opacity=".7"/></g><g fill="#fff" opacity=".9"><circle cx="122" cy="121" r="19"/><circle cx="278" cy="121" r="19"/><circle cx="278" cy="279" r="19"/><circle cx="122" cy="279" r="19"/></g><g fill="#263238" font-family="Arial" font-size="25" font-weight="700" text-anchor="middle"><text x="122" y="130">&#10047;</text><text x="278" y="130">&#9728;</text><text x="278" y="288">&#9670;</text><text x="122" y="288">&#10022;</text></g></svg>`;}
+  function seasonGarden(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 220"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 184c178-104 281 45 433-22s277-10 372 9 235 13 371-58" stroke="#5c8f82" stroke-width="8" opacity=".75"/><path d="M148 138c-8-54 29-88 67-72 9 45-17 78-67 72Zm188 29c-27-43-9-81 30-85 27 35 17 73-30 85Z" fill="#8fc79d" stroke="#527b65" stroke-width="4"/><circle cx="564" cy="145" r="46" fill="#f3c45d" stroke="#d89343" stroke-width="5"/><path d="M564 75v-35m0 215v-35m-70-75h-38m216 0h-38m-120-50-28-27m156 155-28-27m0-101 28-27M486 223l28-27" stroke="#d89343" stroke-width="7"/><path d="M832 162c22-53 69-57 98-24-15 47-59 60-98 24Z" fill="#d78658" stroke="#a45b3d" stroke-width="4"/><g stroke="#7ca8cc" stroke-width="6"><path d="M1060 72v112m-48-84 96 56m0-56-96 56m48-132v208"/><path d="m1047 45 13 27 13-27m-13 160-13 27m-59-117 24-15-2-29m112 0-2 29 24 15m-24 41 2 29 24 15m-134 0 2-29-24-15"/></g></g></svg>`;}
+  function ironCathedral(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700"><defs><linearGradient id="iron" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#111216"/><stop offset=".5" stop-color="#596069"/><stop offset="1" stop-color="#08090b"/></linearGradient><radialGradient id="glass"><stop stop-color="#a7192f" stop-opacity=".82"/><stop offset="1" stop-color="#25050c" stop-opacity=".18"/></radialGradient></defs><g fill="none" stroke="url(#iron)" stroke-linejoin="round"><path stroke-width="18" d="M92 650V277L214 91l103 155L450 34l133 212L686 91l122 186v373"/><path stroke-width="9" d="M148 650V310l66-105 66 105v340m340 0V310l66-105 66 105v340M362 650V276l88-137 88 137v374"/><path stroke-width="5" opacity=".75" d="M67 650h766M119 384h190m282 0h190M337 335h226"/></g><g fill="url(#glass)" stroke="#a8adb4"><circle cx="450" cy="296" r="77" stroke-width="8"/><circle cx="450" cy="296" r="52" stroke-width="4"/><path d="M450 219v154M373 296h154m-131-54 108 108m0-108L396 350" fill="none" stroke-width="5"/></g><g fill="#a7192f"><path d="m450 405 22 43 48 7-35 34 8 48-43-23-43 23 8-48-35-34 48-7Z"/><circle cx="214" cy="333" r="9"/><circle cx="686" cy="333" r="9"/></g><g fill="none" stroke="#8c929a" stroke-width="8"><path d="M52 44c82 84 91 162 78 264M848 44c-82 84-91 162-78 264"/><path d="M37 31l30 28m-4 18 31 25m-3 22 33 21m739-114-30 28m4 18-31 25m3 22-33 21"/></g></svg>`;}
   function twitchLogoMark(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260"><path fill="#fff" d="M16 8h208v162l-57 57h-47l-48 33v-33H16Z"/><path fill="#9147ff" d="M32 24h176v139l-48 48h-48l-24 18v-18H32Z"/><path fill="#fff" d="M62 50h116v83l-33 33h-39l-27 21v-21H62Z"/><path fill="#9147ff" d="M95 72h20v55H95zm43 0h20v55h-20z"/></svg>`;}
   function normalizeImageCrop(element={}){return {cropZoom:clamp(element.cropZoom??1,.1,3),cropX:clamp(element.cropX??0,-200,200),cropY:clamp(element.cropY??0,-200,200),stretchX:clamp(element.stretchX??1,.5,3),stretchY:clamp(element.stretchY??1,.5,3)};}
   function imageCropStyle(element){const crop=normalizeImageCrop(element);return `object-fit:${element.fit||'cover'};left:calc(50% + ${crop.cropX}%);top:calc(50% + ${crop.cropY}%);transform:translate(-50%,-50%) scale(${crop.cropZoom}) scaleX(${crop.stretchX}) scaleY(${crop.stretchY})`;}
   function defaultCardColors(variant){
     return {
-      cloud:{fill:'#f7f1ff',color:'#292b63'},eventposter:{fill:'#4b1732',color:'#fff4df'},eventpostersquare:{fill:'#4b1732',color:'#fff4df'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff2dc',color:'#4d3226'},arcade:{fill:'#102b28',color:'#f7edce'},adventure:{fill:'#102a2a',color:'#fff3cf'},adventure2:{fill:'#061521',color:'#edfaff'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#25124f',color:'#ffffff'},bubblegrid:{fill:'#15e7ff',color:'#17052e'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
+      cloud:{fill:'#f7f1ff',color:'#292b63'},eventposter:{fill:'#4b1732',color:'#fff4df'},eventpostersquare:{fill:'#4b1732',color:'#fff4df'},cyber:{fill:'#071321',color:'#d9faff'},rpg:{fill:'#e9d2a2',color:'#3f2b1d'},twitch:{fill:'#181022',color:'#ffffff'},manga:{fill:'#ffffff',color:'#17121f'},cozy:{fill:'#fff2dc',color:'#4d3226'},seasonboard:{fill:'#dcebd8',color:'#263238'},metalcore:{fill:'#0c0c0f',color:'#f0e9df'},arcade:{fill:'#102b28',color:'#f7edce'},adventure:{fill:'#102a2a',color:'#fff3cf'},adventure2:{fill:'#061521',color:'#edfaff'},agenda:{fill:'#fffdf8',color:'#18324a'},polaroid:{fill:'#fffdf8',color:'#24364b'},roadmap:{fill:'#0b2c30',color:'#effff9'},constellation:{fill:'#111536',color:'#f5f3ff'},wuwa:{fill:'#f4faf9',color:'#153f45'},spotlight:{fill:'#171717',color:'#ffffff'},columns:{fill:'#25124f',color:'#ffffff'},bubblegrid:{fill:'#15e7ff',color:'#17052e'},horror:{fill:'#10090b',color:'#ffffff'},violin:{fill:'#fffaf0',color:'#3e291c'},fantasy7:{fill:'#051011',color:'#effff7'},neonblue:{fill:'#040a15',color:'#ffffff'},neonred:{fill:'#130409',color:'#ffffff'},astralblue:{fill:'#07152e',color:'#ffffff'},astralrose:{fill:'#2a071d',color:'#ffffff'}
     }[variant] || {fill:'#ffffff',color:'#111827'};
   }
 
@@ -221,6 +226,14 @@
     if(style==='spotlight')return spotlightCardLayout(width,height);
     if(style==='neonduel')return neonDuelCardLayout(width,height);
     if(style==='astralduo')return featureDuoCardLayout(width,height);
+    if(style==='seasonboard'){
+      if(square)return [[62,275,300,245],[390,250,300,245],[718,275,300,245],[42,600,240,260],[304,570,240,260],[566,600,240,260],[828,570,210,260]].map(([x,y,w,h])=>({x,y,w,h}));
+      return [[72,270,340,235],[444,235,340,235],[816,270,340,235],[1188,235,340,235],[190,575,370,230],[615,540,370,230],[1040,575,370,230]].map(([x,y,w,h])=>({x,y,w,h}));
+    }
+    if(style==='metalcore'){
+      if(square)return [[55,270,305,285],[388,238,305,285],[721,270,305,285],[38,610,235,310],[294,580,235,310],[550,580,235,310],[806,610,235,310]].map(([x,y,w,h])=>({x,y,w,h}));
+      return [[58,260,355,270],[433,225,355,270],[813,225,355,270],[1188,260,355,270],[165,570,390,255],[605,540,390,255],[1045,570,390,255]].map(([x,y,w,h])=>({x,y,w,h}));
+    }
     if(style==='columns'){
       if(!square){const gap=18,margin=45,cardW=(width-margin*2-gap*6)/7;return Array.from({length:7},(_,i)=>({x:margin+i*(cardW+gap),y:270,w:cardW,h:515}));}
       const gap=18,margin=42,topW=(width-margin*2-gap*3)/4,bottomW=(width-margin*2-gap*2)/3;
@@ -305,6 +318,8 @@
     if(name==='columns'){Object.assign(heading,{align:'left',x:width===height?45:55,y:38,w:width===height?width-90:1040,font:'display',fontSize:width===height?62:80,color:'#ffe45e',transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:width===height?45:820,w:width===height?width-90:720,y:158,font:'typewriter',fontSize:23,color:'#55f3ff',transform:'uppercase',letterSpacing:3,effect:'neon'});}
     if(name==='bubblegrid'){Object.assign(heading,{align:'left',x:width===height?45:70,y:38,w:width===height?width-90:1110,font:'display',color:'#fff23d',fontSize:width===height?62:82,transform:'uppercase',letterSpacing:4,effect:'hard'});Object.assign(subtitle,{align:'right',x:width===height?45:820,y:157,w:width===height?width-90:690,font:'comic',color:'#63f5ff',fontSize:25,transform:'uppercase',letterSpacing:2,effect:'hard'});}
     if(name==='cozy'){Object.assign(heading,{x:width===height?85:125,y:width===height?52:42,w:width===height?width-170:width-250,font:'hand',fontSize:width===height?58:72,color:'#fff2dc',weight:700,letterSpacing:1,effect:'soft'});Object.assign(subtitle,{x:width===height?180:400,y:width===height?150:142,w:width===height?width-360:width-800,font:'serif',fontStyle:'italic',fontSize:23,color:'#f3c98b',weight:700});}
+    if(name==='seasonboard'){Object.assign(heading,{align:'center',x:width===height?90:250,y:width===height?48:42,w:width===height?width-180:width-500,h:82,font:'comic',fontSize:width===height?52:62,color:'#263238',weight:900,letterSpacing:-1,effect:'none'});Object.assign(subtitle,{align:'center',x:width===height?180:430,y:width===height?142:137,w:width===height?width-360:width-860,h:36,font:'rounded',fontSize:width===height?19:22,color:'#4f746d',weight:800,letterSpacing:2,effect:'none'});}
+    if(name==='metalcore'){Object.assign(heading,{align:'center',x:width===height?70:180,y:width===height?42:34,w:width===height?width-140:width-360,h:96,font:'serif',fontStyle:'italic',fontSize:width===height?58:76,color:'#f0e9df',weight:900,transform:'uppercase',letterSpacing:5,effect:'hard'});Object.assign(subtitle,{align:'center',x:width===height?170:400,y:width===height?145:142,w:width===height?width-340:width-800,h:34,font:'condensed',fontSize:width===height?18:22,color:'#b7bbc1',weight:900,transform:'uppercase',letterSpacing:6,effect:'none'});}
     if(name==='arcade'){Object.assign(heading,{x:width===height?90:160,y:52,w:width===height?width-180:width-320,h:96,font:'serif',fontSize:width===height?63:76,color:'#f7edce',weight:900,letterSpacing:2,effect:'soft'});Object.assign(subtitle,{x:width===height?180:430,y:157,w:width===height?width-360:width-860,h:38,font:'serif',fontStyle:'italic',fontSize:24,color:'#e5c473',weight:700});}
     if(name==='adventure'){Object.assign(heading,{align:width===height?'center':'left',x:width===height?60:55,y:width===height?32:38,w:width===height?width-120:680,h:width===height?74:66,font:'condensed',fontSize:width===height?46:48,color:'#edfaff',weight:900,transform:'uppercase',letterSpacing:4,effect:'neon'});Object.assign(subtitle,{align:width===height?'center':'left',x:width===height?120:60,y:width===height?110:108,w:width===height?width-240:540,h:36,font:'sans',fontSize:width===height?18:21,color:'#8de8ff',weight:800,transform:'uppercase',letterSpacing:3,effect:'soft'});}
     if(name==='adventure2'){Object.assign(heading,{align:'center',x:width===height?80:190,y:width===height?34:28,w:width===height?width-160:width-380,h:72,font:'condensed',fontSize:width===height?48:56,color:'#f4fcff',weight:900,transform:'uppercase',letterSpacing:5,effect:'neon'});Object.assign(subtitle,{align:'center',x:width===height?140:360,y:width===height?115:105,w:width===height?width-280:width-720,h:34,font:'mono',fontSize:width===height?17:20,color:'#8de8ff',weight:900,transform:'uppercase',letterSpacing:4,effect:'neon'});}
@@ -327,6 +342,14 @@
       [[width-250,48,166],[width-215,83,96],[32,height-205,150]].forEach(([x,y,size],index)=>{const ring=shapeElement('circle',x,y,size,size,index===1?'#4ed6d5':'#e8f5f3',size/2);ring.borderColor='#167a82';ring.borderWidth=index===1?4:2;ring.opacity=index===1 ? .24 : .42;ring.locked=true;elements.unshift(ring);});
       const resonanceLabel=textElement('RESONANCE // WEEK 07',62,210,430,28,16,'#167a82','mono',900,'left');resonanceLabel.letterSpacing=4;resonanceLabel.locked=true;elements.push(resonanceLabel);
     }
+    if(name==='seasonboard'){
+      const wheel=svgImageElement(seasonWheel(),width/2-(width===height?205:225),178,width===height?410:450,width===height?410:450,'Roue des quatre saisons');wheel.opacity=.2;wheel.role='templateBackgroundOverlay';elements.unshift(wheel);
+      const titleRail=shapeElement('rect',width===height?205:435,width===height?207:196,width===height?width-410:width-870,5,'#5c8f82',3);titleRail.opacity=.58;elements.unshift(titleRail);
+    }
+    if(name==='metalcore'){
+      const cathedral=svgImageElement(ironCathedral(),width/2-(width===height?330:390),130,width===height?660:780,width===height?520:610,'Cathédrale d’acier');cathedral.opacity=.2;cathedral.role='templateBackgroundOverlay';elements.unshift(cathedral);
+      const redRail=shapeElement('rect',width===height?225:470,width===height?210:205,width===height?width-450:width-940,4,'#a7192f',2);redRail.opacity=.84;elements.unshift(redRail);
+    }
     const layouts=cardLayout(name,width,height);
     layouts.forEach((layout,index)=>{
       const card=dayElement(layout.dayIndex??index,layout.x,layout.y,layout.w,layout.h,style.card);
@@ -348,6 +371,16 @@
         card.rotation=[-2,2,-1,2,1,-2,1][index];
       }
       if(name==='cozy')Object.assign(card,{contentLayout:'standard',font:'rounded',fontSize:22,fill:'#fff2dc',color:'#4d3226',accent:'#d27b57'});
+      if(name==='seasonboard'){
+        const fills=['#dcebd8','#f7d58b','#dca085','#d7e6f2','#cce7df','#edd8ef','#f1c9d7'],accents=['#5c9c72','#d89535','#b96545','#6999bd','#4f9b90','#9878aa','#cc6f91'];
+        Object.assign(card,{contentLayout:'standard',align:'left',font:'comic',fontSize:width===height?18:20,fill:fills[index],color:'#263238',accent:accents[index]});
+        card.rotation=[-1,1,-1,1,-1,1,-1][index];
+      }
+      if(name==='metalcore'){
+        const fills=['#0b0b0d','#151116','#090a0c','#160b0e','#111216','#09090b','#180d11'],accents=['#a7192f','#c3c6ca','#7c1828','#a8adb4','#94172a','#d0c9bd','#b51c35'];
+        Object.assign(card,{contentLayout:'standard',align:'center',font:'condensed',fontSize:width===height?19:21,fill:fills[index],color:'#f0e9df',accent:accents[index]});
+        card.rotation=[-1,1,-1,1,1,-1,1][index];
+      }
       if(name==='arcade')Object.assign(card,{contentLayout:'standard',font:'serif',fontSize:width===height?22:24,fill:'#102b28',color:'#f7edce',accent:'#e5c473'});
       if(name==='adventure')Object.assign(card,{contentLayout:'standard',font:'condensed',fontSize:width===height?19:20,fill:'#061521',color:'#edfaff',accent:index%2?'#66e3ff':'#43b9ff'});
       if(name==='adventure2')Object.assign(card,{contentLayout:'standard',align:'center',font:'condensed',fontSize:width===height?18:20,fill:'#061521',color:'#edfaff',accent:index%2?'#8de8ff':'#43b9ff'});
@@ -409,6 +442,15 @@
       const footer=textElement('UNE SEMAINE AU CHAUD  •  PLAID RECOMMANDÉ',width===height?150:430,height-58,width===height?width-300:width-860,30,17,'#f3c98b','serif',700,'center');footer.fontStyle='italic';footer.letterSpacing=2;elements.push(footer);
       elements.push(emojiElement('🕯️',width-150,height-170,110));elements.push(emojiElement('📚',width-270,height-115,84));
       elements.push(emojiElement('☕',45,height-155,105));elements.push(emojiElement('🍄',155,height-108,68));elements.push(emojiElement('🌿',35,35,72));
+    }
+    if(name==='seasonboard'){
+      const garden=svgImageElement(seasonGarden(),width===height?0:50,height-(width===height?200:190),width===height?1080:1500,width===height?200:190,'Frise des quatre saisons');garden.opacity=.78;garden.role='templateBackgroundOverlay';elements.unshift(garden);
+      const footer=textElement('PRINTEMPS  •  ÉTÉ  •  AUTOMNE  •  HIVER',width===height?235:455,height-49,width===height?610:690,28,width===height?14:17,'#4f746d','rounded',900,'center');footer.letterSpacing=3;elements.push(footer);
+    }
+    if(name==='metalcore'){
+      const footer=textElement('LOUD  /  DARK  /  UNBROKEN',width===height?215:440,height-(width===height?62:50),width===height?650:720,30,width===height?15:18,'#b7bbc1','condensed',900,'center');footer.letterSpacing=6;elements.push(footer);
+      const leftChain=shapeElement('rect',width===height?31:38,85,5,height-170,'#555a62',2);leftChain.opacity=.62;elements.unshift(leftChain);
+      const rightChain=shapeElement('rect',width-(width===height?36:43),85,5,height-170,'#555a62',2);rightChain.opacity=.62;elements.unshift(rightChain);
     }
     if(name==='arcade'){
       const crest=svgImageElement(questCrestWatermark(),width===height?width-280:width-325,28,width===height?230:285,width===height?230:285,'Emblème de quête');crest.opacity=.32;elements.unshift(crest);
@@ -1031,8 +1073,12 @@
     Object.assign(element,normalizeImageCrop(cropDraft));if(cropDraft.kind==='background'||cropDraft.kind==='day')element.imageFit=cropDraft.fit;else element.fit=cropDraft.fit;closeCropEditor();renderAll();pushHistory();save();toast('Cadrage et adaptation appliqués.');
   }
   function updateCropRange(){if(!cropDraft)return;cropDraft.cropZoom=Number(els.cropZoom.value);cropDraft.stretchX=Number(els.cropStretchX.value);cropDraft.stretchY=Number(els.cropStretchY.value);renderCropEditor();}
+  function closeProjectInfo(returnFocus=false){els.projectInfoTooltip.hidden=true;els.projectInfoBtn.setAttribute('aria-expanded','false');if(returnFocus)els.projectInfoBtn.focus();}
 
   function bind(){
+    els.projectInfoBtn.addEventListener('click',event=>{event.stopPropagation();const open=els.projectInfoTooltip.hidden;els.projectInfoTooltip.hidden=!open;els.projectInfoBtn.setAttribute('aria-expanded',String(open));});
+    document.addEventListener('click',event=>{if(!event.target.closest('.projectInfoWrap'))closeProjectInfo();});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!els.projectInfoTooltip.hidden)closeProjectInfo(true);});
     document.querySelectorAll('.tabBtn').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.tabBtn').forEach(item=>{const active=item===button;item.classList.toggle('isActive',active);item.setAttribute('aria-selected',String(active));});document.querySelectorAll('.sidePanel').forEach(panel=>panel.classList.toggle('isActive',panel.dataset.panelContent===button.dataset.panel));}));
     document.querySelectorAll('[data-planning-mode]').forEach(button=>button.addEventListener('click',()=>setPlanningMode(button.dataset.planningMode)));
     els.quickPlanningInput.addEventListener('input',updateQuickPlanningFeedback);els.quickPlanningCreate.addEventListener('click',()=>{generateQuickPlanning().catch(()=>toast('Impossible de créer ce planning.'));});
