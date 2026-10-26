@@ -1,8 +1,45 @@
 # Historique des versions
 
-## 2.2.2 — Cathédrale noire
+## 2.3.2 — Réinitialisation toujours accessible
 
-- ajoute un thème original hardcore, métal et gothique avec acier noirci, vitrail rouge, chaînes, rivets et cartes en ogive ;
+- ajoute un bouton compact « Reset » à droite de l’aide dans la barre supérieure ;
+- réutilise la même confirmation et la même fonction de réinitialisation que le bouton du panneau Contenu ;
+- conserve ce raccourci dans la barre supérieure sur les petits écrans.
+
+## 2.3.1 — Disciplines Esport modifiables
+
+- transforme MOBA et BATTLE ROYAL en véritables calques texte sélectionnables et modifiables ;
+- ajoute les calques FPS, MMORPG, VERSUS, RACING et DANCE sous les cinq autres cartes ;
+- retire le libellé CAR BALL du décor vectoriel et reconstruit automatiquement les projets Esport enregistrés en V2.3.0.
+
+## 2.3.0 — Esport arena et bibliothèque simplifiée
+
+- ajoute le modèle original « Esport arena », inspiré des grandes disciplines compétitives sans reprendre leurs logos ;
+- rend la bibliothèque plus rapide à parcourir grâce à des vignettes plus compactes, sans ajouter de recherche ni de filtres ;
+- conserve l’onglet actif après actualisation de la page ;
+- enrichit Duo astral avec une carte des constellations vectorielle en arrière-plan.
+
+## 2.2.5 — Reliquaire restauré
+
+- corrige l’encodage UTF-8 des décorations SVG intégrées ;
+- restaure l’affichage du calque « Reliquaire du rituel » à la place de l’icône d’image cassée ;
+- reconstruit automatiquement les projets Rituel d’acier enregistrés avec le calque défectueux.
+
+## 2.2.4 — Cartes du Rituel restaurées
+
+- restaure les panneaux découpés sobres de la précédente version de Rituel d’acier ;
+- retire les ornements qui réduisaient inutilement la place disponible dans chaque carte ;
+- garantit l’affichage complet du nom des jours, sans ellipse comme « LUN… ».
+
+## 2.2.3 — Reliques du Rituel d’acier
+
+- remplace le sigil abstrait par un reliquaire original réunissant grimoire obscur, crâne, dagues croisées et chaînes ;
+- transforme les cartes de jour en pages noires rituelles plus lisibles, ponctuées d’une dague, d’une chaîne et d’un sceau crânien ;
+- conserve les images de jour, les réglages de texte et l’export PNG sans ressource distante.
+
+## 2.2.2 — Rituel d’acier
+
+- ajoute un thème original hardcore, métal et gothique inspiré des affiches de concert underground, sans cathédrale ni cadres gothiques lourds ;
 - adapte sa composition aux formats 16:9 et carré, aux images de jour, aux textes détachés, au mode Random et à l’export PNG ;
 - conserve une lisibilité élevée malgré une direction visuelle sombre et agressive.
 

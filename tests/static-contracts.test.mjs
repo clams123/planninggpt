@@ -30,10 +30,47 @@ test('un bouton après l’export présente le projet dans une infobulle accessi
   assert.match(script,/event\.key==='Escape'[\s\S]*closeProjectInfo/);
 });
 
-test('les vingt-trois modèles de l’interface possèdent un style V2',()=>{
+test('un bouton Reset compact réutilise la réinitialisation existante depuis la barre supérieure',()=>{
+  assert.match(html,/id="projectInfoBtn"[\s\S]*?<\/div>\s*<button class="btn topResetBtn" id="topResetBtn"[^>]*>Reset<\/button>/);
+  assert.match(script,/topReset:\$\('topResetBtn'\)/);
+  assert.match(script,/\[els\.resetPlanning,els\.topReset\]\.forEach\(button=>button\.addEventListener\('click',resetPlanning\)\)/);
+  assert.match(css,/\.topResetBtn\{/);
+});
+
+test('les vingt-quatre modèles de l’interface possèdent un style V2',()=>{
   const templates=[...html.matchAll(/data-template="([^"]+)"/g)].map(match=>match[1]);
-  assert.equal(templates.length,23);
+  assert.equal(templates.length,24);
   templates.forEach(name=>assert.match(script,new RegExp(`${name}:\\{bg:`)));
+});
+
+test('la bibliothèque de modèles reste simple avec des cartes compactes',()=>{
+  assert.doesNotMatch(html,/id="templateSearch"|id="templateCategory"|id="templateFilterStatus"/);
+  assert.doesNotMatch(script,/filterTemplateCards|normalizeTemplateSearch/);
+  assert.match(css,/\.templateCard\{[^}]*min-height:82px/);
+  assert.match(css,/\.templatePreview\{[^}]*height:47px/);
+});
+
+test('l’onglet actif est restauré après actualisation',()=>{
+  assert.match(script,/const ACTIVE_PANEL_KEY = 'planninggpt_v2_active_panel'/);
+  assert.match(script,/function activatePanel\(panel,/);
+  assert.match(script,/localStorage\.setItem\(ACTIVE_PANEL_KEY,panel\)/);
+  assert.match(script,/activatePanel\(localStorage\.getItem\(ACTIVE_PANEL_KEY\)\|\|'planning',false\)/);
+});
+
+test('Esport arena réunit plusieurs disciplines dans une identité compétitive originale',()=>{
+  assert.match(html,/value="esport">Esport arena<\/option>/);
+  assert.match(html,/data-template="esport"[^>]*data-category="gaming"[\s\S]*<strong>Esport arena<\/strong>/);
+  assert.match(script,/esport:\{bg:/);
+  assert.match(script,/if\(style==='esport'\)/);
+  assert.match(script,/if\(name==='esport'\)/);
+  assert.match(script,/function esportArena\(\)/);
+  for(const label of ['ARÈNE ESPORT','MOBA','FPS','MMORPG','VERSUS','RACING','DANCE','BATTLE ROYAL'])assert.match(script,new RegExp(label));
+  assert.doesNotMatch(script,/CAR BALL|BATTLE ROYALE/);
+  assert.match(script,/const ESPORT_DISCIPLINES = \['MOBA','FPS','MMORPG','VERSUS','RACING','DANCE','BATTLE ROYAL'\]/);
+  assert.match(script,/label\.role=`esportDiscipline\$\{index\+1\}`/);
+  assert.match(script,/refreshEsport=project\.template==='esport'&&previousRevision<21/);
+  for(const token of ['tp-esport','template-esport','variant-esport'])assert.match(css,new RegExp(`\\.${token}`));
+  assert.doesNotMatch(script,/League of Legends|Rocket League|Fortnite/);
 });
 
 test('Carnet des saisons fournit une composition originale utilisable toute l’année',()=>{
@@ -48,14 +85,29 @@ test('Carnet des saisons fournit une composition originale utilisable toute l’
   assert.doesNotMatch(script,/seasonboard[^\n]*(portrait|photo|citrouille|pumpkin)/i);
 });
 
-test('Cathédrale noire fournit une composition métal gothique complète',()=>{
-  assert.match(html,/value="metalcore">Cathédrale noire<\/option>/);
-  assert.match(html,/data-template="metalcore"[\s\S]*<strong>Cathédrale noire<\/strong>/);
+test('Rituel d’acier fournit un rituel morbide avec grimoire, dagues, chaînes et crâne',()=>{
+  assert.match(html,/value="metalcore">Rituel d’acier<\/option>/);
+  assert.match(html,/data-template="metalcore"[\s\S]*<strong>Rituel d’acier<\/strong>/);
   assert.match(script,/metalcore:\{bg:/);
   assert.match(script,/if\(style==='metalcore'\)/);
   assert.match(script,/if\(name==='metalcore'\)/);
-  assert.match(script,/function ironCathedral\(\)/);
+  assert.match(script,/function occultRelics\(\)/);
+  for(const relic of ['Grimoire obscur','Crâne rituel','Dagues croisées','Chaînes du rituel'])assert.match(script,new RegExp(relic));
+  assert.doesNotMatch(script,/metalSigil|ironCathedral|Cathédrale d’acier/);
+  assert.match(script,/refreshMetalcore=project\.template==='metalcore'&&previousRevision<19/);
   for(const token of ['tp-metalcore','template-metalcore','variant-metalcore'])assert.match(css,new RegExp(`\\.${token}`));
+  assert.match(css,/\.variant-metalcore \.elDay__name\{[^}]*max-width:100%[^}]*white-space:normal[^}]*overflow:visible[^}]*text-overflow:clip/);
+  assert.doesNotMatch(css,/\.variant-metalcore \.elDay__name::before\{content:"☠"/);
+});
+
+test('les SVG intégrés conservent leurs caractères UTF-8',()=>{
+  const source=script.match(/function svgDataUrl\(svg\)\{[^}]+\}/)?.[0];
+  assert.ok(source,'svgDataUrl doit exister');
+  const svgDataUrl=Function(`return (${source})`)();
+  const svg='<svg xmlns="http://www.w3.org/2000/svg"><title>Crâne et Chaînes</title></svg>';
+  const url=svgDataUrl(svg);
+  assert.match(url,/^data:image\/svg\+xml;charset=utf-8,/);
+  assert.equal(decodeURIComponent(url.slice(url.indexOf(',')+1)),svg);
 });
 
 test('Affiche crée un événement centré sur une seule journée',()=>{
@@ -108,6 +160,9 @@ test('Duo Néon et Duo astral proposent deux compositions illustrées distinctes
   assert.match(css,/\.variant-neonblue::before/);
   assert.doesNotMatch(script,/const versus=textElement\('VS'/);
   assert.match(script,/const sigil=textElement\('✦'/);
+  assert.match(script,/function astralConstellation\(\)/);
+  assert.match(script,/Carte des constellations/);
+  assert.match(script,/refreshAstralDuo=project\.template==='astralduo'&&previousRevision<20/);
 });
 
 test('Aventure possède un portail interdimensionnel original et exportable',async()=>{
@@ -318,7 +373,7 @@ test('Twitch Live remplace Quête fantasy avec une composition de diffusion déd
 });
 
 test('aucun calque de modèle n’est verrouillé par défaut',()=>{
-  assert.match(script,/const MODEL_REVISION = 15;/);
+  assert.match(script,/const MODEL_REVISION = 21;/);
   assert.match(script,/modelRevision:MODEL_REVISION/);
   assert.match(script,/elements\.forEach\(element=>\{element\.builtIn=true;element\.locked=false;\}\)/);
   assert.match(script,/unlockDefaultLayers=previousRevision<4/);
@@ -335,9 +390,9 @@ test('Résonance WuWa remplace entièrement l’ancienne Constellation',()=>{
   assert.doesNotMatch(script,/lineElementBetween|URSA MAJOR|GRANDE OURSE|starNames/);
 });
 
-test('les aperçus de modèles sont réduits de cinq pour cent en hauteur',()=>{
-  assert.match(css,/\.templatePreview\{[^}]*height:60px/);
-  assert.match(css,/\.templateCard\{[^}]*min-height:101px/);
+test('les aperçus de modèles utilisent le format compact demandé',()=>{
+  assert.match(css,/\.templatePreview\{[^}]*height:47px/);
+  assert.match(css,/\.templateCard\{[^}]*min-height:82px/);
 });
 
 test('colonnes, grille pop et horreur ont des structures visuelles propres',()=>{
@@ -431,7 +486,7 @@ test('les contrôles ergonomiques essentiels restent à portée',()=>{
   assert.match(css,/\.tabBtn\{[^}]*min-width:0;[^}]*flex-direction:column/);
   assert.doesNotMatch(html,/id="resetBtn"|↺ Réinitialiser/);
   assert.match(script,/function resetPlanning\(\)/);
-  assert.match(script,/els\.resetPlanning\.addEventListener\('click',resetPlanning\)/);
+  assert.match(script,/\[els\.resetPlanning,els\.topReset\]\.forEach\(button=>button\.addEventListener\('click',resetPlanning\)\)/);
   assert.doesNotMatch(html,/dayMovePanel|data-move-day|data-arrange/);
   assert.match(html,/data-panel="design"[^>]*>[\s\S]*?<span>3<\/span>Design<\/button>/);
   assert.match(html,/data-panel="planning"[^>]*>[\s\S]*?<span>1<\/span>Contenu<\/button>/);
@@ -589,7 +644,7 @@ test('les textes intégrés se déplacent dans leur carte avec une sélection se
   assert.match(css,/Texte · reste dans la carte/);
 });
 
-test('alignements effets et compositions utilisateur priment sur les vingt-trois modèles',()=>{
+test('alignements effets et compositions utilisateur priment sur les vingt-quatre modèles',()=>{
   const horizontal=html.indexOf('id="propAlign"'),vertical=html.indexOf('id="propVAlign"'),textCase=html.indexOf('id="propTransform"');
   assert.ok(horizontal>0&&vertical>horizontal&&textCase>vertical,'les deux positions doivent être voisines avant la casse');
   assert.match(html,/id="propVAlign"[\s\S]*?<option value="theme">Selon le modèle<\/option>/);
@@ -708,9 +763,9 @@ test('le seul export proposé est le PNG',()=>{
 });
 
 test('la version V2 correspond au paquet et à la documentation',()=>{
-  assert.match(script,/const VERSION = '2\.2\.2'/);
-  assert.equal(packageJson.version,'2.2.2');
-  assert.match(readme,/PlanningGPT V2\.2\.2/);
+  assert.match(script,/const VERSION = '2\.3\.2'/);
+  assert.equal(packageJson.version,'2.3.2');
+  assert.match(readme,/PlanningGPT V2\.3\.2/);
 });
 
 test('les textes libérés conservent les styles calculés des cartes',()=>{
